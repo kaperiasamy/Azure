@@ -96,5 +96,19 @@ Which of the following networking features of App Service can be used to control
 - For ASP.NET and ASP.NET Core developers, setting app settings in App Service is like setting them in <appSettings> in Web.config or appsettings.json, but the values in App Service override the ones in Web.config or appsettings.json. You can keep development settings (for example, local MySQL password) in Web.config or appsettings.json and production secrets (for example, Azure MySQL database password) safely in App Service. The same code uses your development settings when you debug locally, and it uses your production secrets when deployed to Azure.
 - App settings are always encrypted when stored (encrypted-at-rest). 
 
+## Scale apps in Azure App Service
 
+#### What is autoscaling?
+
+Autoscaling is a cloud system or process that adjusts available resources based on the current demand. Autoscaling performs scaling in and out, as opposed to scaling up and down.
+
+#### Azure App Service autoscaling
+
+Autoscaling in Azure App Service monitors the resource metrics of a web app as it runs. It detects situations where other resources are required to handle an increasing workload, and ensures those resources are available before the system becomes overloaded.
+
+Autoscaling responds to changes in the environment by adding or removing web servers and balancing the load between them. Autoscaling doesn't have any effect on the CPU power, memory, or storage capacity of the web servers powering the app, it only changes the number of web servers.
+
+- A rule specifies the threshold for a metric, and triggers an autoscale event when this threshold is crossed. 
+
+- Autoscaling works by adding or removing web servers.
 
