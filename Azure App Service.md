@@ -112,3 +112,161 @@ Autoscaling responds to changes in the environment by adding or removing web ser
 
 - Autoscaling works by adding or removing web servers.
 
+#### Metrics for autoscale rules
+
+- **CPU Percentage**. This metric is an indication of the CPU utilization across all instances. A high value shows that instances are becoming CPU-bound, which could cause delays in processing client requests.
+- **Memory Percentage**. This metric captures the memory occupancy of the application across all instances. A high value indicates that free memory could be running low, and could cause one or more instances to fail.
+- **Disk Queue Length**. This metric is a measure of the number of outstanding I/O requests across all instances. A high value means that disk contention could be occurring.
+- **Http Queue Length**. This metric shows how many client requests are waiting for processing by the web app. If this number is large, client requests might fail with HTTP 408 (Timeout) errors.
+- **Data In**. This metric is the number of bytes received across all instances.
+- **Data Out**. This metric is the number of bytes sent by all instances.
+
+Here’s your content reformatted into clear, skimmable bullet points for easy reference:
+
+---
+
+#### How an Autoscale Rule Analyzes Metrics
+
+- **Autoscaling analyzes metric trends over time** across all instances to determine whether scaling actions are needed.
+- The analysis involves **multiple steps**, focusing on both short-term and long-term metric behavior.
+
+---
+
+##### Step 1: Time Grain Aggregation
+- Metrics are collected across all instances over a short period called the **time grain**.
+- Most metrics use a **1-minute time grain** by default.
+- The values are aggregated using a method called **time aggregation**.
+- **Time aggregation options** include:
+  - `Average`
+  - `Minimum`
+  - `Maximum`
+  - `Sum`
+  - `Last`
+  - `Count`
+
+---
+
+##### Step 2: Duration-Based Aggregation
+- A single minute is often too short to determine meaningful trends.
+- Autoscale rules perform a **second aggregation** over a longer, user-defined period called the **Duration**.
+- **Minimum Duration** is 5 minutes; common values include 10 minutes or more.
+- During this step, the rule aggregates multiple time grain values (e.g., 10 one-minute averages).
+
+---
+
+##### Example Scenario
+- If the **time aggregation** is set to `Average` and the metric is **CPU Percentage**:
+  - Each minute, the average CPU usage across all instances is calculated.
+- If the **Duration** is set to 10 minutes and the aggregation method is `Maximum`:
+  - The rule evaluates the **maximum of the 10 average CPU values** to determine if the threshold is crossed.
+
+---
+
+#### Autoscale Actions – Key Concepts
+
+##### Triggering Autoscale
+- Autoscale actions are triggered when a **metric crosses a defined threshold**.
+- The rule evaluates the metric using **comparison operators**:
+  - `Greater than` → typically used for **scale-out** actions.
+  - `Less than` → typically used for **scale-in** actions.
+  - Other operators include `Equal to`, etc.
+
+---
+
+##### Types of Autoscale Actions
+- **Scale-out**: Increases the number of instances.
+- **Scale-in**: Decreases the number of instances.
+- Autoscale can also **set the instance count to a specific number**, rather than adjusting incrementally.
+
+---
+
+##### Cool Down Period
+- After an autoscale action, a **cool down period** is enforced.
+- During this time, **no further scaling actions** can be triggered.
+- Purpose: Allows the system to **stabilize** and prevents rapid, repeated scaling.
+- **Minimum cool down period**: 5 minutes.
+- Important because **starting or stopping instances takes time**, and metrics may not reflect changes immediately.
+
+---
+
+#### Explore autoscale best practices
+
+##### Autoscale concepts
+
+- An autoscale setting scales instances horizontally, which is out by increasing the instances and in by decreasing the number of instances. An autoscale setting has a maximum, minimum, and default value of instances.
+- An autoscale job always reads the associated metric to scale by, checking if it crossed the configured threshold for scale-out or scale-in.
+- All thresholds are calculated at an instance level. For example, "scale out by one instance when average CPU > 80% when instance count is 2", means to scale out when the average CPU across all instances is greater than 80%.
+- All autoscale successes and failures are logged to the Activity Log. You can then configure an activity log alert so that you can be notified via email, short message service, or webhooks whenever there's activity.
+
+---
+
+#### Autoscale Best Practices
+
+##### Set Clear Maximum and Minimum Instance Limits
+- Ensure **minimum ≠ maximum**; otherwise, no scaling can occur.
+- Maintain a **reasonable margin** between min and max values.
+- Autoscale operates **within these inclusive boundaries**.
+
+---
+
+##### Select the Right Metric Statistic
+- For diagnostics metrics, choose from:
+  - `Average` (most common)
+  - `Minimum`
+  - `Maximum`
+  - `Total`
+- Pick the statistic that best reflects your workload behavior.
+
+---
+
+##### Define Thoughtful Thresholds
+- Use **distinct thresholds** for scale-out and scale-in to avoid confusion.
+- Avoid identical thresholds like:
+  - Scale-out: Thread Count ≥ 600
+  - Scale-in: Thread Count ≤ 600
+- Identical thresholds can cause **flapping**—a loop of scaling in and out.
+
+###### Flapping Example
+- Start with 2 instances; thread count rises to 625 → scale-out to 3.
+- Thread count drops to 575 → autoscale estimates:
+  - 575 × 3 = 1,725 / 2 = 862.5 → triggers scale-out again.
+- To prevent this, autoscale **skips scale-in** and reevaluates later.
+
+###### Better Threshold Design
+- Scale-out: CPU% ≥ 80
+- Scale-in: CPU% ≤ 60
+- This margin avoids flapping and ensures stable scaling behavior.
+
+---
+
+##### Handle Multiple Rules in a Profile
+- **Scale-out** triggers if **any rule** is met.
+- **Scale-in** triggers only if **all rules** are met.
+
+###### Example Rule Set
+- Scale-in: CPU < 30%, Memory < 50%
+- Scale-out: CPU > 75%, Memory > 75%
+
+###### Behavior
+- CPU = 76%, Memory = 50% → scale-out
+- CPU = 50%, Memory = 76% → scale-out
+- CPU = 25%, Memory = 51% → no scale-in
+- CPU = 29%, Memory = 49% → scale-in
+
+---
+
+##### Choose a Safe Default Instance Count
+- Autoscale uses the **default count** when metrics are unavailable.
+- Set a default that can **safely handle your workload**.
+
+---
+
+##### Configure Autoscale Notifications
+- Autoscale logs events in the **Activity Log** when:
+  - A scale operation is issued
+  - A scale action succeeds or fails
+  - Metrics are unavailable or recovered
+- Use **Activity Log alerts**, **email**, or **webhooks** to monitor autoscale health and actions.
+
+---
+
