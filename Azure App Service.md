@@ -270,3 +270,21 @@ Here’s your content reformatted into clear, skimmable bullet points for easy r
 
 ---
 
+## Route Production Traffic Automatically
+
+- Navigate to your app's resource page in Azure and select **Deployment slots**.
+- In the **Traffic %** column for the desired slot, enter a percentage (0 to 100) to define how much traffic should be routed to that slot.
+- Click **Save** to apply the traffic routing configuration.
+
+---
+
+## How Traffic Routing Works
+
+- Once configured, the specified percentage of client requests is **randomly routed** to the selected nonproduction slot.
+- After a client is routed to a slot, it is **pinned to that slot** for the duration of the session.
+- The slot assignment is visible in the client's browser via the **x-ms-routing-name** cookie:
+  - If routed to the staging slot: `x-ms-routing-name=staging`
+  - If routed to the production slot: `x-ms-routing-name=self`
+
+---
+
