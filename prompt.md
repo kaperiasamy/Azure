@@ -7,6 +7,6 @@ Here is the transcript from a course. This section describes `What is .NET?`. Tr
 
 I am a .NET developer with 16+ years of experience. Now I am preparing for the interview. In an interview, if I asked the following question, what and how should I answer, so that I can avoid questions based on my answer:
 
-About OWASP - top 10
+what is WCF and difference between REST and WCF
 
 Please elaborate on this so that I can show my expertise.
