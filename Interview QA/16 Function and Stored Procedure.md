@@ -32,7 +32,8 @@ CREATE FUNCTION GetEmployeeFullName (@EmployeeID INT)
 RETURNS NVARCHAR(100) AS
 BEGIN
     DECLARE @FullName NVARCHAR(100);
-    SELECT @FullName = FirstName + ' ' + LastName FROM Employees WHERE EmployeeID = @EmployeeID;
+    SELECT @FullName = FirstName + ' ' + LastName 
+      FROM Employees WHERE EmployeeID = @EmployeeID;
     RETURN @FullName;
 END;
 ```

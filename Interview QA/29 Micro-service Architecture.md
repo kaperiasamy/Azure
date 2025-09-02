@@ -113,7 +113,8 @@ public class WeatherService {
 
     public WeatherService() {
         _circuitBreakerPolicy = Policy.Handle<HttpRequestException>()
-            .CircuitBreakerAsync(2, TimeSpan.FromMinutes(1)); // Break the circuit after 2 failures
+            .CircuitBreakerAsync(2, TimeSpan.FromMinutes(1)); 
+            // Break the circuit after 2 failures
     }
 
     public async Task<WeatherResponse> GetWeatherAsync(string city) {

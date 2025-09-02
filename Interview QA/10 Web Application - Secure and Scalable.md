@@ -13,7 +13,8 @@ Configure your web server to support HTTPS using an SSL/TLS certificate.
 - Implement rigorous validation for all user inputs to prevent common vulnerabilities such as SQL Injection and Cross-Site Scripting (XSS). Use parameterized queries or ORM frameworks for database access.
 
 ```csharp
-using (SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE Username = @username", connection))
+using (SqlCommand cmd 
+  = new SqlCommand("SELECT * FROM Users WHERE Username = @username", connection))
 {
     cmd.Parameters.AddWithValue("@username", username);
     // Execute command

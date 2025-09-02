@@ -40,5 +40,6 @@ A connection pool in SQL Server is a collection of database connections that are
 In ADO.NET, connection pooling is typically enabled by default. Here’s an example of a connection string that includes pooling options:
 
 ```plaintext
-Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;Pooling=true;Max Pool Size=100;Min Pool Size=5;
+Server=myServerAddress;Database=myDataBase;User Id=myUsername;
+   Password=myPassword;Pooling=true;Max Pool Size=100;Min Pool Size=5;
 ```

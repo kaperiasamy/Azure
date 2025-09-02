@@ -34,7 +34,8 @@ public class MyThirdPartyService : IMyThirdPartyService {
 In the Startup.cs of the ASP.NET application, I register this service as a singleton:
 
 ```csharp
-services.AddHttpClient<IMyThirdPartyService, MyThirdPartyService>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+services.AddHttpClient<IMyThirdPartyService, MyThirdPartyService>()
+   .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 ```
 
 By registering it as a singleton, I ensure that the same instance of MyThirdPartyService is used in all requests, which is particularly important for managing resources effectively and maintaining state as needed for the integration.
@@ -80,7 +81,8 @@ public class WeatherService : IWeatherService {
     }
 
     public async Task<WeatherResponse> GetWeatherAsync(string city) {
-        var response = await _httpClient.GetAsync($"api/weather?city={city}&apikey={_apiKey}");
+        var response = await _httpClient.GetAsync($"api/weather?city={city}
+           &apikey={_apiKey}");
         response.EnsureSuccessStatusCode();
         var weatherData = await response.Content.ReadAsAsync<WeatherResponse>();
         return weatherData;
@@ -97,7 +99,8 @@ Example Singleton Registration in ASP.NET Core:
 ```csharp
 
 public void ConfigureServices(IServiceCollection services) {
-    services.AddHttpClient<IWeatherService, WeatherService>().SetHandlerLifetime(TimeSpan.FromMinutes(5));
+    services.AddHttpClient<IWeatherService, WeatherService>()
+       .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 }
 ```
 

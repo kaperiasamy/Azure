@@ -24,6 +24,7 @@ An example implementation could involve setting up a web application that genera
 For instance:
 
 # Sample Logstash configuration
+```plaintext
 input {
     file {
         path => "/var/log/myapp/*.log"
@@ -41,6 +42,7 @@ output {
         index => "myapp-logs-%{+YYYY.MM.dd}"
     }
 }
+```
 
 This configuration reads logs from a specified directory, processes them using the grok filter to parse Apache log format, and outputs them to Elasticsearch.
 

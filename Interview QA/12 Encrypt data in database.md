@@ -45,7 +45,8 @@ To demonstrate your expertise, summarize an approach to encrypting data in a SQL
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
             using (MemoryStream msEncrypt = new MemoryStream())
             {
-                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                using (CryptoStream csEncrypt 
+                   = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                 {
                     using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                     {
@@ -69,7 +70,8 @@ To demonstrate your expertise, summarize an approach to encrypting data in a SQL
     Retrieve the encrypted data and decrypt it when necessary using the same key and IV. Here’s an example decryption method:
 
     ```csharp
-    public static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
+    public static string DecryptStringFromBytes_Aes(
+       byte[] cipherText, byte[] Key, byte[] IV)
     {
         using (Aes aes = Aes.Create())
         {
@@ -78,7 +80,8 @@ To demonstrate your expertise, summarize an approach to encrypting data in a SQL
             ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
             using (MemoryStream msDecrypt = new MemoryStream(cipherText))
             {
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                using (CryptoStream csDecrypt 
+                   = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {
                     using (StreamReader srDecrypt = new StreamReader(csDecrypt))
                     {

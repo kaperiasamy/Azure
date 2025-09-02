@@ -26,7 +26,8 @@ public interface IUnitOfWork : IDisposable
 public class UnitOfWork : IUnitOfWork
 {
     private readonly DbContext _context;
-    private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
+    private readonly Dictionary<Type, object> _repositories 
+       = new Dictionary<Type, object>();
 
     public UnitOfWork(DbContext context)
     {

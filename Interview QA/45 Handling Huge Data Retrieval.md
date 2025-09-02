@@ -57,6 +57,7 @@ if (cachedProducts == null)
 
 ```sql
 -- Example of an optimized query with proper indexing
-SELECT P.ProductID, P.ProductName FROM Products P WITH (INDEX(IndexName)) WHERE P.Price < @Price;
+SELECT P.ProductID, P.ProductName FROM Products P 
+  WITH (INDEX(IndexName)) WHERE P.Price < @Price;
 ```
 **Benefits**: Reduces query execution time and enhances overall application performance.

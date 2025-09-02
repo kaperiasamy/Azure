@@ -134,7 +134,8 @@ public class PaymentsController : ControllerBase
             else
             {
                 // Handle failed payment
-                return BadRequest(new { status = "failed", message = charge.LastError?.Message });
+                return BadRequest(new { status = "failed", 
+                   message = charge.LastError?.Message });
             }
         }
         catch (StripeException ex)
@@ -217,7 +218,8 @@ public class PaymentsController : ControllerBase
             else
             {
                 // Handle failed payment
-                return BadRequest(new { status = "failed", message = charge.LastError?.Message });
+                return BadRequest(new { status = "failed", 
+                   message = charge.LastError?.Message });
             }
         }
         catch (StripeException ex)
@@ -244,7 +246,9 @@ public class PaymentsController : ControllerBase
         Event stripeEvent; 
         try
         {
-            stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], "your_endpoint_secret");
+            stripeEvent = EventUtility.ConstructEvent(json, 
+               Request.Headers["Stripe-Signature"],
+               "your_endpoint_secret");
         }
         catch (StripeException e)
         {
@@ -311,7 +315,8 @@ public class ChargeRequest
     <div id="payment-result"></div>
 
     <script>
-        const stripe = Stripe('your_public_key'); // Replace with your Stripe public key
+        const stripe = Stripe('your_public_key'); 
+        // Replace with your Stripe public key
         const elements = stripe.elements();
         const cardElement = elements.create('card');
         cardElement.mount('#card-element');
@@ -343,9 +348,11 @@ public class ChargeRequest
 
                 const result = await response.json();
                 if (result.status === 'success') {
-                    document.getElementById('payment-result').innerText = 'Payment successful!';
+                    document.getElementById('payment-result').innerText 
+                       = 'Payment successful!';
                 } else {
-                    document.getElementById('payment-result').innerText = 'Payment failed: ' + result.message;
+                    document.getElementById('payment-result').innerText 
+                       = 'Payment failed: ' + result.message;
                 }
             }
         });

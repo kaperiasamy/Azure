@@ -33,7 +33,8 @@ public class RequestTimingMiddleware
 
         watch.Stop();
         var elapsed = watch.ElapsedMilliseconds;
-        Console.WriteLine($"Request {context.Request.Method} {context.Request.Path} took {elapsed} ms");
+        Console.WriteLine($"Request {context.Request.Method} 
+           {context.Request.Path} took {elapsed} ms");
     }
 }
 ```

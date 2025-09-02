@@ -19,7 +19,8 @@ services.AddTransient<IEmailService, EmailService>(); // A new instance for each
 **Example**:
 
 ```csharp
-services.AddScoped<IProductRepository, ProductRepository>(); // A single instance per request
+services.AddScoped<IProductRepository, ProductRepository>(); 
+// A single instance per request
 ```
 
 3. Singleton
@@ -29,7 +30,8 @@ services.AddScoped<IProductRepository, ProductRepository>(); // A single instanc
 **Example**:
 
 ```csharp
-services.AddSingleton<ILoggingService, LoggingService>(); // A single instance for the application's lifetime
+services.AddSingleton<ILoggingService, LoggingService>(); 
+// A single instance for the application's lifetime
 ```
 
 ## Summary of Differences

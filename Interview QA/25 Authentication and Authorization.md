@@ -37,7 +37,8 @@ public void ConfigureServices(IServiceCollection services)
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = "YourIssuer",
                 ValidAudience = "YourAudience",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKey"))
+                IssuerSigningKey = new SymmetricSecurityKey(
+                   Encoding.UTF8.GetBytes("YourSecretKey"))
             };
         });
     services.AddAuthorization(options =>

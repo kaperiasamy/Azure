@@ -36,7 +36,6 @@ ON Employees(FirstName);
 
 ## Differences between Clustered and Non-Clustered Index
 
-|---------------------------------|------------------------------------|------------------------------------|
 | Feature                         | Clustered Index                    | Non-Clustered Index                |
 |---------------------------------|------------------------------------|------------------------------------|
 | Order of Data                   | Physically orders data rows        | Logical order, separate storage    |
@@ -46,7 +45,6 @@ ON Employees(FirstName);
 | Key Storage                     | Stored in the leaf level of index  | Contains pointers to data rows     |
 | Maximum Number of Non-Clustered | Not applicable                     | Up to 999 per table                |
 | Indexes                         |                                    |                                    |
-|---------------------------------|------------------------------------|------------------------------------|
 
 ## Maximum Limit: 
 In SQL Server, you can have a maximum of 999 non-clustered indexes on a single table. This allows for optimized searching based on various query patterns.

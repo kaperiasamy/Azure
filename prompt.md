@@ -19,3 +19,33 @@ I am a .NET developer with 16+ years of experience. Now I am preparing for the i
 Please elaborate on this so that I can show my expertise, with detailed code.
 
 --- 
+find . -maxdepth 1 -type f -name "*.md" -print0 | while IFS= read -r -d '' file; do pandoc "$file" --pdf-engine=xelatex -o "${file%.md}.pdf"; done
+
+
+find . -maxdepth 1 -type f -name "*.md" -print0 | sort -z | xargs -0 pandoc --pdf-engine=xelatex -o PDFs/InterviewQA.pdf
+
+find . -maxdepth 1 -type f -name "*.md" -print0 | sort -z | xargs -0 pandoc \
+  -V papersize=a4 \
+  -V geometry:margin=2.5cm \
+  --pdf-engine=xelatex \
+  --toc \
+  -o PDFs/InterviewQA.pdf
+
+mkdir -p output
+find . -maxdepth 1 -type f -name "*.md" -print0 | sort -z | xargs -0 pandoc \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o PDFs/InterviewQA.pdf
+
+mkdir -p output
+find . -maxdepth 1 -type f -name "*.md" -print0 | sort -z | xargs -0 pandoc \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  -V fontsize=11pt \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o PDFs/InterviewQA.pdf
+
+
