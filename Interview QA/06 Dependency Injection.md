@@ -125,3 +125,67 @@ public class OrdersController : ControllerBase
 | Scope      | Focused on particular design scenarios         | Broad principles applicable to all stages of design|
 | Example    | Singleton, Factory Method, Observer            | SOLID, DRY, KISS (Keep It Simple, Stupid)          |
 | Usage      | Implemented in code as specific constructs     | Guide decision-making and overall architecture     |
+
+--- 
+
+**Dependency Injection (DI)** is a design pattern widely used in software development, especially within the context of .NET applications. It allows for better modularity, testability, and separation of concerns in your code. Here’s how you can explain DI, along with its types, during an interview to showcase your expertise and minimize follow-up questions:
+
+### Explanation of Dependency Injection:
+
+**Definition**: Dependency Injection is a technique where an object’s dependencies (services or components it requires) are provided externally, instead of being created internally by the object itself. This leads to a more decoupled architecture where classes are easier to manage and test.
+
+**Benefits**:
+  - **Decoupling**: Reduces dependencies between components, making the code more flexible and easier to change.
+  - **Testability**: Facilitates unit testing, as dependencies can be easily mocked or replaced with alternative implementations in tests.
+  - **Maintainability**: Improves the overall maintainability of the code base by following the SOLID principles, particularly the Single Responsibility Principle and Dependency Inversion Principle.
+
+### Types of Dependency Injection:
+
+#### 1. Constructor Injection:
+**Definition**: Dependencies are provided through a class constructor. This is the most common form of DI.
+    
+**Example**:
+
+```csharp
+public class OrderService
+{
+    private readonly IProductRepository _productRepository;
+    
+    public OrderService(IProductRepository productRepository)
+    {
+        _productRepository = productRepository;
+    }
+}
+```
+**Use Case**: Ideal when dependencies are required for class construction and should be immutable during the object lifecycle.
+
+#### 2. Setter Injection:
+**Definition**: Dependencies are provided through properties or setter methods after the object has been instantiated.
+**Example**:
+
+```csharp
+public class OrderService
+{
+    public IProductRepository ProductRepository { get; set; }
+    
+    public void ProcessOrder()
+    {
+        // Use ProductRepository
+    }
+}
+```
+**Use Case**: Useful when a dependency is optional or when modifying its value after object construction is required.
+
+#### 3. Interface Injection:
+**Definition**: The dependency provides an injector method that calls a setter method on the receiving class to inject the dependency.
+**Example**: This is less common than the other two forms. You’d define an interface that includes a method for setting the dependency.
+**Use Case**: Applies in scenarios where the class itself can require setup after being instantiated but before use.
+
+**Example Interface Definition**:
+
+```csharp
+public interface IInjectable
+{
+    void InjectDependency(IProductRepository productRepository);
+}
+```

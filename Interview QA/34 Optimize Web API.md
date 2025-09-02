@@ -55,3 +55,47 @@ Be prepared to discuss specific tools you have used, metrics for performance ass
     "pagination techniques for RESTful APIs"
     "best practices for rate limiting in APIs"
     "asynchronous programming in ASP.NET Core"
+
+--- 
+
+When a request takes more time to execute in a .NET application, it indicates potential issues with performance or resource management. Here’s how to respond effectively in an interview, showcasing your expertise while minimizing the likelihood of follow-up questions:
+
+## Strategies for Handling Long-Running Requests:
+
+### 1. Asynchronous Processing:
+**Implementation**: Use asynchronous programming to handle long-running tasks without blocking the main thread. This allows the application to remain responsive to other requests.
+**Example**: Using async and await keywords to execute I/O-bound operations asynchronously, such as database queries or API calls.
+
+```csharp
+public async Task<IActionResult> GetDataAsync()
+{
+    var data = await someService.GetDataAsync();
+    return Ok(data);
+}
+```
+
+### 2. Timeout Settings:
+**Configuration**: Set appropriate timeouts for database queries, API calls, and service calls. This prevents hanging requests and can allow for better error handling or retries if needed.
+**Example**: Adjusting command timeout settings in Entity Framework or SQL commands.
+
+```csharp
+context.Database.SetCommandTimeout(30); // 30 seconds timeout
+```
+### 3. Bakground Processing:
+**Use Case**: For tasks that are expected to take a long time and do not require the user to wait (e.g., report generation, data processing), offload these tasks to a background job processing system like Hangfire, Quartz.NET, or Azure Functions.
+**Implementation Example**: Implementing a background worker to handle the long-running process and notify the user once completed.
+
+```csharp
+BackgroundJob.Enqueue(() => ProcessDataAsync();
+```
+
+### 4. Optimize Code and Queries:
+**Action**: Review and optimize critical code sections or database queries that are known to take longer than expected. Utilize SQL execution plans to identify inefficiencies in database queries.
+**Considerations**: Adding appropriate indexes, avoiding unnecessary data loads, and breaking down complex operations into simpler, faster components.
+
+### 5. Load Balancing and Scaling:
+**Strategy**: Ensure your application can handle increased load by implementing load-balancing techniques and scaling resources appropriately. This helps distribute incoming requests efficiently and reduces the load on individual servers.
+**Example** : Configuring an application to run on multiple instances in a cloud service, using a service like Azure App Service or AWS Elastic Beanstalk.
+
+### 6. User Feedback:
+**Implementation**: Provide visual feedback to the user for long-running requests. This can be in the form of loading indicators, progress bars, or notifications that the process is ongoing, allowing users to remain informed rather than frustrated.

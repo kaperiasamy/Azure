@@ -59,3 +59,80 @@ public IActionResult GetAdminData()
 
 ## Conclusion: 
 By providing clear definitions of authentication and authorization, outlining the differences between them, detailing common strategies for implementing each within a web API, and presenting practical examples, you demonstrate a comprehensive understanding of securing web applications. Additionally, you may want to prepare for follow-up questions that might cover scenarios involving API security best practices, handling token expiration, or differences between OAuth and OpenID Connect. This thorough preparation will enhance your credibility as an expert in API security.
+
+--- 
+
+Authentication and Authorization are two essential concepts in securing applications, particularly in .NET Core applications. Here’s a detailed explanation you can provide in an interview to showcase your expertise while minimizing follow-up questions:
+
+## Authentication in .NET Core:
+
+**Definition**: Authentication is the process of verifying the identity of a user or application. It ensures that the entities requesting access are who they claim to be.
+
+### Mechanisms in .NET Core:
+- **Cookies**: Implements cookie-based authentication, which stores an authentication cookie in the user’s browser. This is often used for web applications where users log in and remain authenticated across requests.
+- **JWT (JSON Web Tokens)**: Utilizes token-based authentication, providing a stateless way of authenticating users. JWTs are commonly used in APIs, where a server issues a token upon successful authentication, which the client includes in subsequent requests.
+**Implementation Examples**:
+
+#### Cookie Authentication:
+
+```csharp
+services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+```
+#### JWT Authentication:
+
+```csharp
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            // Add your issuer, audience, and signing key here
+        };
+    });
+```
+## Authorization in .NET Core:
+
+**Definition**: Authorization is the process of determining whether a user has permission to access specific resources or perform specific actions after they have been authenticated.
+### Mechanisms in .NET Core:
+- **Role-Based Authorization**: Checks if a user belongs to a specific role (e.g., Admin, User) to grant or deny access to resources or actions based on these roles. Roles are typically defined in the application’s user management logic.
+- **Policy-Based Authorization**: Provides a more granular control mechanism that uses policies defined based on custom requirements. Policies can include multiple checks and criteria beyond simple role memberships.
+**Implementation Examples**:
+#### Role-Based Authorization:
+
+```csharp
+[Authorize(Roles = "Admin")]
+public IActionResult AdminPanel()
+{
+    // Only accessible to users in the Admin role
+    return View();
+}
+```
+#### Policy-Based Authorization:
+
+```csharp
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
+```
+#### Applying a policy:
+
+```csharp
+[Authorize(Policy = "RequireAdminRole")]
+public IActionResult AdminOnly()
+{
+    return View();
+}
+```
+## Key Differences:
+
+Authentication is about validating the identity of a user, while Authorization is about determining what an authenticated user is allowed to do.
