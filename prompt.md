@@ -7,6 +7,9 @@ Here is the transcript from a course. This section describes `What is .NET?`. Tr
 
 I am a .NET developer with 16+ years of experience. Now I am preparing for the interview. In an interview, if I asked the following question, what and how should I answer, so that I can avoid questions based on my answer:
 
-How to scale web app
+What is elastic search
 
 Please elaborate on this so that I can show my expertise.
+
+I am a .NET developer with 16+ years of experience. Now I am preparing for the interview. In an interview, if I asked to design a ecommerce web application microservice implementation, what are the things I should consider first. How to start with? What are the components I should include in this design.
+Please elaborate on this so that I can show my expertise, with detailed code.
