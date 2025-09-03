@@ -3,7 +3,9 @@ Transform the following content clean, interview-ready bullet points for easy re
 
 Let me know if you'd like this turned into a cheat sheet or flashcards for quick review before your interview!
 
-Here is the transcript from a course. This section describes `What is .NET?`. Transform the content clean, interview-ready summary of this course section, format it for easy reference and clarity. Avoid using unicode characters.
+Here is the transcript from a course. This section describes `What are Controllers`. Transform the content clean, interview-ready summary of this course section, format it for easy reference and clarity. Avoid using unicode characters.
+
+Create a one-page `Controllers in MVC` cheat sheet, so I can recall these points instantly in an interview.
 
 --- 
 
