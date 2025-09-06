@@ -1,4 +1,4 @@
-### Steps to Find Recruiter’s Email and Apply
+## Steps to Find Recruiter’s Email and Apply
 
 1. Go to **LinkedIn → Jobs → Easy Apply → Meet the Hiring Team**.
 2. Open the link to the recruiter’s profile and copy the URL.
@@ -15,8 +15,6 @@
 ### **Purpose**
 
 To identify recruiter contact details from LinkedIn and send applications directly via email.
-
----
 
 ### **Procedure**
 
