@@ -50,4 +50,26 @@ find . -maxdepth 1 -type f -name "*.md" -print0 | sort -z | xargs -0 pandoc \
   -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
   -o PDFs/InterviewQA.pdf
 
+pandoc dotNet\ Technical\ Interview.md \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  -V fontsize=11pt \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o dotNetInterview.pdf
 
+
+Hi, I am preparing for technical interview on .NET. In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
+
+
+AI Assistants on WhatsApp – Just a Message Away!
+
+I recently came across a few AI assistants you can chat with directly on WhatsApp. Here are three you might want to try:
+
+1. ChatGPT – +1 (800) 242-8478  
+2. Copilot – +1 (877) 224-1042  
+3. Perplexity – +1 (833) 436-3285  
+
+Simply save any of these numbers to your contacts and start a conversation on WhatsApp. It's an easy way to access smart search, helpful answers, and real-time assistance—right from your phone!
+
+---
