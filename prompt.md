@@ -58,6 +58,21 @@ pandoc dotNet\ Technical\ Interview.md \
   -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
   -o dotNetInterview.pdf
 
+pandoc Prescreening\ test\ .NET.md \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  -V fontsize=11pt \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o PrescreeningText-.NET.pdf
+
+pandoc Prescreening\ test\ SQL\ and\ DSA.md \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  -V fontsize=11pt \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o PrescreeningText-SQL-DSA.pdf
 
 Hi, I am preparing for technical interview on .NET. In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
 
