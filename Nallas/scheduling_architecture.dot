@@ -1,0 +1,39 @@
+digraph ERP_Scheduling {
+    rankdir=LR;
+    node [shape=box, style=filled, fillcolor=lightgrey, fontname="Arial"];
+
+    // Classes
+    ProductionJob [label="ProductionJob\n- JobId\n- JobName\n- StartTime\n- DurationInHours\n+ EndTime"];
+    JobValidator [label="JobValidator\n+ IsValid(job)"];
+    SchedulingService [label="SchedulingService\n- ISchedulingStrategy\n- IReportGenerator\n- IDepartmentNotifier\n- JobValidator\n+ ScheduleJobs(jobs)"];
+
+    // Interfaces
+    ISchedulingStrategy [label="<<interface>>\nISchedulingStrategy\n+ Schedule(jobs)", fillcolor=lightblue];
+    IReportGenerator [label="<<interface>>\nIReportGenerator\n+ Generate(jobs)", fillcolor=lightblue];
+    IDepartmentNotifier [label="<<interface>>\nIDepartmentNotifier\n+ Notify(jobs)", fillcolor=lightblue];
+
+    // Implementations
+    ForwardSchedulingStrategy [label="ForwardSchedulingStrategy\n+ Schedule(jobs)"];
+    BackwardSchedulingStrategy [label="BackwardSchedulingStrategy\n+ Schedule(jobs)"];
+
+    GanttChartReportGenerator [label="GanttChartReportGenerator\n+ Generate(jobs)"];
+    TextReportGenerator [label="TextReportGenerator\n+ Generate(jobs)"];
+
+    ProductionNotifier [label="ProductionDeptNotifier\n+ Notify(jobs)"];
+    QANotifier [label="QADepartmentNotifier\n+ Notify(jobs)"];
+
+    // Relationships
+    SchedulingService -> ISchedulingStrategy;
+    SchedulingService -> IReportGenerator;
+    SchedulingService -> IDepartmentNotifier;
+    SchedulingService -> JobValidator;
+
+    ForwardSchedulingStrategy -> ISchedulingStrategy;
+    BackwardSchedulingStrategy -> ISchedulingStrategy;
+
+    GanttChartReportGenerator -> IReportGenerator;
+    TextReportGenerator -> IReportGenerator;
+
+    ProductionNotifier -> IDepartmentNotifier;
+    QANotifier -> IDepartmentNotifier;
+}

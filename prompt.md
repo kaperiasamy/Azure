@@ -88,3 +88,9 @@ I recently came across a few AI assistants you can chat with directly on WhatsAp
 Simply save any of these numbers to your contacts and start a conversation on WhatsApp. It's an easy way to access smart search, helpful answers, and real-time assistance—right from your phone!
 
 ---
+DOT to SVG:
+dot -Tsvg input.dot -o output.svg
+
+DOT to PNG:
+dot -Tpng input.dot -o output.png
+
