@@ -146,5 +146,37 @@ Dot Net Interview Questions (LTIMindtree for a .NET Developer Role)
 
 --- 
 
+I have an interview scheduled today for both Tech Lead and Solution Architect positions. The role requires strong (Advanced) technical expertise. 
 
+Please provide 25 interview questions on solution architecture diagrams with:
+- Question with correct answer
+- A detailed, clear explanation with code examples
+- One or more relevant follow-up questions, with correct answers
+The goal is to help me prepare thoroughly for this interview, which is very important to me. Avoid using Unicode characters. Please keep in mind the solution architecture also while preparing the questions and answers. 
+
+
+I have an interview scheduled today for both Tech Lead and Solution Architect positions. The role requires strong (Advanced) technical expertise, particularly in C#, MVC, .NET Core, SQL, Web API, Azure, and Unit Testing. I also need to be expert in SOLID principles. Further more, I have to be aware of the solution architecture diagrams. 
+
+Please provide 25 interview questions on each topic with:
+- A correct answer
+- A detailed, clear explanation with examples
+- One or more relevant follow-up questions, with correct answers
+The goal is to help me prepare thoroughly for this interview, which is very important to me.
+
+--- 
+
+I have an interview scheduled today for both Tech Lead and Solution Architect positions. The role requires strong technical expertise, particularly in C#, .NET Core and SOLID principles. Here is the requirement (technical list):
+- .Net framework — DOT NET CORE, CLR, CTS, dot net program execution flow, intermediate language, managed and unmanaged code, garbage collector, Assembly DLL EXE in .NET Framework, strong and weak assembly, app domain.
+- C# — basics , oops , exception handling , delegates , multithreading , collection framework and generic.
+- SQL — basics , keys , clauses , operators, joins , indexes , built-in functions, stored procedures, the difference between stored procedure and functions, views , Trigger .
+- Web API—introduction ,http Verb ( get ,post ,put ,delete) , calling web api from jQuery, Routing , security , versioning
+- Ado.net — introduction , Sqlconnection, Sqlconmand , sqldatareader , sqldataadapater, dataset, datatable , architecture of Ado.net
+- Asp.net MVC— MVC , routing , html helper, attributes , data annotations, action results , view ,filter , security.
+Please provide 50 advanced C# interview questions, each with:
+- A correct answer
+- A detailed, clear explanation with examples
+- One or more relevant follow-up questions
+The goal is to help me prepare thoroughly for this interview, which is very important to me.
+
+--- 
 
