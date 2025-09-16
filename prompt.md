@@ -1,4 +1,4 @@
-Transform the following content clean, interview-ready bullet points for easy reference, avoid using unicode characters in the response:
+Convert the following content into clean, interview-ready bullet points for easy reference. Please avoid using Unicode characters in the response:
 
 
 Let me know if you'd like this turned into a cheat sheet or flashcards for quick review before your interview!
@@ -73,6 +73,15 @@ pandoc Prescreening\ test\ SQL\ and\ DSA.md \
   --pdf-engine=xelatex \
   -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
   -o PrescreeningText-SQL-DSA.pdf
+
+pandoc transitive\ trust.md \
+  -V papersize=a4 \
+  -V geometry:margin=1.5cm \
+  -V fontsize=11pt \
+  --pdf-engine=xelatex \
+  -H <(echo '\usepackage{setspace}\setstretch{1.25}\usepackage{fvextra}\DefineVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true}') \
+  -o transitive\ trust.pdf
+
 
 Hi, I am preparing for technical interview on .NET. In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
 
