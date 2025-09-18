@@ -255,6 +255,7 @@ Hi, I am a .NET resource of having 16+ years of experience. I am preparing for t
 - What is this pattern? / What problem does it solve?
 - Why I should use this pattern?
 - When should I use this pattern (better fit than which pattern / something else)?
+- Use cases of this pattern
 - Is this pattern used in .NET Framework / .NET Core? How?
 - Architecture Relevance of this pattern
 - SOLID Principles Connection
