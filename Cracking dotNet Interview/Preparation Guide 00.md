@@ -146,6 +146,30 @@ Dot Net Interview Questions (LTIMindtree for a .NET Developer Role)
 
 --- 
 
+🚀 Top .NET Core Interview Questions 🚀
+Whether you're preparing for a .NET Core interview or simply want to brush up on your skills, here are some key questions to help you get ready!
+1️⃣ What is .NET Core?
+ 2️⃣ What are the main differences between .NET Core and .NET Framework?
+ 3️⃣ What is Dependency Injection in .NET Core?
+ 4️⃣ What is Middleware in .NET Core?
+ 5️⃣ What is the role of the Startup.cs file in a .NET Core application?
+ 6️⃣ What is Entity Framework Core?
+ 7️⃣ What is ASP.NET Core MVC?
+ 8️⃣ What is the difference between IActionResult and ActionResult in ASP.NET Core?
+ 9️⃣ What is Kestrel in .NET Core?
+ 🔟 What is the difference between async and await in .NET Core?
+ 1️⃣1️⃣ What is a Web API in .NET Core?
+ 1️⃣2️⃣ What is the difference between AddSingleton, AddScoped, and AddTransient in .NET Core dependency injection?
+ 1️⃣3️⃣ What is CORS and how do you enable it in ASP.NET Core?
+ 1️⃣4️⃣ How do you handle logging in .NET Core?
+ 1️⃣5️⃣ What are Razor Pages in ASP.NET Core?
+
+--- 
+
+
+
+--- 
+
 I have an interview scheduled today for both Tech Lead and Solution Architect positions. The role requires strong (Advanced) technical expertise. 
 
 Please provide 25 interview questions on solution architecture diagrams with:
