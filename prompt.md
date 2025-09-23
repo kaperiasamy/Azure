@@ -260,22 +260,24 @@ Would you like me to create a **focused 10-pattern "interview must-know cheat sh
 
 ---
 
-Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. I want to learn design pattern in very detailed way. I want to know the following points on ``:
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. I want to learn design pattern in very detailed way. I want to know the following points on `Strategy Pattern`:
 - Core Category of Pattern 
-- What is this pattern? / What problem does it solve?
+- What is this pattern? 
+- What problem does it solve?
 - Why I should use this pattern?
 - When should I use this pattern (better fit than which pattern / something else)?
 - Use cases of this pattern
-- Is this pattern used in .NET Framework / .NET Core? How?
+- How to implement this pattern in .NET Framework and .NET Core? (Keep examples short but interview-ready (10–15 lines), but with very detailed comments / explanations.)
 - Architecture Relevance of this pattern
 - SOLID Principles Connection
-- UML / Diagrams
+- UML / Diagrams (Markdown supported)
 - Concurrency and Cloud Context
 - Trade-offs & Misuse
 - Risks using this pattern (in multi-thread / cloud native world)?
 - What are the drawbacks of not using it?
-- Code Examples (C# / .NET) (Keep examples short but interview-ready (10–15 lines).)
-
+- Code Examples (C# / .NET) (Keep examples short but interview-ready (10–15 lines), but with very detailed comments / explanations.)
+- How would you implement different payment gateways using Strategy pattern?
+- Show strategy selection based on runtime conditions.
 Please get me the details in solution-oriented architect approach. 
 
 - In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
