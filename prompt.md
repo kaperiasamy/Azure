@@ -103,8 +103,18 @@ dot -Tsvg input.dot -o output.svg
 DOT to PNG:
 dot -Tpng input.dot -o output.png
 
-
 ---
+
+SOAP vs REST vs RESTFul – What’s the Real Difference in APIs?
+
+I want the answer should include: 
+What it is? 
+Why it matters – explain the problem it solves. 
+Business/technical outcome
+
+Use sample code (only 10 - 15 lines) in C# to get the most acceptable answer.
+
+--- 
 
 ## 1. **Creational Patterns** (Object creation mechanisms)
 
