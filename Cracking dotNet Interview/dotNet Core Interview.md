@@ -5770,7 +5770,1164 @@ This comprehensive guide covers all aspects of the Decorator Pattern from an ent
    - Show strategy selection based on runtime conditions.
 
 ---
+I'll provide you with a comprehensive guide on the Strategy Pattern from an architectural perspective, perfect for your .NET technical interview preparation.This comprehensive guide covers the Strategy Pattern from a solution-oriented architect's perspective. Here are the key interview points to remember:
 
+## Quick Interview Summary:
+
+**Core Concept**: Strategy Pattern encapsulates algorithms in separate classes, making them interchangeable at runtime without changing client code.
+
+**Key Architectural Value**: 
+- Eliminates complex conditional logic (if/else, switch statements)
+- Enables runtime algorithm selection based on business conditions
+- Perfect for payment gateways, pricing strategies, and data processing algorithms
+- Supports Open/Closed Principle - add new strategies without modifying existing code
+
+**When to Use**: 
+- Multiple algorithms for the same task
+- Algorithm selection depends on runtime conditions
+- You want to avoid large conditional blocks
+- Need to make algorithms independently testable
+
+**Enterprise Benefits**:
+- Plugin architecture support
+- Easy A/B testing of algorithms
+- Configuration-driven algorithm selection
+- Microservices-friendly (each strategy can be a separate service)
+
+**Payment Gateway Implementation Highlights**:
+- Factory pattern for dynamic strategy selection
+- Fallback mechanisms when primary strategies fail
+- Health checks and availability monitoring
+- Circuit breaker integration for resilience
+
+**Cloud-Native Considerations**:
+- Stateless strategy implementations for thread safety
+- Async/await support for external service calls
+- Configuration-driven strategy selection
+- Circuit breaker and retry patterns integration
+
+**Common Pitfalls to Avoid**:
+- Don't use for simple algorithms that won't change
+- Avoid creating strategies with complex state management
+- Don't over-engineer simple conditional logic
+- Consider performance impact of strategy switching
+
+The payment gateway example demonstrates real-world enterprise scenarios where Strategy Pattern provides significant architectural benefits, including runtime flexibility, fault tolerance, and maintainable code structure.
+
+# Strategy Pattern - Complete .NET Interview Guide
+
+## 1. Core Category of Pattern
+**Behavioral Design Pattern** - Belongs to the Gang of Four (GoF) behavioral patterns that focus on communication between objects and the assignment of responsibilities between objects.
+
+## 2. What is this Pattern?
+The Strategy Pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. It allows the algorithm to vary independently from clients that use it.
+
+**Key Characteristics:**
+- Encapsulates algorithms in separate classes
+- Makes algorithms interchangeable at runtime
+- Eliminates conditional statements for algorithm selection
+- Promotes composition over inheritance
+
+## 3. What Problem Does It Solve?
+
+### Primary Problems:
+- **Conditional Complexity**: Eliminates large if/else or switch statements for algorithm selection
+- **Algorithm Coupling**: Separates algorithm implementation from client code
+- **Runtime Flexibility**: Enables algorithm changes without modifying client code
+- **Code Duplication**: Prevents similar algorithms from being duplicated across the codebase
+
+### Example Scenario:
+Without Strategy: Large switch statement for different payment methods, shipping calculations, or data processing algorithms
+With Strategy: Each algorithm encapsulated in its own class, selected dynamically based on context
+
+## 4. Why Should I Use This Pattern?
+
+### Benefits:
+- **Runtime Algorithm Selection**: Choose algorithms dynamically based on conditions
+- **Easy Extension**: Add new algorithms without modifying existing code
+- **Testability**: Each algorithm can be tested independently
+- **Maintainability**: Changes to one algorithm don't affect others
+- **Single Responsibility**: Each strategy class has one reason to change
+
+## 5. When Should I Use This Pattern?
+
+### Better Than If/Else When:
+- You have multiple ways to perform a task
+- Algorithm selection depends on runtime conditions
+- You want to avoid large conditional blocks
+- Algorithms are likely to change or expand
+
+### Better Than Template Method When:
+- You need complete algorithm substitution (not just steps)
+- Algorithms don't share common structure
+- You want composition over inheritance
+
+### Better Than Command Pattern When:
+- Focus is on algorithm selection, not action execution
+- You don't need undo/redo functionality
+- Algorithms operate on existing data rather than encapsulating requests
+
+### Ideal Scenarios:
+- Payment processing systems
+- Data compression algorithms
+- Sorting and searching strategies
+- Pricing and discount calculations
+- Authentication mechanisms
+
+## 6. Use Cases of This Pattern
+
+### Common Applications:
+- **Payment Gateways**: PayPal, Stripe, Square processing
+- **Shipping Calculations**: UPS, FedEx, DHL pricing
+- **Data Validation**: Different validation rules per context
+- **Caching Strategies**: Memory, Redis, File-based caching
+- **Data Export**: PDF, Excel, CSV generation
+- **Authentication**: OAuth, JWT, Basic Auth
+
+## 7. Implementation in .NET Framework and .NET Core
+
+### Basic Implementation:
+
+```csharp
+// Strategy interface - defines contract for all algorithms
+public interface IPaymentStrategy
+{
+    PaymentResult ProcessPayment(decimal amount, PaymentInfo info);
+}
+
+// Concrete strategy - specific algorithm implementation
+public class CreditCardStrategy : IPaymentStrategy
+{
+    public PaymentResult ProcessPayment(decimal amount, PaymentInfo info)
+    {
+        // Credit card specific processing logic
+        Console.WriteLine($"Processing ${amount} via Credit Card"); 
+        return new PaymentResult { Success = true, TransactionId = Guid.NewGuid().ToString() };
+    }
+}
+
+// Context class - uses strategy to execute algorithm
+public class PaymentProcessor
+{
+    private IPaymentStrategy _strategy; // Composition: has-a relationship with strategy
+    
+    public PaymentProcessor(IPaymentStrategy strategy)
+    {
+        _strategy = strategy; // Strategy injection for loose coupling
+    }
+    
+    public void SetStrategy(IPaymentStrategy strategy) => _strategy = strategy; // Runtime strategy change
+    
+    public PaymentResult ProcessPayment(decimal amount, PaymentInfo info)
+    {
+        return _strategy.ProcessPayment(amount, info); // Delegate to current strategy
+    }
+}
+```
+
+### Usage:
+```csharp
+// Client code - demonstrates runtime strategy selection
+var processor = new PaymentProcessor(new CreditCardStrategy()); // Initial strategy
+var result1 = processor.ProcessPayment(100, paymentInfo); // Use credit card
+
+processor.SetStrategy(new PayPalStrategy()); // Change strategy at runtime
+var result2 = processor.ProcessPayment(200, paymentInfo); // Use PayPal
+```
+
+## 8. Architecture Relevance
+
+### Architectural Benefits:
+- **Plugin Architecture**: Strategies can be loaded dynamically from assemblies
+- **Microservices**: Different services can implement different strategies
+- **Clean Architecture**: Strategies fit naturally in the application layer
+- **Domain-Driven Design**: Strategies can encapsulate domain-specific algorithms
+
+### Integration Points:
+- **Dependency Injection**: Register strategies in DI container
+- **Factory Pattern**: Use factories to create appropriate strategies
+- **Configuration**: Select strategies based on application configuration
+- **Event-Driven**: Change strategies based on domain events
+
+## 9. SOLID Principles Connection
+
+### Single Responsibility Principle (SRP):
+- Each strategy class has one algorithm responsibility
+- Context class only manages strategy execution, not implementation
+
+### Open/Closed Principle (OCP):
+- Open for extension (new strategies) without modifying existing code
+- Closed for modification of existing strategies
+
+### Liskov Substitution Principle (LSP):
+- All strategy implementations can substitute the interface
+- Behavioral contracts remain consistent
+
+### Interface Segregation Principle (ISP):
+- Strategy interfaces are focused and specific
+- Clients depend only on methods they use
+
+### Dependency Inversion Principle (DIP):
+- Context depends on strategy abstraction, not concrete implementations
+- High-level modules don't depend on low-level strategy details
+
+## 10. UML Diagram
+
+```
+┌─────────────────┐    ┌─────────────────────┐
+│     Context     │────│  <<interface>>     │
+│                 │    │   IStrategy         │
+│ - strategy      │    │ + Algorithm()       │
+│ + SetStrategy() │    └─────────────────────┘
+│ + Execute()     │              △
+└─────────────────┘              │
+                        ┌────────┴─────────┐
+                        │                  │
+              ┌─────────▼───────┐ ┌────────▼────────┐
+              │ ConcreteStrategyA│ │ ConcreteStrategyB│
+              │ + Algorithm()    │ │ + Algorithm()   │
+              └──────────────────┘ └─────────────────┘
+```
+
+## 11. Concurrency and Cloud Context
+
+### Thread Safety Considerations:
+```csharp
+// Thread-safe strategy context
+public class ThreadSafePaymentProcessor
+{
+    private readonly object _lock = new object();
+    private IPaymentStrategy _strategy;
+    
+    public void SetStrategy(IPaymentStrategy strategy)
+    {
+        lock (_lock) // Ensure thread-safe strategy changes
+        {
+            _strategy = strategy;
+        }
+    }
+    
+    public PaymentResult ProcessPayment(decimal amount, PaymentInfo info)
+    {
+        IPaymentStrategy currentStrategy;
+        lock (_lock) // Get current strategy safely
+        {
+            currentStrategy = _strategy;
+        }
+        return currentStrategy.ProcessPayment(amount, info); // Execute without lock
+    }
+}
+```
+
+### Cloud-Native Patterns:
+- **Circuit Breaker Strategy**: Different failure handling strategies
+- **Retry Strategy**: Various retry algorithms (exponential backoff, linear)
+- **Load Balancing Strategy**: Round-robin, weighted, health-based
+- **Auto-scaling Strategy**: CPU-based, memory-based, custom metrics
+
+## 12. Trade-offs & Misuse
+
+### Trade-offs:
+**Advantages:**
+- Runtime flexibility
+- Easy to extend and maintain
+- Clean separation of concerns
+- Testable algorithms
+
+**Disadvantages:**
+- Increased number of classes
+- Strategy selection logic complexity
+- Potential performance overhead from indirection
+- Client must be aware of different strategies
+
+### Common Misuse:
+- Using for simple algorithms that won't change
+- Creating strategies for single-use scenarios
+- Over-engineering simple conditional logic
+- Not considering the cost of strategy switching
+
+## 13. Risks in Multi-thread/Cloud-Native World
+
+### Multi-threading Risks:
+- **Strategy State**: Strategies with mutable state need synchronization
+- **Race Conditions**: Concurrent strategy changes and execution
+- **Memory Visibility**: Strategy changes may not be visible across threads
+
+### Cloud-Native Risks:
+- **Service Dependencies**: Strategies might call external services
+- **Configuration Drift**: Different strategy configurations across instances
+- **Resource Consumption**: Some strategies may be more resource-intensive
+
+### Mitigation Strategies:
+```csharp
+// Immutable strategy with async support
+public class AsyncPaymentStrategy : IAsyncPaymentStrategy
+{
+    private readonly HttpClient _httpClient;
+    private readonly PaymentConfig _config; // Immutable configuration
+    
+    public AsyncPaymentStrategy(HttpClient httpClient, PaymentConfig config)
+    {
+        _httpClient = httpClient;
+        _config = config; // Configuration injected, not modified
+    }
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(decimal amount, PaymentInfo info)
+    {
+        // Stateless operation - thread-safe by design
+        return await CallExternalPaymentService(amount, info);
+    }
+}
+```
+
+## 14. Drawbacks of Not Using Strategy Pattern
+
+### Without Strategy Pattern:
+- **God Classes**: Single class with multiple algorithm implementations
+- **Violation of OCP**: Need to modify existing code for new algorithms
+- **Complex Conditionals**: Large if/else or switch statements
+- **Testing Challenges**: Difficult to test individual algorithms in isolation
+- **Code Duplication**: Similar logic repeated across different contexts
+
+### Impact on Maintenance:
+- Higher cognitive complexity
+- Increased risk of introducing bugs
+- Difficulty in adding new algorithms
+- Poor separation of concerns
+
+## 15. Payment Gateway Implementation
+
+### Payment Strategy Implementation:
+```csharp
+// Payment strategy interface with comprehensive contract
+public interface IPaymentStrategy
+{
+    Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request);
+    bool IsAvailable(); // Strategy availability check
+    string GetProviderName(); // For logging and monitoring
+}
+
+// Credit Card Strategy
+public class CreditCardStrategy : IPaymentStrategy
+{
+    private readonly ICreditCardService _creditCardService;
+    private readonly ILogger<CreditCardStrategy> _logger;
+    
+    public CreditCardStrategy(ICreditCardService creditCardService, ILogger<CreditCardStrategy> logger)
+    {
+        _creditCardService = creditCardService; // External service dependency
+        _logger = logger;
+    }
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        _logger.LogInformation("Processing credit card payment for amount: {Amount}", request.Amount);
+        
+        try
+        {
+            var result = await _creditCardService.ChargeAsync(request.Amount, request.CreditCardInfo);
+            return new PaymentResult { Success = true, TransactionId = result.TransactionId };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Credit card payment failed");
+            return new PaymentResult { Success = false, ErrorMessage = ex.Message };
+        }
+    }
+    
+    public bool IsAvailable() => _creditCardService.IsServiceAvailable(); // Health check
+    public string GetProviderName() => "CreditCard";
+}
+
+// PayPal Strategy
+public class PayPalStrategy : IPaymentStrategy
+{
+    private readonly IPayPalClient _payPalClient;
+    private readonly ILogger<PayPalStrategy> _logger;
+    
+    public PayPalStrategy(IPayPalClient payPalClient, ILogger<PayPalStrategy> logger)
+    {
+        _payPalClient = payPalClient;
+        _logger = logger;
+    }
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        _logger.LogInformation("Processing PayPal payment for amount: {Amount}", request.Amount);
+        
+        var payPalRequest = MapToPayPalRequest(request); // Strategy-specific mapping
+        var result = await _payPalClient.ProcessPaymentAsync(payPalRequest);
+        
+        return new PaymentResult 
+        { 
+            Success = result.IsSuccess, 
+            TransactionId = result.PayPalTransactionId,
+            ErrorMessage = result.ErrorMessage
+        };
+    }
+    
+    public bool IsAvailable() => _payPalClient.IsHealthy();
+    public string GetProviderName() => "PayPal";
+}
+```
+
+### Runtime Strategy Selection:
+```csharp
+// Strategy factory for dynamic selection
+public class PaymentStrategyFactory
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly PaymentConfiguration _config;
+    private readonly ILogger<PaymentStrategyFactory> _logger;
+    
+    public PaymentStrategyFactory(IServiceProvider serviceProvider, PaymentConfiguration config, ILogger<PaymentStrategyFactory> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _config = config;
+        _logger = logger;
+    }
+    
+    public IPaymentStrategy CreateStrategy(PaymentRequest request)
+    {
+        // Runtime condition-based strategy selection
+        var strategy = request.PaymentMethod switch
+        {
+            PaymentMethod.CreditCard => GetStrategy<CreditCardStrategy>(),
+            PaymentMethod.PayPal => GetStrategy<PayPalStrategy>(),
+            PaymentMethod.BankTransfer => GetStrategy<BankTransferStrategy>(),
+            _ => GetDefaultStrategy(request) // Fallback logic
+        };
+        
+        // Availability check before returning strategy
+        if (!strategy.IsAvailable())
+        {
+            _logger.LogWarning("Primary strategy {Strategy} unavailable, using fallback", strategy.GetProviderName());
+            return GetFallbackStrategy(request.PaymentMethod);
+        }
+        
+        return strategy;
+    }
+    
+    private IPaymentStrategy GetDefaultStrategy(PaymentRequest request)
+    {
+        // Business logic for default strategy selection
+        return request.Amount > _config.HighValueThreshold 
+            ? GetStrategy<CreditCardStrategy>()  // High value = Credit Card
+            : GetStrategy<PayPalStrategy>();     // Low value = PayPal
+    }
+    
+    private IPaymentStrategy GetFallbackStrategy(PaymentMethod primaryMethod)
+    {
+        // Fallback strategy when primary is unavailable
+        var fallbackStrategies = _config.FallbackStrategies[primaryMethod];
+        
+        foreach (var fallbackType in fallbackStrategies)
+        {
+            var strategy = _serviceProvider.GetService(fallbackType) as IPaymentStrategy;
+            if (strategy?.IsAvailable() == true)
+            {
+                return strategy;
+            }
+        }
+        
+        throw new PaymentProcessingException("No available payment strategies");
+    }
+    
+    private T GetStrategy<T>() where T : IPaymentStrategy => _serviceProvider.GetRequiredService<T>();
+}
+
+// Enhanced Payment Processor with strategy factory
+public class EnhancedPaymentProcessor
+{
+    private readonly PaymentStrategyFactory _strategyFactory;
+    private readonly ILogger<EnhancedPaymentProcessor> _logger;
+    
+    public EnhancedPaymentProcessor(PaymentStrategyFactory strategyFactory, ILogger<EnhancedPaymentProcessor> logger)
+    {
+        _strategyFactory = strategyFactory;
+        _logger = logger;
+    }
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        var strategy = _strategyFactory.CreateStrategy(request); // Dynamic strategy selection
+        
+        _logger.LogInformation("Processing payment using {Strategy} for amount {Amount}", 
+            strategy.GetProviderName(), request.Amount);
+        
+        var result = await strategy.ProcessPaymentAsync(request); // Execute selected strategy
+        
+        _logger.LogInformation("Payment processing completed. Success: {Success}, TransactionId: {TransactionId}", 
+            result.Success, result.TransactionId);
+        
+        return result;
+    }
+}
+```
+
+### Dependency Injection Configuration:
+```csharp
+// Startup configuration for payment strategies
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        // Register payment configuration
+        var paymentConfig = new PaymentConfiguration();
+        configuration.GetSection("Payment").Bind(paymentConfig);
+        services.AddSingleton(paymentConfig);
+        
+        // Register all payment strategies
+        services.AddScoped<CreditCardStrategy>();
+        services.AddScoped<PayPalStrategy>();
+        services.AddScoped<BankTransferStrategy>();
+        
+        // Register strategy factory
+        services.AddScoped<PaymentStrategyFactory>();
+        
+        // Register payment processor
+        services.AddScoped<EnhancedPaymentProcessor>();
+        
+        // Register external service clients
+        services.AddHttpClient<ICreditCardService, CreditCardService>();
+        services.AddHttpClient<IPayPalClient, PayPalClient>();
+    }
+}
+```
+
+## Advanced Strategy Patterns
+
+### 1. Strategy Chain (Multiple Strategies):
+```csharp
+public class CompositePaymentStrategy : IPaymentStrategy
+{
+    private readonly IEnumerable<IPaymentStrategy> _strategies;
+    
+    // Try multiple strategies in sequence until one succeeds
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        foreach (var strategy in _strategies)
+        {
+            if (strategy.IsAvailable())
+            {
+                var result = await strategy.ProcessPaymentAsync(request);
+                if (result.Success) return result;
+            }
+        }
+        return new PaymentResult { Success = false, ErrorMessage = "All payment strategies failed" };
+    }
+}
+```
+
+### 2. Strategy with Circuit Breaker:
+```csharp
+public class CircuitBreakerPaymentStrategy : IPaymentStrategy
+{
+    private readonly IPaymentStrategy _innerStrategy;
+    private readonly ICircuitBreaker _circuitBreaker;
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        return await _circuitBreaker.ExecuteAsync(() => _innerStrategy.ProcessPaymentAsync(request));
+    }
+}
+```
+
+### 3. Configuration-Driven Strategy Selection:
+```csharp
+// appsettings.json
+/*
+{
+  "Payment": {
+    "DefaultStrategy": "CreditCard",
+    "StrategyRules": [
+      { "Condition": "Amount > 1000", "Strategy": "CreditCard" },
+      { "Condition": "Country == 'US'", "Strategy": "PayPal" },
+      { "Condition": "IsRecurring == true", "Strategy": "BankTransfer" }
+    ],
+    "FallbackStrategies": {
+      "CreditCard": ["PayPal", "BankTransfer"],
+      "PayPal": ["CreditCard"],
+      "BankTransfer": ["CreditCard"]
+    }
+  }
+}
+*/
+```
+
+This comprehensive guide provides enterprise-grade Strategy Pattern implementation with real-world payment gateway scenarios, demonstrating how to handle complex runtime strategy selection, fallback mechanisms, and cloud-native considerations.
+
+## Summary
+
+I've provided you with a comprehensive, enterprise-grade guide to the Strategy Pattern that covers all the aspects you requested. Here are the key highlights:
+
+### **🎯 Core Architectural Value**
+- **Runtime Algorithm Selection**: Choose payment strategies based on business rules
+- **Configuration-Driven**: Modify behavior without code changes
+- **Fault Tolerance**: Circuit breakers, retries, and automatic failover
+- **Performance Optimization**: Caching, async operations, and metrics-based selection
+
+### **🛡️ Production-Ready Features**
+- **Circuit Breaker Integration**: Prevents cascading failures when payment providers go down
+- **Health Monitoring**: Real-time strategy availability tracking with automatic failover
+- **Retry Logic**: Exponential backoff for transient failures
+- **Metrics Collection**: Success rates, response times, and error categorization
+
+### **⚡ Advanced Patterns**
+- **Parallel Strategy Execution**: Execute multiple strategies simultaneously for redundancy
+- **Weighted Strategy Selection**: Distribute traffic based on performance metrics  
+- **Event-Driven Management**: Automatic strategy enabling/disabling based on health events
+- **Configuration Rules**: Complex business logic for strategy selection
+
+### **🔧 Enterprise Integration**
+- **Dependency Injection**: Full DI container integration
+- **ASP.NET Core**: Controller examples and health check integration
+- **Testing Framework**: Comprehensive testing utilities and patterns
+- **Monitoring**: Real-time dashboards and alerting
+
+### **💡 Interview Winning Points**
+- Demonstrates deep understanding of enterprise architecture patterns
+- Shows real-world problem-solving with concrete payment gateway examples
+- Covers operational excellence (monitoring, testing, deployment)
+- Integrates with modern cloud-native and microservices architectures
+
+The implementation showcases how Strategy Pattern solves complex business requirements like "high-value transactions use bank transfers, US customers prefer PayPal" through configuration rather than code changes - a key differentiator in senior architect interviews.
+
+This guide positions you to discuss Strategy Pattern not just as a textbook concept, but as a production-ready architectural solution that addresses real enterprise challenges around scalability, reliability, and maintainability.
+
+# Strategy Pattern - Key Interview Points & Architecture Summary
+
+## 🎯 **Critical Interview Concepts**
+
+### **1. Circuit Breaker Integration**
+**Purpose**: Prevent cascading failures when payment providers become unreliable
+
+**Key Points for Interview**:
+- **State Management**: Closed → Open → Half-Open → Closed cycle
+- **Failure Threshold**: Configurable number of failures before opening circuit
+- **Automatic Recovery**: Half-open state allows testing service recovery
+- **Fast Failure**: Immediate rejection when circuit is open, preventing resource waste
+
+**Interview Question**: *"How would you handle a situation where PayPal is down but credit card processing is working?"*
+
+**Answer**: Use circuit breaker pattern within strategy - when PayPal failures exceed threshold, circuit opens and immediately fails future PayPal requests, allowing fallback strategies to take over without waiting for timeouts.
+
+### **2. Configuration-Driven Strategy Selection**
+**Purpose**: Business rules determine strategy selection without code changes
+
+**Key Architecture Benefits**:
+- **Runtime Flexibility**: Change business rules via configuration
+- **A/B Testing**: Route percentage of traffic to different strategies
+- **Environment-Specific**: Different rules for dev/staging/prod
+- **Business Alignment**: Non-technical stakeholders can modify payment routing
+
+**Interview Scenario**: *"Business wants high-value transactions (>$5000) to use bank transfers, US customers to prefer PayPal, and recurring payments to use credit cards. How do you implement this?"*
+
+**Solution**:
+```json
+{
+  "StrategyRules": [
+    { "Name": "HighValue", "Condition": "Amount > 5000", "Strategy": "BankTransfer", "Priority": 100 },
+    { "Name": "USCustomers", "Condition": "Country == 'US'", "Strategy": "PayPal", "Priority": 80 },
+    { "Name": "Recurring", "Condition": "IsRecurring == true", "Strategy": "CreditCard", "Priority": 90 }
+  ]
+}
+```
+
+### **3. Advanced Strategy Composition Patterns**
+
+#### **Parallel Strategy Execution**
+- Execute multiple strategies simultaneously
+- Return first successful result
+- Use for redundancy and speed optimization
+
+#### **Weighted Strategy Selection**
+- Distribute load based on strategy performance
+- Adjust weights based on success rates
+- Implement gradual traffic shifting
+
+#### **Strategy Chaining**
+- Automatic fallback through strategy hierarchy
+- Each strategy has predefined fallback list
+- Prevents total payment system failure
+
+## 🏗️ **Enterprise Architecture Patterns**
+
+### **1. Health Monitoring & Self-Healing**
+```csharp
+// Automatic strategy disabling when unhealthy
+public class SelfHealingStrategyFactory
+{
+    public IPaymentStrategy CreateStrategy(PaymentRequest request)
+    {
+        var primaryStrategy = SelectPrimaryStrategy(request);
+        
+        if (!primaryStrategy.IsAvailable())
+        {
+            return SelectFallbackStrategy(primaryStrategy.GetProviderName());
+        }
+        
+        return ApplyResilienceDecorators(primaryStrategy);
+    }
+}
+```
+
+**Interview Value**: Demonstrates understanding of fault-tolerant system design and automated failure recovery.
+
+### **2. Metrics-Driven Decision Making**
+```csharp
+// Strategy selection based on performance metrics
+private IPaymentStrategy SelectOptimalStrategy(PaymentRequest request)
+{
+    var availableStrategies = GetAvailableStrategies(request);
+    
+    return availableStrategies
+        .OrderByDescending(s => CalculateStrategyScore(s))
+        .First();
+}
+
+private double CalculateStrategyScore(IPaymentStrategy strategy)
+{
+    var stats = _metrics.GetStats(strategy.GetProviderName());
+    return (stats.SuccessRate * 0.6) + 
+           ((1.0 - stats.AverageResponseTime.TotalSeconds / 10.0) * 0.4);
+}
+```
+
+### **3. Event-Driven Strategy Management**
+- Real-time strategy enabling/disabling based on health events
+- Automatic traffic rerouting when strategies fail
+- Integration with monitoring systems (Prometheus, Grafana)
+
+## 🛡️ **Resilience Patterns Implementation**
+
+### **1. Retry with Exponential Backoff**
+```csharp
+// Configurable retry logic
+public class RetryPaymentStrategy : IPaymentStrategy
+{
+    private readonly RetryConfig _config;
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        var delay = _config.InitialDelay;
+        
+        for (int attempt = 1; attempt <= _config.MaxAttempts; attempt++)
+        {
+            var result = await _innerStrategy.ProcessPaymentAsync(request);
+            
+            if (result.Success || !IsRetriable(result))
+                return result;
+                
+            if (attempt < _config.MaxAttempts)
+            {
+                await Task.Delay(delay);
+                delay = TimeSpan.FromMilliseconds(delay.TotalMilliseconds * _config.BackoffMultiplier);
+            }
+        }
+        
+        return new PaymentResult { Success = false, ErrorMessage = "Max retries exceeded" };
+    }
+}
+```
+
+### **2. Timeout Handling**
+- Prevent strategies from hanging indefinitely
+- Configurable timeouts per strategy type
+- Graceful degradation when timeouts occur
+
+### **3. Circuit Breaker States**
+- **Closed**: Normal operation, monitoring failures
+- **Open**: Failing fast, preventing resource waste
+- **Half-Open**: Testing recovery, limited requests allowed
+
+## 📊 **Monitoring & Observability**
+
+### **1. Real-Time Metrics**
+```csharp
+public class PaymentStrategyMetrics
+{
+    // Key metrics for monitoring
+    public void RecordPaymentSuccess(string strategy, decimal amount, TimeSpan duration);
+    public void RecordPaymentFailure(string strategy, decimal amount, string errorType);
+    public PaymentStrategyStats GetStats(string strategy);
+}
+
+public class PaymentStrategyStats
+{
+    public double SuccessRate { get; set; }
+    public TimeSpan AverageResponseTime { get; set; }
+    public decimal TotalProcessedAmount { get; set; }
+    public Dictionary<string, int> ErrorTypes { get; set; }
+}
+```
+
+### **2. Health Check Integration**
+```csharp
+// ASP.NET Core health checks
+services.AddHealthChecks()
+    .AddCheck<PaymentStrategyHealthCheck>("payment-strategies");
+```
+
+### **3. Alerting Integration**
+- Low success rate alerts (< 95%)
+- High response time warnings (> 5 seconds)
+- Strategy unavailability notifications
+- Automatic escalation procedures
+
+## 🚀 **Performance Optimization Strategies**
+
+### **1. Strategy Caching**
+```csharp
+public class CachedPaymentStrategyFactory
+{
+    public IPaymentStrategy CreateStrategy(PaymentRequest request, PaymentContext context)
+    {
+        var cacheKey = CreateCacheKey(request, context);
+        
+        if (_cache.TryGetValue(cacheKey, out IPaymentStrategy cachedStrategy) 
+            && cachedStrategy.IsAvailable())
+        {
+            return cachedStrategy;
+        }
+        
+        var strategy = _innerFactory.CreateStrategy(request, context);
+        _cache.Set(cacheKey, strategy, TimeSpan.FromMinutes(5));
+        return strategy;
+    }
+}
+```
+
+**Interview Question**: *"How do you prevent strategy creation overhead in high-throughput scenarios?"*
+
+**Answer**: Implement caching based on request characteristics (amount threshold, country, payment method). Cache strategies for 5 minutes but validate availability before returning cached instances.
+
+### **2. Async Strategy Execution**
+```csharp
+// Non-blocking strategy operations
+public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+{
+    var strategy = await _factory.CreateStrategyAsync(request, context);
+    return await strategy.ProcessPaymentAsync(request);
+}
+```
+
+### **3. Connection Pooling & Resource Management**
+- HttpClient factory for external service calls
+- Connection pool optimization
+- Proper disposal patterns for decorated strategies
+
+## 🔧 **Testing Strategies**
+
+### **1. Strategy Testing Framework**
+```csharp
+public class PaymentStrategyTestHelper
+{
+    public static Mock<IPaymentStrategy> CreateMockStrategy(
+        string name, 
+        bool isAvailable = true, 
+        bool willSucceed = true,
+        TimeSpan? responseTime = null)
+    {
+        var mock = new Mock<IPaymentStrategy>();
+        mock.Setup(x => x.GetProviderName()).Returns(name);
+        mock.Setup(x => x.IsAvailable()).Returns(isAvailable);
+        
+        mock.Setup(x => x.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+            .Returns(async (PaymentRequest req) => 
+            {
+                if (responseTime.HasValue)
+                    await Task.Delay(responseTime.Value);
+                    
+                return new PaymentResult
+                {
+                    Success = willSucceed,
+                    TransactionId = willSucceed ? Guid.NewGuid().ToString() : null,
+                    ErrorMessage = willSucceed ? null : $"Mock failure from {name}"
+                };
+            });
+        
+        return mock;
+    }
+}
+```
+
+### **2. Integration Testing Patterns**
+- Test configuration rule evaluation
+- Validate fallback strategy chains
+- Circuit breaker state transition testing
+- Load testing with multiple strategies
+
+### **3. Chaos Engineering**
+```csharp
+// Simulate failures for testing resilience
+public class ChaosPaymentStrategy : IPaymentStrategy
+{
+    private readonly IPaymentStrategy _innerStrategy;
+    private readonly double _failureRate;
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Randomly fail to test circuit breakers and fallbacks
+        if (Random.Shared.NextDouble() < _failureRate)
+        {
+            throw new PaymentProcessingException("Chaos engineering failure");
+        }
+        
+        return await _innerStrategy.ProcessPaymentAsync(request);
+    }
+}
+```
+
+## 📱 **Real-World Implementation Examples**
+
+### **1. E-commerce Payment Flow**
+```csharp
+public class EcommercePaymentProcessor
+{
+    public async Task<PaymentResult> ProcessOrderPayment(Order order, Customer customer)
+    {
+        var context = new PaymentContext
+        {
+            CustomerCountry = customer.Country,
+            CustomerTier = customer.Tier,
+            IsRecurring = order.IsSubscription,
+            Channel = "Web",
+            TimeOfDay = DateTime.Now.TimeOfDay
+        };
+        
+        var request = new PaymentRequest
+        {
+            Amount = order.Total,
+            PaymentMethod = order.PaymentMethod,
+            CreditCardInfo = order.PaymentInfo
+        };
+        
+        // Strategy factory handles all complexity
+        var strategy = _strategyFactory.CreateStrategy(request, context);
+        return await strategy.ProcessPaymentAsync(request);
+    }
+}
+```
+
+### **2. Subscription Billing System**
+```csharp
+public class SubscriptionBillingService
+{
+    public async Task ProcessRecurringPayments(IEnumerable<Subscription> subscriptions)
+    {
+        var tasks = subscriptions.Select(async subscription =>
+        {
+            var context = new PaymentContext
+            {
+                CustomerCountry = subscription.Customer.Country,
+                IsRecurring = true,
+                CustomerTier = subscription.Plan.Tier,
+                Channel = "System"
+            };
+            
+            // Recurring payments get special strategy treatment
+            var strategy = _strategyFactory.CreateStrategy(subscription.ToPaymentRequest(), context);
+            
+            try
+            {
+                return await strategy.ProcessPaymentAsync(subscription.ToPaymentRequest());
+            }
+            catch (Exception ex)
+            {
+                // Handle failed recurring payments
+                await _notificationService.NotifyPaymentFailure(subscription, ex);
+                return new PaymentResult { Success = false, ErrorMessage = ex.Message };
+            }
+        });
+        
+        await Task.WhenAll(tasks);
+    }
+}
+```
+
+### **3. Multi-Currency Payment Handling**
+```csharp
+public class MultiCurrencyPaymentStrategy : IPaymentStrategy
+{
+    private readonly Dictionary<string, IPaymentStrategy> _currencyStrategies;
+    private readonly ICurrencyConverter _currencyConverter;
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Different strategies for different currencies
+        var strategy = _currencyStrategies.GetValueOrDefault(request.Currency) 
+                      ?? _currencyStrategies["USD"]; // Default to USD strategy
+        
+        if (request.Currency != "USD")
+        {
+            // Convert to strategy's expected currency
+            request.Amount = await _currencyConverter.ConvertAsync(
+                request.Amount, request.Currency, "USD");
+        }
+        
+        return await strategy.ProcessPaymentAsync(request);
+    }
+}
+```
+
+## 🎯 **Key Interview Talking Points**
+
+### **1. Scalability Considerations**
+- **Question**: *"How does Strategy Pattern help in scaling payment systems?"*
+- **Answer**: 
+  - Horizontal scaling: Add new strategies without touching existing code
+  - Load distribution: Route traffic based on strategy performance
+  - Geographic scaling: Different strategies for different regions
+  - Provider diversification: Reduce dependency on single payment provider
+
+### **2. Maintenance Benefits**
+- **Question**: *"Why is Strategy Pattern better than if/else statements for payment processing?"*
+- **Answer**:
+  - **Single Responsibility**: Each strategy handles one payment method
+  - **Open/Closed Principle**: Add new payment methods without modifying existing code
+  - **Testability**: Test each strategy in isolation
+  - **Configuration-Driven**: Change behavior without code deployment
+
+### **3. Error Handling & Resilience**
+- **Question**: *"How do you ensure payment system reliability using Strategy Pattern?"*
+- **Answer**:
+  - **Circuit Breakers**: Prevent cascading failures
+  - **Retry Logic**: Handle transient failures
+  - **Fallback Chains**: Automatic strategy switching on failures  
+  - **Health Monitoring**: Real-time strategy availability tracking
+
+### **4. Performance Optimization**
+- **Question**: *"What performance considerations exist with Strategy Pattern?"*
+- **Answer**:
+  - **Strategy Caching**: Avoid repeated strategy creation
+  - **Async Operations**: Non-blocking payment processing
+  - **Connection Pooling**: Efficient resource utilization
+  - **Metrics-Based Selection**: Choose fastest available strategy
+
+## 🔄 **Advanced Architectural Patterns**
+
+### **1. Event Sourcing Integration**
+```csharp
+public class EventSourcedPaymentStrategy : IPaymentStrategy
+{
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Record payment attempt event
+        await _eventStore.AppendAsync(new PaymentAttemptedEvent(request));
+        
+        try
+        {
+            var result = await _innerStrategy.ProcessPaymentAsync(request);
+            
+            // Record success/failure event
+            if (result.Success)
+                await _eventStore.AppendAsync(new PaymentSucceededEvent(result));
+            else
+                await _eventStore.AppendAsync(new PaymentFailedEvent(result));
+                
+            return result;
+        }
+        catch (Exception ex)
+        {
+            await _eventStore.AppendAsync(new PaymentErrorEvent(ex));
+            throw;
+        }
+    }
+}
+```
+
+### **2. CQRS Pattern Integration**
+- **Commands**: ProcessPayment, RefundPayment, CancelPayment
+- **Queries**: GetPaymentHistory, GetPaymentStats, GetStrategyHealth
+- **Strategy Selection**: Based on command type and context
+
+### **3. Saga Pattern for Distributed Payments**
+```csharp
+public class DistributedPaymentSaga
+{
+    public async Task ProcessDistributedPayment(PaymentRequest request)
+    {
+        // Step 1: Reserve amount
+        await ExecuteStrategy(new ReserveFundsStrategy(), request);
+        
+        try
+        {
+            // Step 2: Process payment
+            await ExecuteStrategy(_strategyFactory.CreateStrategy(request), request);
+            
+            // Step 3: Confirm transaction
+            await ExecuteStrategy(new ConfirmTransactionStrategy(), request);
+        }
+        catch (Exception)
+        {
+            // Compensating action: Release reserved funds
+            await ExecuteStrategy(new ReleaseFundsStrategy(), request);
+            throw;
+        }
+    }
+}
+```
+
+## 💡 **Production Deployment Considerations**
+
+### **1. Blue-Green Strategy Deployment**
+- Deploy new strategies alongside existing ones
+- Gradually shift traffic to new strategies
+- Instant rollback capability if issues arise
+
+### **2. Feature Flags Integration**
+```csharp
+public class FeatureFlagPaymentStrategy : IPaymentStrategy
+{
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        if (await _featureFlag.IsEnabledAsync("NewPaymentFlow", request.CustomerId))
+        {
+            return await _newStrategy.ProcessPaymentAsync(request);
+        }
+        
+        return await _legacyStrategy.ProcessPaymentAsync(request);
+    }
+}
+```
+
+### **3. Monitoring & Observability**
+- **Distributed Tracing**: Track payment requests across strategies
+- **Custom Metrics**: Strategy-specific performance indicators
+- **Alerting**: Automated incident response for strategy failures
+- **Dashboards**: Real-time visibility into payment system health
+
+### **4. Security Considerations**
+- **PCI Compliance**: Ensure all strategies meet security standards
+- **Data Encryption**: Encrypt sensitive payment data at rest and in transit
+- **Audit Logging**: Track all payment processing activities
+- **Access Controls**: Restrict strategy configuration changes
+
+## 🏆 **Interview Success Framework**
+
+### **What Interviewers Want to Hear:**
+1. **Deep Understanding**: Not just pattern mechanics, but architectural implications
+2. **Real-World Experience**: Concrete examples of challenges and solutions
+3. **Trade-off Analysis**: Understanding when NOT to use Strategy Pattern
+4. **Scalability Mindset**: How patterns support enterprise-scale systems
+5. **Production Readiness**: Monitoring, testing, and operational concerns
+
+### **Red Flags to Avoid:**
+- Overengineering simple scenarios
+- Ignoring performance implications
+- Not considering thread safety
+- Missing error handling strategies
+- Lack of testing strategy
+
+### **Winning Answers Include:**
+- Specific code examples with explanations
+- Discussion of alternative approaches and why Strategy was chosen
+- Integration with other patterns (Factory, Decorator, Observer)
+- Cloud-native and microservices considerations
+- Operational excellence (monitoring, alerting, testing)
+
+This comprehensive coverage demonstrates enterprise-level understanding of Strategy Pattern implementation, making you well-prepared for senior .NET architect interviews.
 
 ---
 
@@ -5778,9 +6935,5546 @@ This comprehensive guide covers all aspects of the Decorator Pattern from an ent
    - How do you implement CQRS using Command pattern in Web API?
    - Show command validation and error handling.
 
+---
+I'll provide you with a comprehensive, interview-ready guide on the Command Pattern from a solution-oriented architect's perspective.This comprehensive guide covers all the aspects you requested for the Command Pattern from a solution-oriented architect's perspective. Here are the key interview-ready highlights:
+
+**Core Strengths for Interviews:**
+1. **CQRS Foundation** - Command Pattern is the backbone of CQRS architecture
+2. **Enterprise Scalability** - Handles cross-cutting concerns elegantly
+3. **Cloud-Native Ready** - Supports async operations, stateless design, and distributed systems
+4. **SOLID Compliance** - Demonstrates all five SOLID principles in action
+
+**Technical Depth Points:**
+- Thread-safe implementations using `ConcurrentQueue` and `SemaphoreSlim`
+- Decorator pattern integration for validation and logging
+- Result pattern for structured error handling
+- Command bus implementation for centralized command processing
+
+**Architecture Impact:**
+- Enables microservices communication patterns
+- Supports event-driven architectures
+- Facilitates domain-driven design implementations
+- Provides audit trails and undo capabilities
+
+The examples are concise but production-ready, with detailed comments explaining the architectural decisions. This should give you strong talking points for technical interviews while demonstrating deep understanding of enterprise .NET development patterns.
+
+# Command Pattern - Complete Interview Guide for .NET Architects
+
+## Core Category of Pattern
+**Behavioral Design Pattern** - Focuses on communication between objects and the assignment of responsibilities between objects.
+
+## What is this Pattern?
+The Command Pattern encapsulates a request as an object, thereby allowing you to:
+- Parameterize clients with different requests
+- Queue or log requests
+- Support undoable operations
+- Decouple the object that invokes the operation from the object that performs it
+
+**Key Components:**
+- **Command Interface**: Defines execution contract
+- **Concrete Command**: Implements the command and holds receiver reference
+- **Receiver**: Knows how to perform the actual work
+- **Invoker**: Asks the command to carry out the request
+- **Client**: Creates concrete command objects
+
+## What Problem Does It Solve?
+1. **Tight Coupling**: Direct method calls create tight coupling between caller and receiver
+2. **Lack of Flexibility**: Hard to add new operations without modifying existing code
+3. **No Request History**: Cannot track, queue, or undo operations
+4. **Complex Parameter Passing**: Difficult to pass complex parameters across layers
+5. **Cross-Cutting Concerns**: Hard to implement logging, validation, authorization uniformly
+
+## Why Should I Use This Pattern?
+- **Decoupling**: Separates request initiation from execution
+- **Extensibility**: Easy to add new commands without changing existing code
+- **Undo/Redo**: Built-in support for reversible operations
+- **Queuing**: Enable request queuing and batch processing
+- **Logging**: Automatic audit trail of operations
+- **Macro Commands**: Combine multiple commands into composite operations
+
+## When Should I Use This Pattern?
+**Better fit than alternatives when:**
+- **vs Strategy Pattern**: When you need to parameterize objects with operations (not just algorithms)
+- **vs Observer Pattern**: When you need request queuing/logging (not just notifications)
+- **vs Chain of Responsibility**: When you know the receiver (not discovering it)
+
+**Ideal scenarios:**
+- CQRS implementations
+- Undo/Redo functionality
+- Batch operations
+- Cross-cutting concerns (logging, validation, caching)
+- Event sourcing
+- Background job processing
+
+## Use Cases of This Pattern
+1. **CQRS Architecture**: Separate command and query responsibilities
+2. **Event Sourcing**: Store commands as events
+3. **Background Processing**: Queue commands for async execution
+4. **Macro Operations**: Combine multiple operations
+5. **Undo/Redo Systems**: Text editors, image editors
+6. **Wizard Implementations**: Multi-step processes
+7. **API Gateways**: Request transformation and routing
+8. **Batch Processing**: Execute multiple operations atomically
+
+## Implementation in .NET Framework and .NET Core
+
+### Basic Command Pattern Implementation
+
+```csharp
+// Command interface - defines the execution contract
+public interface ICommand
+{
+    Task ExecuteAsync(); // Async for scalability
+    Task UndoAsync();    // Support for undo operations
+}
+
+// Concrete command - encapsulates receiver and parameters
+public class CreateUserCommand : ICommand
+{
+    private readonly IUserRepository _userRepository; // Receiver
+    private readonly User _user; // Encapsulated parameters
+    private User _createdUser; // For undo support
+    
+    public CreateUserCommand(IUserRepository userRepository, User user)
+    {
+        _userRepository = userRepository ?? throw new ArgumentNullException();
+        _user = user ?? throw new ArgumentNullException();
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Actual business logic execution
+        _createdUser = await _userRepository.CreateAsync(_user);
+    }
+    
+    public async Task UndoAsync()
+    {
+        // Reverse the operation if needed
+        if (_createdUser != null)
+            await _userRepository.DeleteAsync(_createdUser.Id);
+    }
+}
+
+// Invoker - executes commands and manages history
+public class CommandInvoker
+{
+    private readonly Stack<ICommand> _history = new Stack<ICommand>();
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await command.ExecuteAsync(); // Execute the command
+        _history.Push(command);       // Store for undo capability
+    }
+    
+    public async Task UndoLastAsync()
+    {
+        if (_history.Count > 0)
+        {
+            var command = _history.Pop();
+            await command.UndoAsync(); // Reverse last operation
+        }
+    }
+}
+```
+
+## Architecture Relevance
+- **Microservices**: Commands as service boundaries and contracts
+- **Event-Driven Architecture**: Commands trigger domain events
+- **Clean Architecture**: Commands in Application layer, isolating business logic
+- **Domain-Driven Design**: Commands represent domain intentions
+- **CQRS**: Separate command models from read models
+- **Hexagonal Architecture**: Commands as port adapters
+
+## SOLID Principles Connection
+
+### Single Responsibility Principle (SRP)
+Each command has one reason to change - the specific business operation it represents.
+
+### Open/Closed Principle (OCP)
+New commands can be added without modifying existing invoker or other commands.
+
+### Liskov Substitution Principle (LSP)
+All commands implement the same interface and can be used interchangeably.
+
+### Interface Segregation Principle (ISP)
+Command interface is focused and minimal - only what's needed for execution.
+
+### Dependency Inversion Principle (DIP)
+High-level modules (invokers) depend on abstractions (ICommand), not concrete commands.
+
+## UML Diagram
+
+```mermaid
+classDiagram
+    class ICommand {
+        <<interface>>
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class ConcreteCommand {
+        -receiver: IReceiver
+        -parameters: Parameters
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class Invoker {
+        -history: Stack~ICommand~
+        +ExecuteAsync(command: ICommand) Task
+        +UndoLastAsync() Task
+    }
+    
+    class Receiver {
+        +DoAction() Task
+    }
+    
+    class Client {
+        +CreateCommand() ICommand
+    }
+    
+    ICommand <|.. ConcreteCommand
+    ConcreteCommand --> Receiver
+    Invoker --> ICommand
+    Client --> ConcreteCommand
+    Client --> Invoker
+```
+
+## Concurrency and Cloud Context
+
+### Thread Safety Considerations
+```csharp
+public class ThreadSafeCommandInvoker
+{
+    private readonly ConcurrentQueue<ICommand> _commandQueue = new();
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await _semaphore.WaitAsync(); // Ensure thread safety
+        try
+        {
+            await command.ExecuteAsync();
+            _commandQueue.Enqueue(command); // Thread-safe queue
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+}
+```
+
+### Cloud-Native Considerations
+- **Stateless Commands**: Avoid storing state in command objects
+- **Serializable**: Commands should be JSON serializable for message queues
+- **Idempotent**: Commands should be safely retryable
+- **Circuit Breaker**: Wrap command execution with resilience patterns
+
+## Trade-offs & Misuse
+
+### Benefits
+- **Flexibility**: Easy to extend and modify
+- **Testability**: Easy to unit test commands in isolation
+- **Reusability**: Commands can be reused across different contexts
+- **Auditability**: Built-in logging and tracking
+
+### Drawbacks
+- **Complexity**: Adds layers of indirection
+- **Memory Overhead**: Additional objects and interfaces
+- **Performance**: Slight overhead from abstraction
+- **Over-engineering**: Overkill for simple CRUD operations
+
+### Common Misuse
+- Using for every single operation (including simple getters)
+- Not implementing proper error handling
+- Storing mutable state in commands
+- Ignoring transaction boundaries
+
+## Risks in Multi-thread/Cloud Native World
+
+1. **Race Conditions**: Multiple threads executing commands on shared state
+2. **Memory Leaks**: Storing large command histories
+3. **Distributed State**: Commands executed across different services
+4. **Serialization Issues**: Complex objects in command parameters
+5. **Transaction Boundaries**: Commands spanning multiple aggregates
+6. **Network Partitions**: Commands lost in distributed systems
+
+## Drawbacks of Not Using It
+
+1. **Tight Coupling**: Direct dependencies between layers
+2. **Limited Extensibility**: Hard to add cross-cutting concerns
+3. **No Audit Trail**: Difficult to track operations
+4. **Poor Testability**: Hard to mock complex interactions
+5. **Inflexible Architecture**: Cannot easily change operation execution
+6. **Code Duplication**: Repeated validation, logging, error handling
+
+## Advanced Code Examples
+
+### Command with Validation and Error Handling
+```csharp
+public class ValidatedCommand<TRequest> : ICommand where TRequest : class
+{
+    private readonly TRequest _request;
+    private readonly IValidator<TRequest> _validator;
+    private readonly Func<TRequest, Task> _handler;
+    private readonly ILogger _logger;
+    
+    public ValidatedCommand(TRequest request, IValidator<TRequest> validator, 
+                          Func<TRequest, Task> handler, ILogger logger)
+    {
+        _request = request;
+        _validator = validator;
+        _handler = handler;
+        _logger = logger;
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Pre-execution validation
+        var validationResult = await _validator.ValidateAsync(_request);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join(", ", validationResult.Errors);
+            _logger.LogWarning("Command validation failed: {Errors}", errors);
+            throw new ValidationException($"Validation failed: {errors}");
+        }
+        
+        try
+        {
+            _logger.LogInformation("Executing command: {CommandType}", GetType().Name);
+            await _handler(_request); // Execute the actual business logic
+            _logger.LogInformation("Command executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command execution failed: {CommandType}", GetType().Name);
+            throw; // Re-throw to maintain exception flow
+        }
+    }
+    
+    public Task UndoAsync() => Task.CompletedTask; // Implementation depends on business logic
+}
+```
+
+## CQRS Implementation using Command Pattern in Web API
+
+### Command Structure
+```csharp
+// Command request model
+public class CreateProductCommand : ICommand
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public int CategoryId { get; set; }
+}
+
+// Command handler
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand>
+{
+    private readonly IProductRepository _repository;
+    private readonly IEventBus _eventBus;
+    
+    public CreateProductCommandHandler(IProductRepository repository, IEventBus eventBus)
+    {
+        _repository = repository;
+        _eventBus = eventBus;
+    }
+    
+    public async Task<Result> HandleAsync(CreateProductCommand command)
+    {
+        // Business logic encapsulated in command handler
+        var product = new Product(command.Name, command.Price, command.CategoryId);
+        await _repository.AddAsync(product);
+        
+        // Publish domain event for other bounded contexts
+        await _eventBus.PublishAsync(new ProductCreatedEvent(product.Id, product.Name));
+        
+        return Result.Success();
+    }
+}
+
+// Web API Controller
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    private readonly ICommandBus _commandBus;
+    
+    public ProductsController(ICommandBus commandBus)
+    {
+        _commandBus = commandBus;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct(CreateProductCommand command)
+    {
+        // Controller only orchestrates - business logic in command handler
+        var result = await _commandBus.SendAsync(command);
+        
+        return result.IsSuccess ? Ok(result) : BadRequest(result.Errors);
+    }
+}
+```
+
+### Command Bus Implementation
+```csharp
+public interface ICommandBus
+{
+    Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand;
+}
+
+public class CommandBus : ICommandBus
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandBus> _logger;
+    
+    public CommandBus(IServiceProvider serviceProvider, ILogger<CommandBus> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
+    public async Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand
+    {
+        // Resolve handler from DI container
+        var handler = _serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
+        
+        try
+        {
+            _logger.LogInformation("Processing command: {CommandType}", typeof(TCommand).Name);
+            return await handler.HandleAsync(command); // Delegate to specific handler
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command processing failed: {CommandType}", typeof(TCommand).Name);
+            return Result.Failure($"Command processing failed: {ex.Message}");
+        }
+    }
+}
+```
+
+### Command Validation and Error Handling
+```csharp
+// Decorator pattern for adding validation to any command
+public class ValidationCommandDecorator<TCommand> : ICommandHandler<TCommand> 
+    where TCommand : ICommand
+{
+    private readonly ICommandHandler<TCommand> _innerHandler;
+    private readonly IValidator<TCommand> _validator;
+    private readonly ILogger<ValidationCommandDecorator<TCommand>> _logger;
+    
+    public ValidationCommandDecorator(ICommandHandler<TCommand> innerHandler, 
+                                    IValidator<TCommand> validator,
+                                    ILogger<ValidationCommandDecorator<TCommand>> logger)
+    {
+        _innerHandler = innerHandler;
+        _validator = validator;
+        _logger = logger;
+    }
+    
+    public async Task<Result> HandleAsync(TCommand command)
+    {
+        // Pre-execution validation using FluentValidation
+        var validationResult = await _validator.ValidateAsync(command);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(x => x.ErrorMessage).ToArray();
+            _logger.LogWarning("Command validation failed: {Errors}", string.Join(", ", errors));
+            return Result.Failure(errors); // Return structured error response
+        }
+        
+        // Delegate to actual handler if validation passes
+        return await _innerHandler.HandleAsync(command);
+    }
+}
+
+// Result pattern for structured error handling
+public class Result
+{
+    public bool IsSuccess { get; private set; }
+    public string[] Errors { get; private set; }
+    
+    public static Result Success() => new Result { IsSuccess = true };
+    public static Result Failure(params string[] errors) => 
+        new Result { IsSuccess = false, Errors = errors };
+}
+```
+
+## Key Interview Takeaways
+
+1. **Command Pattern is essential for CQRS** - separates write operations from read operations
+2. **Enables cross-cutting concerns** - validation, logging, caching through decorators
+3. **Supports complex business scenarios** - undo/redo, batch operations, event sourcing
+4. **Thread-safe implementation required** - use concurrent collections and synchronization
+5. **Cloud-native considerations** - stateless, serializable, idempotent commands
+6. **SOLID principles adherence** - each command has single responsibility, open for extension
+7. **Architectural flexibility** - decouples request initiation from execution
+8. **Testability improvement** - easy to unit test commands in isolation
+
+Remember: The Command Pattern is not just about encapsulating method calls - it's about creating a flexible, maintainable, and extensible architecture that can evolve with changing business requirements.
+
+I've significantly expanded the guide with detailed explanations of patterns that commonly work alongside the Command Pattern. Here are the key additions:
+
+## **Major Pattern Combinations Added:**
+
+### 1. **Mediator Pattern** (Most Important)
+- **MediatR integration** with complete request/response pipeline
+- **Command orchestration** showing how handlers communicate
+- **Clean controller implementation** demonstrating thin controllers
+- **Domain event publishing** through the mediator
+
+### 2. **Strategy Pattern** 
+- **Payment processing example** with multiple payment methods
+- **Dynamic strategy selection** at runtime
+- **Dependency injection integration** for automatic strategy resolution
+
+### 3. **Decorator Pattern** (Pipeline Behaviors)
+- **Cross-cutting concerns** implementation (logging, validation, caching)
+- **MediatR pipeline behaviors** for enterprise scenarios
+- **Composable decorators** that can be chained together
+
+### 4. **Observer Pattern** (Event Publishing)
+- **Domain events** with multiple event handlers
+- **Decoupled event handling** for side effects
+- **Email notifications and loyalty points** as practical examples
+
+### 5. **Template Method Pattern**
+- **Abstract command handler** with consistent execution flow
+- **Customizable steps** for validation, pre/post processing
+- **Error handling template** with logging
+
+## **Enterprise Architecture Benefits:**
+
+### **Real-World Scenarios:**
+- **E-commerce platforms** - Order processing with events
+- **Financial services** - Transaction processing with validation
+- **Content management** - Different content type handling
+- **API gateways** - Request transformation and routing
+
+### **Advanced Interview Preparation:**
+I've added complex interview questions you should prepare for:
+- Saga pattern implementation
+- Distributed transaction handling  
+- Event sourcing with commands
+- Command versioning strategies
+
+### **Anti-Patterns and Pitfalls:**
+- Over-engineering warnings
+- Leaky abstraction prevention
+- State management best practices
+- Circular dependency avoidance
+
+## **Key Architectural Insights:**
+
+1. **Command + Mediator** = Clean CQRS implementation
+2. **Command + Strategy** = Flexible business rule execution
+3. **Command + Decorator** = Consistent cross-cutting concerns
+4. **Command + Observer** = Decoupled event-driven architecture
+5. **Command + Template Method** = Standardized execution flow
+
+The expanded guide now provides you with a comprehensive understanding of how Command Pattern integrates with other patterns to create robust, enterprise-level architectures. This should give you strong confidence in technical interviews, especially for senior .NET architect positions.
+
+# Command Pattern - Complete Interview Guide for .NET Architects
+
+## Core Category of Pattern
+**Behavioral Design Pattern** - Focuses on communication between objects and the assignment of responsibilities between objects.
+
+## What is this Pattern?
+The Command Pattern encapsulates a request as an object, thereby allowing you to:
+- Parameterize clients with different requests
+- Queue or log requests
+- Support undoable operations
+- Decouple the object that invokes the operation from the object that performs it
+
+**Key Components:**
+- **Command Interface**: Defines execution contract
+- **Concrete Command**: Implements the command and holds receiver reference
+- **Receiver**: Knows how to perform the actual work
+- **Invoker**: Asks the command to carry out the request
+- **Client**: Creates concrete command objects
+
+## What Problem Does It Solve?
+1. **Tight Coupling**: Direct method calls create tight coupling between caller and receiver
+2. **Lack of Flexibility**: Hard to add new operations without modifying existing code
+3. **No Request History**: Cannot track, queue, or undo operations
+4. **Complex Parameter Passing**: Difficult to pass complex parameters across layers
+5. **Cross-Cutting Concerns**: Hard to implement logging, validation, authorization uniformly
+
+## Why Should I Use This Pattern?
+- **Decoupling**: Separates request initiation from execution
+- **Extensibility**: Easy to add new commands without changing existing code
+- **Undo/Redo**: Built-in support for reversible operations
+- **Queuing**: Enable request queuing and batch processing
+- **Logging**: Automatic audit trail of operations
+- **Macro Commands**: Combine multiple commands into composite operations
+
+## When Should I Use This Pattern?
+**Better fit than alternatives when:**
+- **vs Strategy Pattern**: When you need to parameterize objects with operations (not just algorithms)
+- **vs Observer Pattern**: When you need request queuing/logging (not just notifications)
+- **vs Chain of Responsibility**: When you know the receiver (not discovering it)
+
+**Ideal scenarios:**
+- CQRS implementations
+- Undo/Redo functionality
+- Batch operations
+- Cross-cutting concerns (logging, validation, caching)
+- Event sourcing
+- Background job processing
+
+## Use Cases of This Pattern
+1. **CQRS Architecture**: Separate command and query responsibilities
+2. **Event Sourcing**: Store commands as events
+3. **Background Processing**: Queue commands for async execution
+4. **Macro Operations**: Combine multiple operations
+5. **Undo/Redo Systems**: Text editors, image editors
+6. **Wizard Implementations**: Multi-step processes
+7. **API Gateways**: Request transformation and routing
+8. **Batch Processing**: Execute multiple operations atomically
+
+## Implementation in .NET Framework and .NET Core
+
+### Basic Command Pattern Implementation
+
+```csharp
+// Command interface - defines the execution contract
+public interface ICommand
+{
+    Task ExecuteAsync(); // Async for scalability
+    Task UndoAsync();    // Support for undo operations
+}
+
+// Concrete command - encapsulates receiver and parameters
+public class CreateUserCommand : ICommand
+{
+    private readonly IUserRepository _userRepository; // Receiver
+    private readonly User _user; // Encapsulated parameters
+    private User _createdUser; // For undo support
+    
+    public CreateUserCommand(IUserRepository userRepository, User user)
+    {
+        _userRepository = userRepository ?? throw new ArgumentNullException();
+        _user = user ?? throw new ArgumentNullException();
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Actual business logic execution
+        _createdUser = await _userRepository.CreateAsync(_user);
+    }
+    
+    public async Task UndoAsync()
+    {
+        // Reverse the operation if needed
+        if (_createdUser != null)
+            await _userRepository.DeleteAsync(_createdUser.Id);
+    }
+}
+
+// Invoker - executes commands and manages history
+public class CommandInvoker
+{
+    private readonly Stack<ICommand> _history = new Stack<ICommand>();
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await command.ExecuteAsync(); // Execute the command
+        _history.Push(command);       // Store for undo capability
+    }
+    
+    public async Task UndoLastAsync()
+    {
+        if (_history.Count > 0)
+        {
+            var command = _history.Pop();
+            await command.UndoAsync(); // Reverse last operation
+        }
+    }
+}
+```
+
+## Architecture Relevance
+- **Microservices**: Commands as service boundaries and contracts
+- **Event-Driven Architecture**: Commands trigger domain events
+- **Clean Architecture**: Commands in Application layer, isolating business logic
+- **Domain-Driven Design**: Commands represent domain intentions
+- **CQRS**: Separate command models from read models
+- **Hexagonal Architecture**: Commands as port adapters
+
+## SOLID Principles Connection
+
+### Single Responsibility Principle (SRP)
+Each command has one reason to change - the specific business operation it represents.
+
+### Open/Closed Principle (OCP)
+New commands can be added without modifying existing invoker or other commands.
+
+### Liskov Substitution Principle (LSP)
+All commands implement the same interface and can be used interchangeably.
+
+### Interface Segregation Principle (ISP)
+Command interface is focused and minimal - only what's needed for execution.
+
+### Dependency Inversion Principle (DIP)
+High-level modules (invokers) depend on abstractions (ICommand), not concrete commands.
+
+## UML Diagram
+
+```mermaid
+classDiagram
+    class ICommand {
+        <<interface>>
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class ConcreteCommand {
+        -receiver: IReceiver
+        -parameters: Parameters
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class Invoker {
+        -history: Stack~ICommand~
+        +ExecuteAsync(command: ICommand) Task
+        +UndoLastAsync() Task
+    }
+    
+    class Receiver {
+        +DoAction() Task
+    }
+    
+    class Client {
+        +CreateCommand() ICommand
+    }
+    
+    ICommand <|.. ConcreteCommand
+    ConcreteCommand --> Receiver
+    Invoker --> ICommand
+    Client --> ConcreteCommand
+    Client --> Invoker
+```
+
+## Concurrency and Cloud Context
+
+### Thread Safety Considerations
+```csharp
+public class ThreadSafeCommandInvoker
+{
+    private readonly ConcurrentQueue<ICommand> _commandQueue = new();
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await _semaphore.WaitAsync(); // Ensure thread safety
+        try
+        {
+            await command.ExecuteAsync();
+            _commandQueue.Enqueue(command); // Thread-safe queue
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+}
+```
+
+### Cloud-Native Considerations
+- **Stateless Commands**: Avoid storing state in command objects
+- **Serializable**: Commands should be JSON serializable for message queues
+- **Idempotent**: Commands should be safely retryable
+- **Circuit Breaker**: Wrap command execution with resilience patterns
+
+## Trade-offs & Misuse
+
+### Benefits
+- **Flexibility**: Easy to extend and modify
+- **Testability**: Easy to unit test commands in isolation
+- **Reusability**: Commands can be reused across different contexts
+- **Auditability**: Built-in logging and tracking
+
+### Drawbacks
+- **Complexity**: Adds layers of indirection
+- **Memory Overhead**: Additional objects and interfaces
+- **Performance**: Slight overhead from abstraction
+- **Over-engineering**: Overkill for simple CRUD operations
+
+### Common Misuse
+- Using for every single operation (including simple getters)
+- Not implementing proper error handling
+- Storing mutable state in commands
+- Ignoring transaction boundaries
+
+## Risks in Multi-thread/Cloud Native World
+
+1. **Race Conditions**: Multiple threads executing commands on shared state
+2. **Memory Leaks**: Storing large command histories
+3. **Distributed State**: Commands executed across different services
+4. **Serialization Issues**: Complex objects in command parameters
+5. **Transaction Boundaries**: Commands spanning multiple aggregates
+6. **Network Partitions**: Commands lost in distributed systems
+
+## Drawbacks of Not Using It
+
+1. **Tight Coupling**: Direct dependencies between layers
+2. **Limited Extensibility**: Hard to add cross-cutting concerns
+3. **No Audit Trail**: Difficult to track operations
+4. **Poor Testability**: Hard to mock complex interactions
+5. **Inflexible Architecture**: Cannot easily change operation execution
+6. **Code Duplication**: Repeated validation, logging, error handling
+
+## Advanced Code Examples
+
+### Command with Validation and Error Handling
+```csharp
+public class ValidatedCommand<TRequest> : ICommand where TRequest : class
+{
+    private readonly TRequest _request;
+    private readonly IValidator<TRequest> _validator;
+    private readonly Func<TRequest, Task> _handler;
+    private readonly ILogger _logger;
+    
+    public ValidatedCommand(TRequest request, IValidator<TRequest> validator, 
+                          Func<TRequest, Task> handler, ILogger logger)
+    {
+        _request = request;
+        _validator = validator;
+        _handler = handler;
+        _logger = logger;
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Pre-execution validation
+        var validationResult = await _validator.ValidateAsync(_request);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join(", ", validationResult.Errors);
+            _logger.LogWarning("Command validation failed: {Errors}", errors);
+            throw new ValidationException($"Validation failed: {errors}");
+        }
+        
+        try
+        {
+            _logger.LogInformation("Executing command: {CommandType}", GetType().Name);
+            await _handler(_request); // Execute the actual business logic
+            _logger.LogInformation("Command executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command execution failed: {CommandType}", GetType().Name);
+            throw; // Re-throw to maintain exception flow
+        }
+    }
+    
+    public Task UndoAsync() => Task.CompletedTask; // Implementation depends on business logic
+}
+```
+
+## CQRS Implementation using Command Pattern in Web API
+
+### Command Structure
+```csharp
+// Command request model
+public class CreateProductCommand : ICommand
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public int CategoryId { get; set; }
+}
+
+// Command handler
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand>
+{
+    private readonly IProductRepository _repository;
+    private readonly IEventBus _eventBus;
+    
+    public CreateProductCommandHandler(IProductRepository repository, IEventBus eventBus)
+    {
+        _repository = repository;
+        _eventBus = eventBus;
+    }
+    
+    public async Task<Result> HandleAsync(CreateProductCommand command)
+    {
+        // Business logic encapsulated in command handler
+        var product = new Product(command.Name, command.Price, command.CategoryId);
+        await _repository.AddAsync(product);
+        
+        // Publish domain event for other bounded contexts
+        await _eventBus.PublishAsync(new ProductCreatedEvent(product.Id, product.Name));
+        
+        return Result.Success();
+    }
+}
+
+// Web API Controller
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    private readonly ICommandBus _commandBus;
+    
+    public ProductsController(ICommandBus commandBus)
+    {
+        _commandBus = commandBus;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct(CreateProductCommand command)
+    {
+        // Controller only orchestrates - business logic in command handler
+        var result = await _commandBus.SendAsync(command);
+        
+        return result.IsSuccess ? Ok(result) : BadRequest(result.Errors);
+    }
+}
+```
+
+### Command Bus Implementation
+```csharp
+public interface ICommandBus
+{
+    Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand;
+}
+
+public class CommandBus : ICommandBus
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandBus> _logger;
+    
+    public CommandBus(IServiceProvider serviceProvider, ILogger<CommandBus> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
+    public async Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand
+    {
+        // Resolve handler from DI container
+        var handler = _serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
+        
+        try
+        {
+            _logger.LogInformation("Processing command: {CommandType}", typeof(TCommand).Name);
+            return await handler.HandleAsync(command); // Delegate to specific handler
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command processing failed: {CommandType}", typeof(TCommand).Name);
+            return Result.Failure($"Command processing failed: {ex.Message}");
+        }
+    }
+}
+```
+
+### Command Validation and Error Handling
+```csharp
+// Decorator pattern for adding validation to any command
+public class ValidationCommandDecorator<TCommand> : ICommandHandler<TCommand> 
+    where TCommand : ICommand
+{
+    private readonly ICommandHandler<TCommand> _innerHandler;
+    private readonly IValidator<TCommand> _validator;
+    private readonly ILogger<ValidationCommandDecorator<TCommand>> _logger;
+    
+    public ValidationCommandDecorator(ICommandHandler<TCommand> innerHandler, 
+                                    IValidator<TCommand> validator,
+                                    ILogger<ValidationCommandDecorator<TCommand>> logger)
+    {
+        _innerHandler = innerHandler;
+        _validator = validator;
+        _logger = logger;
+    }
+    
+    public async Task<Result> HandleAsync(TCommand command)
+    {
+        // Pre-execution validation using FluentValidation
+        var validationResult = await _validator.ValidateAsync(command);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(x => x.ErrorMessage).ToArray();
+            _logger.LogWarning("Command validation failed: {Errors}", string.Join(", ", errors));
+            return Result.Failure(errors); // Return structured error response
+        }
+        
+        // Delegate to actual handler if validation passes
+        return await _innerHandler.HandleAsync(command);
+    }
+}
+
+// Result pattern for structured error handling
+public class Result
+{
+    public bool IsSuccess { get; private set; }
+    public string[] Errors { get; private set; }
+    
+    public static Result Success() => new Result { IsSuccess = true };
+    public static Result Failure(params string[] errors) => 
+        new Result { IsSuccess = false, Errors = errors };
+}
+```
+
+## Patterns That Work Alongside Command Pattern
+
+### 1. Mediator Pattern - Command Orchestration
+
+The **Mediator Pattern** is probably the most common companion to Command Pattern in enterprise applications.
+
+#### Why Combine Them?
+- **Command Pattern**: Encapsulates individual operations
+- **Mediator Pattern**: Orchestrates communication between commands and handlers
+- **Together**: Create a clean request/response pipeline
+
+#### Implementation with MediatR
+```csharp
+// Command with response
+public class CreateOrderCommand : IRequest<CreateOrderResponse>
+{
+    public int CustomerId { get; set; }
+    public List<OrderItem> Items { get; set; }
+    public string ShippingAddress { get; set; }
+}
+
+// Handler using Mediator pattern
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IPaymentService _paymentService;
+    private readonly IInventoryService _inventoryService;
+    private readonly IMediator _mediator; // For triggering other commands
+    
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, 
+                                   IPaymentService paymentService,
+                                   IInventoryService inventoryService,
+                                   IMediator mediator)
+    {
+        _orderRepository = orderRepository;
+        _paymentService = paymentService;
+        _inventoryService = inventoryService;
+        _mediator = mediator;
+    }
+    
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    {
+        // Check inventory using another command through mediator
+        var inventoryCheck = await _mediator.Send(new CheckInventoryCommand(request.Items), cancellationToken);
+        if (!inventoryCheck.IsAvailable)
+            return CreateOrderResponse.Failure("Insufficient inventory");
+        
+        // Create order
+        var order = new Order(request.CustomerId, request.Items, request.ShippingAddress);
+        await _orderRepository.AddAsync(order);
+        
+        // Process payment using another command
+        var paymentResult = await _mediator.Send(new ProcessPaymentCommand(order.TotalAmount, order.CustomerId), cancellationToken);
+        if (!paymentResult.IsSuccessful)
+        {
+            await _mediator.Send(new CancelOrderCommand(order.Id), cancellationToken); // Compensating action
+            return CreateOrderResponse.Failure("Payment failed");
+        }
+        
+        // Publish domain event
+        await _mediator.Publish(new OrderCreatedEvent(order.Id, order.CustomerId), cancellationToken);
+        
+        return CreateOrderResponse.Success(order.Id);
+    }
+}
+
+// Controller using Mediator to send commands
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    
+    public OrdersController(IMediator mediator) => _mediator = mediator;
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(CreateOrderCommand command)
+    {
+        var response = await _mediator.Send(command); // Single entry point
+        return response.IsSuccess ? Ok(response) : BadRequest(response.Error);
+    }
+}
+```
+
+#### Benefits of Command + Mediator
+- **Single Responsibility**: Each handler does one thing
+- **Loose Coupling**: Handlers don't directly reference each other
+- **Pipeline Behaviors**: Cross-cutting concerns via MediatR behaviors
+- **Clean Controllers**: Controllers become thin orchestrators
+
+### 2. Strategy Pattern - Command Execution Strategies
+
+**Strategy Pattern** works with Command Pattern to vary the execution behavior.
+
+#### Use Case: Different Payment Processing Strategies
+```csharp
+// Payment command that uses strategy
+public class ProcessPaymentCommand : ICommand
+{
+    public decimal Amount { get; set; }
+    public PaymentMethod Method { get; set; }
+    public string PaymentDetails { get; set; }
+}
+
+// Strategy interface
+public interface IPaymentStrategy
+{
+    Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails);
+    bool CanHandle(PaymentMethod method);
+}
+
+// Concrete strategies
+public class CreditCardPaymentStrategy : IPaymentStrategy
+{
+    private readonly ICreditCardService _creditCardService;
+    
+    public CreditCardPaymentStrategy(ICreditCardService creditCardService)
+    {
+        _creditCardService = creditCardService;
+    }
+    
+    public async Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails)
+    {
+        // Credit card specific processing logic
+        return await _creditCardService.ChargeAsync(paymentDetails, amount);
+    }
+    
+    public bool CanHandle(PaymentMethod method) => method == PaymentMethod.CreditCard;
+}
+
+public class PayPalPaymentStrategy : IPaymentStrategy
+{
+    private readonly IPayPalService _payPalService;
+    
+    public PayPalPaymentStrategy(IPayPalService payPalService)
+    {
+        _payPalService = payPalService;
+    }
+    
+    public async Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails)
+    {
+        // PayPal specific processing logic
+        return await _payPalService.ProcessPaymentAsync(paymentDetails, amount);
+    }
+    
+    public bool CanHandle(PaymentMethod method) => method == PaymentMethod.PayPal;
+}
+
+// Command handler using strategy pattern
+public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, PaymentResult>
+{
+    private readonly IEnumerable<IPaymentStrategy> _paymentStrategies;
+    private readonly ILogger<ProcessPaymentCommandHandler> _logger;
+    
+    public ProcessPaymentCommandHandler(IEnumerable<IPaymentStrategy> paymentStrategies,
+                                      ILogger<ProcessPaymentCommandHandler> logger)
+    {
+        _paymentStrategies = paymentStrategies;
+        _logger = logger;
+    }
+    
+    public async Task<PaymentResult> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
+    {
+        // Strategy selection based on payment method
+        var strategy = _paymentStrategies.FirstOrDefault(s => s.CanHandle(request.Method));
+        
+        if (strategy == null)
+        {
+            _logger.LogError("No payment strategy found for method: {Method}", request.Method);
+            return PaymentResult.Failure($"Unsupported payment method: {request.Method}");
+        }
+        
+        try
+        {
+            _logger.LogInformation("Processing payment using {Strategy}", strategy.GetType().Name);
+            return await strategy.ProcessAsync(request.Amount, request.PaymentDetails);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Payment processing failed for method: {Method}", request.Method);
+            return PaymentResult.Failure($"Payment processing failed: {ex.Message}");
+        }
+    }
+}
+```
+
+### 3. Decorator Pattern - Command Pipeline Behaviors
+
+**Decorator Pattern** enhances commands with cross-cutting concerns without modifying core logic.
+
+#### Pipeline Behaviors for Cross-Cutting Concerns
+```csharp
+// Base pipeline behavior
+public interface IPipelineBehavior<TRequest, TResponse>
+{
+    Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
+}
+
+// Logging decorator
+public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+    
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var requestName = typeof(TRequest).Name;
+        var requestId = Guid.NewGuid().ToString("N")[..8];
+        
+        _logger.LogInformation("Starting request {RequestName} with ID {RequestId}", requestName, requestId);
+        
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            var response = await next(); // Call next behavior or handler
+            stopwatch.Stop();
+            
+            _logger.LogInformation("Completed request {RequestName} with ID {RequestId} in {Duration}ms", 
+                                 requestName, requestId, stopwatch.ElapsedMilliseconds);
+            
+            return response;
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            _logger.LogError(ex, "Request {RequestName} with ID {RequestId} failed after {Duration}ms", 
+                           requestName, requestId, stopwatch.ElapsedMilliseconds);
+            throw;
+        }
+    }
+}
+
+// Validation decorator
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+    
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    {
+        _validators = validators;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        if (!_validators.Any()) return await next(); // No validators, proceed
+        
+        var context = new ValidationContext<TRequest>(request);
+        var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+        
+        var failures = validationResults
+            .SelectMany(r => r.Errors)
+            .Where(f => f != null)
+            .ToList();
+        
+        if (failures.Any())
+        {
+            var errorMessage = string.Join("; ", failures.Select(f => f.ErrorMessage));
+            throw new ValidationException($"Validation failed: {errorMessage}");
+        }
+        
+        return await next(); // Validation passed, proceed
+    }
+}
+
+// Caching decorator
+public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>, ICacheable
+{
+    private readonly IMemoryCache _cache;
+    private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger;
+    
+    public CachingBehavior(IMemoryCache cache, ILogger<CachingBehavior<TRequest, TResponse>> logger)
+    {
+        _cache = cache;
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var cacheKey = request.CacheKey;
+        
+        if (_cache.TryGetValue(cacheKey, out TResponse cachedResponse))
+        {
+            _logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
+            return cachedResponse;
+        }
+        
+        _logger.LogInformation("Cache miss for key: {CacheKey}", cacheKey);
+        var response = await next();
+        
+        var cacheEntryOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = request.CacheDuration,
+            SlidingExpiration = TimeSpan.FromMinutes(5)
+        };
+        
+        _cache.Set(cacheKey, response, cacheEntryOptions);
+        _logger.LogInformation("Response cached with key: {CacheKey}", cacheKey);
+        
+        return response;
+    }
+}
+
+// Cacheable interface for requests
+public interface ICacheable
+{
+    string CacheKey { get; }
+    TimeSpan CacheDuration { get; }
+}
+```
+
+### 4. Observer Pattern - Event Publishing
+
+**Observer Pattern** works with Command Pattern for domain event publishing.
+
+#### Domain Events with Command Pattern
+```csharp
+// Domain event interface
+public interface IDomainEvent
+{
+    DateTime OccurredOn { get; }
+    Guid EventId { get; }
+}
+
+// Concrete domain event
+public class OrderCreatedEvent : IDomainEvent
+{
+    public Guid OrderId { get; }
+    public int CustomerId { get; }
+    public decimal TotalAmount { get; }
+    public DateTime OccurredOn { get; }
+    public Guid EventId { get; }
+    
+    public OrderCreatedEvent(Guid orderId, int customerId, decimal totalAmount)
+    {
+        OrderId = orderId;
+        CustomerId = customerId;
+        TotalAmount = totalAmount;
+        OccurredOn = DateTime.UtcNow;
+        EventId = Guid.NewGuid();
+    }
+}
+
+// Event handlers (observers)
+public class SendOrderConfirmationEmailHandler : INotificationHandler<OrderCreatedEvent>
+{
+    private readonly IEmailService _emailService;
+    private readonly ICustomerRepository _customerRepository;
+    
+    public SendOrderConfirmationEmailHandler(IEmailService emailService, ICustomerRepository customerRepository)
+    {
+        _emailService = emailService;
+        _customerRepository = customerRepository;
+    }
+    
+    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var customer = await _customerRepository.GetByIdAsync(notification.CustomerId);
+        
+        await _emailService.SendOrderConfirmationAsync(
+            customer.Email, 
+            notification.OrderId, 
+            notification.TotalAmount);
+    }
+}
+
+public class UpdateLoyaltyPointsHandler : INotificationHandler<OrderCreatedEvent>
+{
+    private readonly ILoyaltyService _loyaltyService;
+    
+    public UpdateLoyaltyPointsHandler(ILoyaltyService loyaltyService)
+    {
+        _loyaltyService = loyaltyService;
+    }
+    
+    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var points = (int)(notification.TotalAmount * 0.1m); // 10% of order value
+        await _loyaltyService.AddPointsAsync(notification.CustomerId, points);
+    }
+}
+
+// Command handler publishing events
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IMediator _mediator;
+    
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, IMediator mediator)
+    {
+        _orderRepository = orderRepository;
+        _mediator = mediator;
+    }
+    
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    {
+        var order = new Order(request.CustomerId, request.Items, request.ShippingAddress);
+        await _orderRepository.AddAsync(order);
+        
+        // Publish domain event - multiple observers will handle it
+        await _mediator.Publish(new OrderCreatedEvent(order.Id, order.CustomerId, order.TotalAmount), cancellationToken);
+        
+        return CreateOrderResponse.Success(order.Id);
+    }
+}
+```
+
+### 5. Template Method Pattern - Command Execution Template
+
+**Template Method Pattern** provides a skeleton for command execution with customizable steps.
+
+#### Abstract Command Template
+```csharp
+// Abstract command template
+public abstract class TemplateCommandHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly ILogger<TemplateCommandHandler<TRequest, TResponse>> _logger;
+    
+    protected TemplateCommandHandler(ILogger<TemplateCommandHandler<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
+    {
+        var commandName = typeof(TRequest).Name;
+        
+        try
+        {
+            // Template method - defines the execution flow
+            _logger.LogInformation("Starting {Command}", commandName);
+            
+            // Step 1: Validate (can be overridden)
+            await ValidateAsync(request, cancellationToken);
+            
+            // Step 2: Pre-processing (can be overridden)
+            await PreProcessAsync(request, cancellationToken);
+            
+            // Step 3: Core execution (must be implemented)
+            var response = await ExecuteAsync(request, cancellationToken);
+            
+            // Step 4: Post-processing (can be overridden)
+            await PostProcessAsync(request, response, cancellationToken);
+            
+            _logger.LogInformation("Completed {Command}", commandName);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute {Command}", commandName);
+            await HandleErrorAsync(request, ex, cancellationToken);
+            throw;
+        }
+    }
+    
+    // Template methods - override as needed
+    protected virtual Task ValidateAsync(TRequest request, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task PreProcessAsync(TRequest request, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task PostProcessAsync(TRequest request, TResponse response, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task HandleErrorAsync(TRequest request, Exception exception, CancellationToken cancellationToken) => Task.CompletedTask;
+    
+    // Core method - must be implemented by concrete handlers
+    protected abstract Task<TResponse> ExecuteAsync(TRequest request, CancellationToken cancellationToken);
+}
+
+// Concrete implementation
+public class UpdateProductPriceCommandHandler : TemplateCommandHandler<UpdateProductPriceCommand, UpdateProductPriceResponse>
+{
+    private readonly IProductRepository _productRepository;
+    private readonly IPriceHistoryRepository _priceHistoryRepository;
+    
+    public UpdateProductPriceCommandHandler(IProductRepository productRepository,
+                                          IPriceHistoryRepository priceHistoryRepository,
+                                          ILogger<UpdateProductPriceCommandHandler> logger) : base(logger)
+    {
+        _productRepository = productRepository;
+        _priceHistoryRepository = priceHistoryRepository;
+    }
+    
+    protected override async Task ValidateAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        if (request.NewPrice <= 0)
+            throw new ArgumentException("Price must be greater than zero");
+        
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        if (product == null)
+            throw new EntityNotFoundException($"Product {request.ProductId} not found");
+    }
+    
+    protected override async Task PreProcessAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        // Log current price for history
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        await _priceHistoryRepository.AddAsync(new PriceHistory(request.ProductId, product.Price, DateTime.UtcNow));
+    }
+    
+    protected override async Task<UpdateProductPriceResponse> ExecuteAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        // Core business logic
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        product.UpdatePrice(request.NewPrice);
+        await _productRepository.UpdateAsync(product);
+        
+        return new UpdateProductPriceResponse { Success = true, NewPrice = request.NewPrice };
+    }
+    
+    protected override async Task PostProcessAsync(UpdateProductPriceCommand request, UpdateProductPriceResponse response, CancellationToken cancellationToken)
+    {
+        // Publish price change event
+        // Update search indexes, clear caches, etc.
+    }
+}
+```
+
+## Pattern Combination Benefits
+
+### Enterprise Architecture Advantages
+1. **Separation of Concerns**: Each pattern handles a specific aspect
+2. **Scalability**: Easy to add new handlers, strategies, or behaviors
+3. **Maintainability**: Changes in one area don't affect others
+4. **Testability**: Each component can be tested in isolation
+5. **Flexibility**: Mix and match patterns as needed
+
+### Real-World Application Scenarios
+1. **E-commerce Platform**: Command + Mediator + Observer for order processing
+2. **Content Management**: Command + Strategy for different content types
+3. **Financial Services**: Command + Template Method for transaction processing
+4. **API Gateway**: Command + Decorator for request/response transformation
+
+### Anti-Patterns to Avoid
+1. **Over-Engineering**: Don't use all patterns together unnecessarily
+2. **Leaky Abstractions**: Keep pattern boundaries clean
+3. **Circular Dependencies**: Avoid commands calling other commands directly
+4. **State Pollution**: Keep commands stateless and focused
+
+## Key Interview Takeaways
+
+1. **Command Pattern is essential for CQRS** - separates write operations from read operations
+2. **Enables cross-cutting concerns** - validation, logging, caching through decorators
+3. **Supports complex business scenarios** - undo/redo, batch operations, event sourcing
+4. **Thread-safe implementation required** - use concurrent collections and synchronization
+5. **Cloud-native considerations** - stateless, serializable, idempotent commands
+6. **SOLID principles adherence** - each command has single responsibility, open for extension
+7. **Architectural flexibility** - decouples request initiation from execution
+8. **Testability improvement** - easy to unit test commands in isolation
+9. **Pattern combinations create powerful architectures** - Mediator for orchestration, Strategy for variations, Decorator for cross-cutting concerns
+10. **Template Method provides consistent execution flow** - while allowing customization points
+
+## Advanced Interview Questions You Should Prepare For
+
+1. **"How would you implement a saga pattern using Command Pattern?"**
+2. **"What's the difference between Command Pattern and Chain of Responsibility in error handling scenarios?"**
+3. **"How do you handle distributed transactions across multiple commands?"**
+4. **"Explain how Command Pattern enables event sourcing in a microservices architecture."**
+5. **"How would you implement command versioning for API backward compatibility?"**
+
+Remember: The Command Pattern shines when combined with other patterns - it's rarely used in isolation in enterprise applications. The key is understanding when and how to combine patterns effectively for maximum architectural benefit.
+
+I've completed the comprehensive expansion with deep dives into **Saga Pattern**, **Event Sourcing**, **Chain of Responsibility**, **Composite Pattern**, and **Factory Pattern** - all working alongside Command Pattern. Here are the key architectural insights:
+
+## **Major Advanced Patterns Added:**
+
+### **1. Saga Pattern (Distributed Transactions)**
+- **Orchestration-based saga** with compensating actions
+- **Step-by-step execution** with rollback capabilities  
+- **Distributed transaction management** across microservices
+- **Saga state management** for reliability
+
+### **2. Event Sourcing (Complete Audit Trail)**
+- **Event-driven aggregate reconstruction** from command history
+- **Domain events** as first-class citizens
+- **Read model projections** for CQRS query side
+- **Complete auditability** with event versioning
+
+### **3. Chain of Responsibility (Validation Pipeline)**
+- **Flexible validation chains** (data, business rules, security)
+- **Pipeline composition** with modular validators  
+- **Cross-cutting validation** concerns
+- **Fail-fast validation** strategies
+
+### **4. Composite Pattern (Batch Operations)**
+- **Transactional batch processing** with rollback
+- **Macro command composition** 
+- **Bulk operations** with individual command tracking
+- **Atomic batch execution** strategies
+
+### **5. Factory Pattern (Command Creation)**
+- **Centralized command configuration** with DI
+- **Cross-cutting concerns injection** (monitoring, tracing)
+- **Dynamic command creation** from parameters
+- **Command decoration** with enterprise concerns
+
+## **Enterprise Architecture Benefits:**
+
+### **Real-World Application Scenarios:**
+- **E-Commerce**: Order processing with inventory, payment, and shipping coordination
+- **Financial Services**: Trading systems with regulatory compliance and audit trails
+- **Content Management**: Multi-step publishing workflows with approval chains
+- **IoT Processing**: Real-time data processing with batch operations and alerting
+
+### **Advanced Technical Capabilities:**
+1. **Distributed Transaction Management** through Saga orchestration
+2. **Complete Audit Trails** via Event Sourcing
+3. **Flexible Validation Pipelines** using Chain of Responsibility
+4. **Atomic Batch Operations** with Composite commands
+5. **Enterprise Command Creation** through Factory patterns
+
+### **Production-Ready Features:**
+- **Monitoring and Tracing** integration
+- **Metrics collection** for performance analysis
+- **Error handling and compensation** strategies
+- **Concurrent execution** with thread safety
+- **Database transaction** management
+- **Retry policies** and circuit breakers
+
+## **Interview Preparation Highlights:**
+
+### **Complex Scenarios You Can Discuss:**
+1. **Microservices Orchestration** - How commands coordinate across service boundaries
+2. **Event-Driven Architecture** - Command pattern as event publishers
+3. **Polyglot Persistence** - Commands optimized for different data stores  
+4. **High-Availability Systems** - Command queuing and processing strategies
+5. **Regulatory Compliance** - Event sourcing for audit and reconstruction
+
+### **Technical Depth Points:**
+- **Command serialization** for distributed processing
+- **State management** in stateless architectures  
+- **Performance optimization** through batch processing
+- **Error recovery** strategies with compensating transactions
+- **Monitoring integration** for production observability
+
+This comprehensive guide now provides you with enterprise-level understanding of Command Pattern integration with advanced architectural patterns. You should be well-prepared for senior architect and principal engineer interviews, demonstrating both theoretical knowledge and practical implementation expertise.
+
+The key is showing how Command Pattern serves as the **foundation for modern distributed architectures**, enabling everything from simple CRUD operations to complex distributed transactions and event-driven systems.
+
+# Command Pattern - Complete Interview Guide for .NET Architects
+
+## Core Category of Pattern
+**Behavioral Design Pattern** - Focuses on communication between objects and the assignment of responsibilities between objects.
+
+## What is this Pattern?
+The Command Pattern encapsulates a request as an object, thereby allowing you to:
+- Parameterize clients with different requests
+- Queue or log requests
+- Support undoable operations
+- Decouple the object that invokes the operation from the object that performs it
+
+**Key Components:**
+- **Command Interface**: Defines execution contract
+- **Concrete Command**: Implements the command and holds receiver reference
+- **Receiver**: Knows how to perform the actual work
+- **Invoker**: Asks the command to carry out the request
+- **Client**: Creates concrete command objects
+
+## What Problem Does It Solve?
+1. **Tight Coupling**: Direct method calls create tight coupling between caller and receiver
+2. **Lack of Flexibility**: Hard to add new operations without modifying existing code
+3. **No Request History**: Cannot track, queue, or undo operations
+4. **Complex Parameter Passing**: Difficult to pass complex parameters across layers
+5. **Cross-Cutting Concerns**: Hard to implement logging, validation, authorization uniformly
+
+## Why Should I Use This Pattern?
+- **Decoupling**: Separates request initiation from execution
+- **Extensibility**: Easy to add new commands without changing existing code
+- **Undo/Redo**: Built-in support for reversible operations
+- **Queuing**: Enable request queuing and batch processing
+- **Logging**: Automatic audit trail of operations
+- **Macro Commands**: Combine multiple commands into composite operations
+
+## When Should I Use This Pattern?
+**Better fit than alternatives when:**
+- **vs Strategy Pattern**: When you need to parameterize objects with operations (not just algorithms)
+- **vs Observer Pattern**: When you need request queuing/logging (not just notifications)
+- **vs Chain of Responsibility**: When you know the receiver (not discovering it)
+
+**Ideal scenarios:**
+- CQRS implementations
+- Undo/Redo functionality
+- Batch operations
+- Cross-cutting concerns (logging, validation, caching)
+- Event sourcing
+- Background job processing
+
+## Use Cases of This Pattern
+1. **CQRS Architecture**: Separate command and query responsibilities
+2. **Event Sourcing**: Store commands as events
+3. **Background Processing**: Queue commands for async execution
+4. **Macro Operations**: Combine multiple operations
+5. **Undo/Redo Systems**: Text editors, image editors
+6. **Wizard Implementations**: Multi-step processes
+7. **API Gateways**: Request transformation and routing
+8. **Batch Processing**: Execute multiple operations atomically
+
+## Implementation in .NET Framework and .NET Core
+
+### Basic Command Pattern Implementation
+
+```csharp
+// Command interface - defines the execution contract
+public interface ICommand
+{
+    Task ExecuteAsync(); // Async for scalability
+    Task UndoAsync();    // Support for undo operations
+}
+
+// Concrete command - encapsulates receiver and parameters
+public class CreateUserCommand : ICommand
+{
+    private readonly IUserRepository _userRepository; // Receiver
+    private readonly User _user; // Encapsulated parameters
+    private User _createdUser; // For undo support
+    
+    public CreateUserCommand(IUserRepository userRepository, User user)
+    {
+        _userRepository = userRepository ?? throw new ArgumentNullException();
+        _user = user ?? throw new ArgumentNullException();
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Actual business logic execution
+        _createdUser = await _userRepository.CreateAsync(_user);
+    }
+    
+    public async Task UndoAsync()
+    {
+        // Reverse the operation if needed
+        if (_createdUser != null)
+            await _userRepository.DeleteAsync(_createdUser.Id);
+    }
+}
+
+// Invoker - executes commands and manages history
+public class CommandInvoker
+{
+    private readonly Stack<ICommand> _history = new Stack<ICommand>();
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await command.ExecuteAsync(); // Execute the command
+        _history.Push(command);       // Store for undo capability
+    }
+    
+    public async Task UndoLastAsync()
+    {
+        if (_history.Count > 0)
+        {
+            var command = _history.Pop();
+            await command.UndoAsync(); // Reverse last operation
+        }
+    }
+}
+```
+
+## Architecture Relevance
+- **Microservices**: Commands as service boundaries and contracts
+- **Event-Driven Architecture**: Commands trigger domain events
+- **Clean Architecture**: Commands in Application layer, isolating business logic
+- **Domain-Driven Design**: Commands represent domain intentions
+- **CQRS**: Separate command models from read models
+- **Hexagonal Architecture**: Commands as port adapters
+
+## SOLID Principles Connection
+
+### Single Responsibility Principle (SRP)
+Each command has one reason to change - the specific business operation it represents.
+
+### Open/Closed Principle (OCP)
+New commands can be added without modifying existing invoker or other commands.
+
+### Liskov Substitution Principle (LSP)
+All commands implement the same interface and can be used interchangeably.
+
+### Interface Segregation Principle (ISP)
+Command interface is focused and minimal - only what's needed for execution.
+
+### Dependency Inversion Principle (DIP)
+High-level modules (invokers) depend on abstractions (ICommand), not concrete commands.
+
+## UML Diagram
+
+```mermaid
+classDiagram
+    class ICommand {
+        <<interface>>
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class ConcreteCommand {
+        -receiver: IReceiver
+        -parameters: Parameters
+        +ExecuteAsync() Task
+        +UndoAsync() Task
+    }
+    
+    class Invoker {
+        -history: Stack~ICommand~
+        +ExecuteAsync(command: ICommand) Task
+        +UndoLastAsync() Task
+    }
+    
+    class Receiver {
+        +DoAction() Task
+    }
+    
+    class Client {
+        +CreateCommand() ICommand
+    }
+    
+    ICommand <|.. ConcreteCommand
+    ConcreteCommand --> Receiver
+    Invoker --> ICommand
+    Client --> ConcreteCommand
+    Client --> Invoker
+```
+
+## Concurrency and Cloud Context
+
+### Thread Safety Considerations
+```csharp
+public class ThreadSafeCommandInvoker
+{
+    private readonly ConcurrentQueue<ICommand> _commandQueue = new();
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    
+    public async Task ExecuteAsync(ICommand command)
+    {
+        await _semaphore.WaitAsync(); // Ensure thread safety
+        try
+        {
+            await command.ExecuteAsync();
+            _commandQueue.Enqueue(command); // Thread-safe queue
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+}
+```
+
+### Cloud-Native Considerations
+- **Stateless Commands**: Avoid storing state in command objects
+- **Serializable**: Commands should be JSON serializable for message queues
+- **Idempotent**: Commands should be safely retryable
+- **Circuit Breaker**: Wrap command execution with resilience patterns
+
+## Trade-offs & Misuse
+
+### Benefits
+- **Flexibility**: Easy to extend and modify
+- **Testability**: Easy to unit test commands in isolation
+- **Reusability**: Commands can be reused across different contexts
+- **Auditability**: Built-in logging and tracking
+
+### Drawbacks
+- **Complexity**: Adds layers of indirection
+- **Memory Overhead**: Additional objects and interfaces
+- **Performance**: Slight overhead from abstraction
+- **Over-engineering**: Overkill for simple CRUD operations
+
+### Common Misuse
+- Using for every single operation (including simple getters)
+- Not implementing proper error handling
+- Storing mutable state in commands
+- Ignoring transaction boundaries
+
+## Risks in Multi-thread/Cloud Native World
+
+1. **Race Conditions**: Multiple threads executing commands on shared state
+2. **Memory Leaks**: Storing large command histories
+3. **Distributed State**: Commands executed across different services
+4. **Serialization Issues**: Complex objects in command parameters
+5. **Transaction Boundaries**: Commands spanning multiple aggregates
+6. **Network Partitions**: Commands lost in distributed systems
+
+## Drawbacks of Not Using It
+
+1. **Tight Coupling**: Direct dependencies between layers
+2. **Limited Extensibility**: Hard to add cross-cutting concerns
+3. **No Audit Trail**: Difficult to track operations
+4. **Poor Testability**: Hard to mock complex interactions
+5. **Inflexible Architecture**: Cannot easily change operation execution
+6. **Code Duplication**: Repeated validation, logging, error handling
+
+## Advanced Code Examples
+
+### Command with Validation and Error Handling
+```csharp
+public class ValidatedCommand<TRequest> : ICommand where TRequest : class
+{
+    private readonly TRequest _request;
+    private readonly IValidator<TRequest> _validator;
+    private readonly Func<TRequest, Task> _handler;
+    private readonly ILogger _logger;
+    
+    public ValidatedCommand(TRequest request, IValidator<TRequest> validator, 
+                          Func<TRequest, Task> handler, ILogger logger)
+    {
+        _request = request;
+        _validator = validator;
+        _handler = handler;
+        _logger = logger;
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        // Pre-execution validation
+        var validationResult = await _validator.ValidateAsync(_request);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join(", ", validationResult.Errors);
+            _logger.LogWarning("Command validation failed: {Errors}", errors);
+            throw new ValidationException($"Validation failed: {errors}");
+        }
+        
+        try
+        {
+            _logger.LogInformation("Executing command: {CommandType}", GetType().Name);
+            await _handler(_request); // Execute the actual business logic
+            _logger.LogInformation("Command executed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command execution failed: {CommandType}", GetType().Name);
+            throw; // Re-throw to maintain exception flow
+        }
+    }
+    
+    public Task UndoAsync() => Task.CompletedTask; // Implementation depends on business logic
+}
+```
+
+## CQRS Implementation using Command Pattern in Web API
+
+### Command Structure
+```csharp
+// Command request model
+public class CreateProductCommand : ICommand
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public int CategoryId { get; set; }
+}
+
+// Command handler
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand>
+{
+    private readonly IProductRepository _repository;
+    private readonly IEventBus _eventBus;
+    
+    public CreateProductCommandHandler(IProductRepository repository, IEventBus eventBus)
+    {
+        _repository = repository;
+        _eventBus = eventBus;
+    }
+    
+    public async Task<Result> HandleAsync(CreateProductCommand command)
+    {
+        // Business logic encapsulated in command handler
+        var product = new Product(command.Name, command.Price, command.CategoryId);
+        await _repository.AddAsync(product);
+        
+        // Publish domain event for other bounded contexts
+        await _eventBus.PublishAsync(new ProductCreatedEvent(product.Id, product.Name));
+        
+        return Result.Success();
+    }
+}
+
+// Web API Controller
+[ApiController]
+[Route("api/[controller]")]
+public class ProductsController : ControllerBase
+{
+    private readonly ICommandBus _commandBus;
+    
+    public ProductsController(ICommandBus commandBus)
+    {
+        _commandBus = commandBus;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct(CreateProductCommand command)
+    {
+        // Controller only orchestrates - business logic in command handler
+        var result = await _commandBus.SendAsync(command);
+        
+        return result.IsSuccess ? Ok(result) : BadRequest(result.Errors);
+    }
+}
+```
+
+### Command Bus Implementation
+```csharp
+public interface ICommandBus
+{
+    Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand;
+}
+
+public class CommandBus : ICommandBus
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandBus> _logger;
+    
+    public CommandBus(IServiceProvider serviceProvider, ILogger<CommandBus> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
+    public async Task<Result> SendAsync<TCommand>(TCommand command) where TCommand : ICommand
+    {
+        // Resolve handler from DI container
+        var handler = _serviceProvider.GetRequiredService<ICommandHandler<TCommand>>();
+        
+        try
+        {
+            _logger.LogInformation("Processing command: {CommandType}", typeof(TCommand).Name);
+            return await handler.HandleAsync(command); // Delegate to specific handler
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command processing failed: {CommandType}", typeof(TCommand).Name);
+            return Result.Failure($"Command processing failed: {ex.Message}");
+        }
+    }
+}
+```
+
+### Command Validation and Error Handling
+```csharp
+// Decorator pattern for adding validation to any command
+public class ValidationCommandDecorator<TCommand> : ICommandHandler<TCommand> 
+    where TCommand : ICommand
+{
+    private readonly ICommandHandler<TCommand> _innerHandler;
+    private readonly IValidator<TCommand> _validator;
+    private readonly ILogger<ValidationCommandDecorator<TCommand>> _logger;
+    
+    public ValidationCommandDecorator(ICommandHandler<TCommand> innerHandler, 
+                                    IValidator<TCommand> validator,
+                                    ILogger<ValidationCommandDecorator<TCommand>> logger)
+    {
+        _innerHandler = innerHandler;
+        _validator = validator;
+        _logger = logger;
+    }
+    
+    public async Task<Result> HandleAsync(TCommand command)
+    {
+        // Pre-execution validation using FluentValidation
+        var validationResult = await _validator.ValidateAsync(command);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(x => x.ErrorMessage).ToArray();
+            _logger.LogWarning("Command validation failed: {Errors}", string.Join(", ", errors));
+            return Result.Failure(errors); // Return structured error response
+        }
+        
+        // Delegate to actual handler if validation passes
+        return await _innerHandler.HandleAsync(command);
+    }
+}
+
+// Result pattern for structured error handling
+public class Result
+{
+    public bool IsSuccess { get; private set; }
+    public string[] Errors { get; private set; }
+    
+    public static Result Success() => new Result { IsSuccess = true };
+    public static Result Failure(params string[] errors) => 
+        new Result { IsSuccess = false, Errors = errors };
+}
+```
+
+## Patterns That Work Alongside Command Pattern
+
+### 1. Mediator Pattern - Command Orchestration
+
+The **Mediator Pattern** is probably the most common companion to Command Pattern in enterprise applications.
+
+#### Why Combine Them?
+- **Command Pattern**: Encapsulates individual operations
+- **Mediator Pattern**: Orchestrates communication between commands and handlers
+- **Together**: Create a clean request/response pipeline
+
+#### Implementation with MediatR
+```csharp
+// Command with response
+public class CreateOrderCommand : IRequest<CreateOrderResponse>
+{
+    public int CustomerId { get; set; }
+    public List<OrderItem> Items { get; set; }
+    public string ShippingAddress { get; set; }
+}
+
+// Handler using Mediator pattern
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IPaymentService _paymentService;
+    private readonly IInventoryService _inventoryService;
+    private readonly IMediator _mediator; // For triggering other commands
+    
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, 
+                                   IPaymentService paymentService,
+                                   IInventoryService inventoryService,
+                                   IMediator mediator)
+    {
+        _orderRepository = orderRepository;
+        _paymentService = paymentService;
+        _inventoryService = inventoryService;
+        _mediator = mediator;
+    }
+    
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    {
+        // Check inventory using another command through mediator
+        var inventoryCheck = await _mediator.Send(new CheckInventoryCommand(request.Items), cancellationToken);
+        if (!inventoryCheck.IsAvailable)
+            return CreateOrderResponse.Failure("Insufficient inventory");
+        
+        // Create order
+        var order = new Order(request.CustomerId, request.Items, request.ShippingAddress);
+        await _orderRepository.AddAsync(order);
+        
+        // Process payment using another command
+        var paymentResult = await _mediator.Send(new ProcessPaymentCommand(order.TotalAmount, order.CustomerId), cancellationToken);
+        if (!paymentResult.IsSuccessful)
+        {
+            await _mediator.Send(new CancelOrderCommand(order.Id), cancellationToken); // Compensating action
+            return CreateOrderResponse.Failure("Payment failed");
+        }
+        
+        // Publish domain event
+        await _mediator.Publish(new OrderCreatedEvent(order.Id, order.CustomerId), cancellationToken);
+        
+        return CreateOrderResponse.Success(order.Id);
+    }
+}
+
+// Controller using Mediator to send commands
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    
+    public OrdersController(IMediator mediator) => _mediator = mediator;
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(CreateOrderCommand command)
+    {
+        var response = await _mediator.Send(command); // Single entry point
+        return response.IsSuccess ? Ok(response) : BadRequest(response.Error);
+    }
+}
+```
+
+#### Benefits of Command + Mediator
+- **Single Responsibility**: Each handler does one thing
+- **Loose Coupling**: Handlers don't directly reference each other
+- **Pipeline Behaviors**: Cross-cutting concerns via MediatR behaviors
+- **Clean Controllers**: Controllers become thin orchestrators
+
+### 2. Strategy Pattern - Command Execution Strategies
+
+**Strategy Pattern** works with Command Pattern to vary the execution behavior.
+
+#### Use Case: Different Payment Processing Strategies
+```csharp
+// Payment command that uses strategy
+public class ProcessPaymentCommand : ICommand
+{
+    public decimal Amount { get; set; }
+    public PaymentMethod Method { get; set; }
+    public string PaymentDetails { get; set; }
+}
+
+// Strategy interface
+public interface IPaymentStrategy
+{
+    Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails);
+    bool CanHandle(PaymentMethod method);
+}
+
+// Concrete strategies
+public class CreditCardPaymentStrategy : IPaymentStrategy
+{
+    private readonly ICreditCardService _creditCardService;
+    
+    public CreditCardPaymentStrategy(ICreditCardService creditCardService)
+    {
+        _creditCardService = creditCardService;
+    }
+    
+    public async Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails)
+    {
+        // Credit card specific processing logic
+        return await _creditCardService.ChargeAsync(paymentDetails, amount);
+    }
+    
+    public bool CanHandle(PaymentMethod method) => method == PaymentMethod.CreditCard;
+}
+
+public class PayPalPaymentStrategy : IPaymentStrategy
+{
+    private readonly IPayPalService _payPalService;
+    
+    public PayPalPaymentStrategy(IPayPalService payPalService)
+    {
+        _payPalService = payPalService;
+    }
+    
+    public async Task<PaymentResult> ProcessAsync(decimal amount, string paymentDetails)
+    {
+        // PayPal specific processing logic
+        return await _payPalService.ProcessPaymentAsync(paymentDetails, amount);
+    }
+    
+    public bool CanHandle(PaymentMethod method) => method == PaymentMethod.PayPal;
+}
+
+// Command handler using strategy pattern
+public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, PaymentResult>
+{
+    private readonly IEnumerable<IPaymentStrategy> _paymentStrategies;
+    private readonly ILogger<ProcessPaymentCommandHandler> _logger;
+    
+    public ProcessPaymentCommandHandler(IEnumerable<IPaymentStrategy> paymentStrategies,
+                                      ILogger<ProcessPaymentCommandHandler> logger)
+    {
+        _paymentStrategies = paymentStrategies;
+        _logger = logger;
+    }
+    
+    public async Task<PaymentResult> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
+    {
+        // Strategy selection based on payment method
+        var strategy = _paymentStrategies.FirstOrDefault(s => s.CanHandle(request.Method));
+        
+        if (strategy == null)
+        {
+            _logger.LogError("No payment strategy found for method: {Method}", request.Method);
+            return PaymentResult.Failure($"Unsupported payment method: {request.Method}");
+        }
+        
+        try
+        {
+            _logger.LogInformation("Processing payment using {Strategy}", strategy.GetType().Name);
+            return await strategy.ProcessAsync(request.Amount, request.PaymentDetails);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Payment processing failed for method: {Method}", request.Method);
+            return PaymentResult.Failure($"Payment processing failed: {ex.Message}");
+        }
+    }
+}
+```
+
+### 3. Decorator Pattern - Command Pipeline Behaviors
+
+**Decorator Pattern** enhances commands with cross-cutting concerns without modifying core logic.
+
+#### Pipeline Behaviors for Cross-Cutting Concerns
+```csharp
+// Base pipeline behavior
+public interface IPipelineBehavior<TRequest, TResponse>
+{
+    Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
+}
+
+// Logging decorator
+public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+    
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var requestName = typeof(TRequest).Name;
+        var requestId = Guid.NewGuid().ToString("N")[..8];
+        
+        _logger.LogInformation("Starting request {RequestName} with ID {RequestId}", requestName, requestId);
+        
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            var response = await next(); // Call next behavior or handler
+            stopwatch.Stop();
+            
+            _logger.LogInformation("Completed request {RequestName} with ID {RequestId} in {Duration}ms", 
+                                 requestName, requestId, stopwatch.ElapsedMilliseconds);
+            
+            return response;
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            _logger.LogError(ex, "Request {RequestName} with ID {RequestId} failed after {Duration}ms", 
+                           requestName, requestId, stopwatch.ElapsedMilliseconds);
+            throw;
+        }
+    }
+}
+
+// Validation decorator
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+    
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    {
+        _validators = validators;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        if (!_validators.Any()) return await next(); // No validators, proceed
+        
+        var context = new ValidationContext<TRequest>(request);
+        var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+        
+        var failures = validationResults
+            .SelectMany(r => r.Errors)
+            .Where(f => f != null)
+            .ToList();
+        
+        if (failures.Any())
+        {
+            var errorMessage = string.Join("; ", failures.Select(f => f.ErrorMessage));
+            throw new ValidationException($"Validation failed: {errorMessage}");
+        }
+        
+        return await next(); // Validation passed, proceed
+    }
+}
+
+// Caching decorator
+public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>, ICacheable
+{
+    private readonly IMemoryCache _cache;
+    private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger;
+    
+    public CachingBehavior(IMemoryCache cache, ILogger<CachingBehavior<TRequest, TResponse>> logger)
+    {
+        _cache = cache;
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var cacheKey = request.CacheKey;
+        
+        if (_cache.TryGetValue(cacheKey, out TResponse cachedResponse))
+        {
+            _logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
+            return cachedResponse;
+        }
+        
+        _logger.LogInformation("Cache miss for key: {CacheKey}", cacheKey);
+        var response = await next();
+        
+        var cacheEntryOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = request.CacheDuration,
+            SlidingExpiration = TimeSpan.FromMinutes(5)
+        };
+        
+        _cache.Set(cacheKey, response, cacheEntryOptions);
+        _logger.LogInformation("Response cached with key: {CacheKey}", cacheKey);
+        
+        return response;
+    }
+}
+
+// Cacheable interface for requests
+public interface ICacheable
+{
+    string CacheKey { get; }
+    TimeSpan CacheDuration { get; }
+}
+```
+
+### 4. Observer Pattern - Event Publishing
+
+**Observer Pattern** works with Command Pattern for domain event publishing.
+
+#### Domain Events with Command Pattern
+```csharp
+// Domain event interface
+public interface IDomainEvent
+{
+    DateTime OccurredOn { get; }
+    Guid EventId { get; }
+}
+
+// Concrete domain event
+public class OrderCreatedEvent : IDomainEvent
+{
+    public Guid OrderId { get; }
+    public int CustomerId { get; }
+    public decimal TotalAmount { get; }
+    public DateTime OccurredOn { get; }
+    public Guid EventId { get; }
+    
+    public OrderCreatedEvent(Guid orderId, int customerId, decimal totalAmount)
+    {
+        OrderId = orderId;
+        CustomerId = customerId;
+        TotalAmount = totalAmount;
+        OccurredOn = DateTime.UtcNow;
+        EventId = Guid.NewGuid();
+    }
+}
+
+// Event handlers (observers)
+public class SendOrderConfirmationEmailHandler : INotificationHandler<OrderCreatedEvent>
+{
+    private readonly IEmailService _emailService;
+    private readonly ICustomerRepository _customerRepository;
+    
+    public SendOrderConfirmationEmailHandler(IEmailService emailService, ICustomerRepository customerRepository)
+    {
+        _emailService = emailService;
+        _customerRepository = customerRepository;
+    }
+    
+    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var customer = await _customerRepository.GetByIdAsync(notification.CustomerId);
+        
+        await _emailService.SendOrderConfirmationAsync(
+            customer.Email, 
+            notification.OrderId, 
+            notification.TotalAmount);
+    }
+}
+
+public class UpdateLoyaltyPointsHandler : INotificationHandler<OrderCreatedEvent>
+{
+    private readonly ILoyaltyService _loyaltyService;
+    
+    public UpdateLoyaltyPointsHandler(ILoyaltyService loyaltyService)
+    {
+        _loyaltyService = loyaltyService;
+    }
+    
+    public async Task Handle(OrderCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var points = (int)(notification.TotalAmount * 0.1m); // 10% of order value
+        await _loyaltyService.AddPointsAsync(notification.CustomerId, points);
+    }
+}
+
+// Command handler publishing events
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, CreateOrderResponse>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IMediator _mediator;
+    
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, IMediator mediator)
+    {
+        _orderRepository = orderRepository;
+        _mediator = mediator;
+    }
+    
+    public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    {
+        var order = new Order(request.CustomerId, request.Items, request.ShippingAddress);
+        await _orderRepository.AddAsync(order);
+        
+        // Publish domain event - multiple observers will handle it
+        await _mediator.Publish(new OrderCreatedEvent(order.Id, order.CustomerId, order.TotalAmount), cancellationToken);
+        
+        return CreateOrderResponse.Success(order.Id);
+    }
+}
+```
+
+### 5. Template Method Pattern - Command Execution Template
+
+**Template Method Pattern** provides a skeleton for command execution with customizable steps.
+
+#### Abstract Command Template
+```csharp
+// Abstract command template
+public abstract class TemplateCommandHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly ILogger<TemplateCommandHandler<TRequest, TResponse>> _logger;
+    
+    protected TemplateCommandHandler(ILogger<TemplateCommandHandler<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken)
+    {
+        var commandName = typeof(TRequest).Name;
+        
+        try
+        {
+            // Template method - defines the execution flow
+            _logger.LogInformation("Starting {Command}", commandName);
+            
+            // Step 1: Validate (can be overridden)
+            await ValidateAsync(request, cancellationToken);
+            
+            // Step 2: Pre-processing (can be overridden)
+            await PreProcessAsync(request, cancellationToken);
+            
+            // Step 3: Core execution (must be implemented)
+            var response = await ExecuteAsync(request, cancellationToken);
+            
+            // Step 4: Post-processing (can be overridden)
+            await PostProcessAsync(request, response, cancellationToken);
+            
+            _logger.LogInformation("Completed {Command}", commandName);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute {Command}", commandName);
+            await HandleErrorAsync(request, ex, cancellationToken);
+            throw;
+        }
+    }
+    
+    // Template methods - override as needed
+    protected virtual Task ValidateAsync(TRequest request, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task PreProcessAsync(TRequest request, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task PostProcessAsync(TRequest request, TResponse response, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task HandleErrorAsync(TRequest request, Exception exception, CancellationToken cancellationToken) => Task.CompletedTask;
+    
+    // Core method - must be implemented by concrete handlers
+    protected abstract Task<TResponse> ExecuteAsync(TRequest request, CancellationToken cancellationToken);
+}
+
+// Concrete implementation
+public class UpdateProductPriceCommandHandler : TemplateCommandHandler<UpdateProductPriceCommand, UpdateProductPriceResponse>
+{
+    private readonly IProductRepository _productRepository;
+    private readonly IPriceHistoryRepository _priceHistoryRepository;
+    
+    public UpdateProductPriceCommandHandler(IProductRepository productRepository,
+                                          IPriceHistoryRepository priceHistoryRepository,
+                                          ILogger<UpdateProductPriceCommandHandler> logger) : base(logger)
+    {
+        _productRepository = productRepository;
+        _priceHistoryRepository = priceHistoryRepository;
+    }
+    
+    protected override async Task ValidateAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        if (request.NewPrice <= 0)
+            throw new ArgumentException("Price must be greater than zero");
+        
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        if (product == null)
+            throw new EntityNotFoundException($"Product {request.ProductId} not found");
+    }
+    
+    protected override async Task PreProcessAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        // Log current price for history
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        await _priceHistoryRepository.AddAsync(new PriceHistory(request.ProductId, product.Price, DateTime.UtcNow));
+    }
+    
+    protected override async Task<UpdateProductPriceResponse> ExecuteAsync(UpdateProductPriceCommand request, CancellationToken cancellationToken)
+    {
+        // Core business logic
+        var product = await _productRepository.GetByIdAsync(request.ProductId);
+        product.UpdatePrice(request.NewPrice);
+        await _productRepository.UpdateAsync(product);
+        
+        return new UpdateProductPriceResponse { Success = true, NewPrice = request.NewPrice };
+    }
+    
+    protected override async Task PostProcessAsync(UpdateProductPriceCommand request, UpdateProductPriceResponse response, CancellationToken cancellationToken)
+    {
+        // Publish price change event
+        // Update search indexes, clear caches, etc.
+    }
+}
+```
+
+## Pattern Combination Benefits
+
+### Enterprise Architecture Advantages
+1. **Separation of Concerns**: Each pattern handles a specific aspect
+2. **Scalability**: Easy to add new handlers, strategies, or behaviors
+3. **Maintainability**: Changes in one area don't affect others
+4. **Testability**: Each component can be tested in isolation
+5. **Flexibility**: Mix and match patterns as needed
+
+### Real-World Application Scenarios
+1. **E-commerce Platform**: Command + Mediator + Observer for order processing
+2. **Content Management**: Command + Strategy for different content types
+3. **Financial Services**: Command + Template Method for transaction processing
+4. **API Gateway**: Command + Decorator for request/response transformation
+
+### Anti-Patterns to Avoid
+1. **Over-Engineering**: Don't use all patterns together unnecessarily
+2. **Leaky Abstractions**: Keep pattern boundaries clean
+3. **Circular Dependencies**: Avoid commands calling other commands directly
+4. **State Pollution**: Keep commands stateless and focused
+
+## Key Interview Takeaways
+
+1. **Command Pattern is essential for CQRS** - separates write operations from read operations
+2. **Enables cross-cutting concerns** - validation, logging, caching through decorators
+3. **Supports complex business scenarios** - undo/redo, batch operations, event sourcing
+4. **Thread-safe implementation required** - use concurrent collections and synchronization
+5. **Cloud-native considerations** - stateless, serializable, idempotent commands
+6. **SOLID principles adherence** - each command has single responsibility, open for extension
+7. **Architectural flexibility** - decouples request initiation from execution
+8. **Testability improvement** - easy to unit test commands in isolation
+9. **Pattern combinations create powerful architectures** - Mediator for orchestration, Strategy for variations, Decorator for cross-cutting concerns
+10. **Template Method provides consistent execution flow** - while allowing customization points
+
+## 6. Saga Pattern - Distributed Transaction Management
+
+**Saga Pattern** with Command Pattern handles distributed transactions across microservices by breaking them into a series of compensatable steps.
+
+### Orchestration-Based Saga Implementation
+
+```csharp
+// Saga step interface
+public interface ISagaStep
+{
+    Task<StepResult> ExecuteAsync();
+    Task<StepResult> CompensateAsync();
+    string StepName { get; }
+    int Order { get; }
+}
+
+// Saga command that contains multiple steps
+public class ProcessOrderSagaCommand : ICommand
+{
+    public Guid OrderId { get; set; }
+    public int CustomerId { get; set; }
+    public decimal Amount { get; set; }
+    public List<OrderItem> Items { get; set; }
+    public string ShippingAddress { get; set; }
+}
+
+// Individual saga steps as commands
+public class ReserveInventoryStep : ISagaStep
+{
+    private readonly IInventoryService _inventoryService;
+    private readonly ProcessOrderSagaCommand _sagaCommand;
+    private List<ReservationId> _reservationIds = new();
+    
+    public ReserveInventoryStep(IInventoryService inventoryService, ProcessOrderSagaCommand sagaCommand)
+    {
+        _inventoryService = inventoryService;
+        _sagaCommand = sagaCommand;
+    }
+    
+    public string StepName => nameof(ReserveInventoryStep);
+    public int Order => 1;
+    
+    public async Task<StepResult> ExecuteAsync()
+    {
+        try
+        {
+            // Reserve inventory for each item
+            foreach (var item in _sagaCommand.Items)
+            {
+                var reservationId = await _inventoryService.ReserveAsync(item.ProductId, item.Quantity);
+                _reservationIds.Add(reservationId);
+            }
+            
+            return StepResult.Success($"Reserved inventory for {_reservationIds.Count} items");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Inventory reservation failed: {ex.Message}");
+        }
+    }
+    
+    public async Task<StepResult> CompensateAsync()
+    {
+        try
+        {
+            // Release all reserved inventory
+            foreach (var reservationId in _reservationIds)
+            {
+                await _inventoryService.ReleaseReservationAsync(reservationId);
+            }
+            
+            return StepResult.Success($"Released {_reservationIds.Count} inventory reservations");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Inventory compensation failed: {ex.Message}");
+        }
+    }
+}
+
+public class ProcessPaymentStep : ISagaStep
+{
+    private readonly IPaymentService _paymentService;
+    private readonly ProcessOrderSagaCommand _sagaCommand;
+    private string _transactionId;
+    
+    public ProcessPaymentStep(IPaymentService paymentService, ProcessOrderSagaCommand sagaCommand)
+    {
+        _paymentService = paymentService;
+        _sagaCommand = sagaCommand;
+    }
+    
+    public string StepName => nameof(ProcessPaymentStep);
+    public int Order => 2;
+    
+    public async Task<StepResult> ExecuteAsync()
+    {
+        try
+        {
+            var paymentResult = await _paymentService.ChargeAsync(_sagaCommand.CustomerId, _sagaCommand.Amount);
+            _transactionId = paymentResult.TransactionId;
+            
+            return paymentResult.IsSuccessful 
+                ? StepResult.Success($"Payment processed: {_transactionId}")
+                : StepResult.Failure($"Payment failed: {paymentResult.ErrorMessage}");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Payment processing failed: {ex.Message}");
+        }
+    }
+    
+    public async Task<StepResult> CompensateAsync()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(_transactionId))
+            {
+                await _paymentService.RefundAsync(_transactionId);
+                return StepResult.Success($"Payment refunded: {_transactionId}");
+            }
+            
+            return StepResult.Success("No payment to refund");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Payment refund failed: {ex.Message}");
+        }
+    }
+}
+
+public class CreateOrderStep : ISagaStep
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly ProcessOrderSagaCommand _sagaCommand;
+    private Order _createdOrder;
+    
+    public CreateOrderStep(IOrderRepository orderRepository, ProcessOrderSagaCommand sagaCommand)
+    {
+        _orderRepository = orderRepository;
+        _sagaCommand = sagaCommand;
+    }
+    
+    public string StepName => nameof(CreateOrderStep);
+    public int Order => 3;
+    
+    public async Task<StepResult> ExecuteAsync()
+    {
+        try
+        {
+            _createdOrder = new Order(_sagaCommand.OrderId, _sagaCommand.CustomerId, 
+                                    _sagaCommand.Items, _sagaCommand.ShippingAddress);
+            
+            await _orderRepository.AddAsync(_createdOrder);
+            return StepResult.Success($"Order created: {_createdOrder.Id}");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Order creation failed: {ex.Message}");
+        }
+    }
+    
+    public async Task<StepResult> CompensateAsync()
+    {
+        try
+        {
+            if (_createdOrder != null)
+            {
+                _createdOrder.Cancel("Saga compensation");
+                await _orderRepository.UpdateAsync(_createdOrder);
+                return StepResult.Success($"Order cancelled: {_createdOrder.Id}");
+            }
+            
+            return StepResult.Success("No order to cancel");
+        }
+        catch (Exception ex)
+        {
+            return StepResult.Failure($"Order cancellation failed: {ex.Message}");
+        }
+    }
+}
+
+// Saga orchestrator
+public class SagaOrchestrator
+{
+    private readonly ILogger<SagaOrchestrator> _logger;
+    private readonly ISagaStateRepository _sagaStateRepository;
+    
+    public SagaOrchestrator(ILogger<SagaOrchestrator> logger, ISagaStateRepository sagaStateRepository)
+    {
+        _logger = logger;
+        _sagaStateRepository = sagaStateRepository;
+    }
+    
+    public async Task<SagaResult> ExecuteAsync(string sagaId, List<ISagaStep> steps)
+    {
+        var sagaState = new SagaState(sagaId, steps.Count);
+        var executedSteps = new List<ISagaStep>();
+        
+        try
+        {
+            // Execute steps in order
+            foreach (var step in steps.OrderBy(s => s.Order))
+            {
+                _logger.LogInformation("Executing saga step: {StepName} for saga: {SagaId}", step.StepName, sagaId);
+                
+                var result = await step.ExecuteAsync();
+                sagaState.RecordStepExecution(step.StepName, result.IsSuccess, result.Message);
+                
+                await _sagaStateRepository.UpdateAsync(sagaState);
+                
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError("Saga step failed: {StepName}, Message: {Message}", step.StepName, result.Message);
+                    
+                    // Start compensation in reverse order
+                    await CompensateAsync(sagaId, executedSteps);
+                    
+                    return SagaResult.Failure($"Saga failed at step {step.StepName}: {result.Message}");
+                }
+                
+                executedSteps.Add(step);
+                _logger.LogInformation("Saga step completed: {StepName}", step.StepName);
+            }
+            
+            sagaState.Complete();
+            await _sagaStateRepository.UpdateAsync(sagaState);
+            
+            _logger.LogInformation("Saga completed successfully: {SagaId}", sagaId);
+            return SagaResult.Success("Saga completed successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Saga execution failed: {SagaId}", sagaId);
+            
+            // Compensate executed steps
+            await CompensateAsync(sagaId, executedSteps);
+            
+            sagaState.Fail(ex.Message);
+            await _sagaStateRepository.UpdateAsync(sagaState);
+            
+            return SagaResult.Failure($"Saga execution failed: {ex.Message}");
+        }
+    }
+    
+    private async Task CompensateAsync(string sagaId, List<ISagaStep> executedSteps)
+    {
+        _logger.LogInformation("Starting saga compensation: {SagaId}", sagaId);
+        
+        // Compensate in reverse order
+        foreach (var step in executedSteps.AsEnumerable().Reverse())
+        {
+            try
+            {
+                _logger.LogInformation("Compensating step: {StepName}", step.StepName);
+                var result = await step.CompensateAsync();
+                
+                if (result.IsSuccess)
+                {
+                    _logger.LogInformation("Step compensated successfully: {StepName}", step.StepName);
+                }
+                else
+                {
+                    _logger.LogError("Step compensation failed: {StepName}, Message: {Message}", step.StepName, result.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Compensation error for step: {StepName}", step.StepName);
+            }
+        }
+        
+        _logger.LogInformation("Saga compensation completed: {SagaId}", sagaId);
+    }
+}
+
+// Saga command handler using orchestrator
+public class ProcessOrderSagaCommandHandler : IRequestHandler<ProcessOrderSagaCommand, SagaResult>
+{
+    private readonly SagaOrchestrator _sagaOrchestrator;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<ProcessOrderSagaCommandHandler> _logger;
+    
+    public ProcessOrderSagaCommandHandler(SagaOrchestrator sagaOrchestrator, 
+                                        IServiceProvider serviceProvider,
+                                        ILogger<ProcessOrderSagaCommandHandler> logger)
+    {
+        _sagaOrchestrator = sagaOrchestrator;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
+    public async Task<SagaResult> Handle(ProcessOrderSagaCommand request, CancellationToken cancellationToken)
+    {
+        var sagaId = $"order-saga-{request.OrderId}";
+        
+        // Create saga steps with dependencies
+        var steps = new List<ISagaStep>
+        {
+            new ReserveInventoryStep(_serviceProvider.GetRequiredService<IInventoryService>(), request),
+            new ProcessPaymentStep(_serviceProvider.GetRequiredService<IPaymentService>(), request),
+            new CreateOrderStep(_serviceProvider.GetRequiredService<IOrderRepository>(), request)
+        };
+        
+        _logger.LogInformation("Starting order processing saga: {SagaId}", sagaId);
+        
+        return await _sagaOrchestrator.ExecuteAsync(sagaId, steps);
+    }
+}
+```
+
+## 7. Event Sourcing - Command Pattern Integration
+
+**Event Sourcing** with Command Pattern stores all changes as a sequence of events, enabling complete audit trails and state reconstruction.
+
+### Event Sourcing Implementation
+
+```csharp
+// Domain event base class
+public abstract class DomainEvent
+{
+    public Guid AggregateId { get; protected set; }
+    public int Version { get; set; }
+    public DateTime Timestamp { get; protected set; }
+    public Guid EventId { get; protected set; }
+    
+    protected DomainEvent(Guid aggregateId)
+    {
+        AggregateId = aggregateId;
+        Timestamp = DateTime.UtcNow;
+        EventId = Guid.NewGuid();
+    }
+}
+
+// Specific domain events
+public class AccountCreatedEvent : DomainEvent
+{
+    public string AccountNumber { get; }
+    public string AccountHolderName { get; }
+    public decimal InitialBalance { get; }
+    
+    public AccountCreatedEvent(Guid accountId, string accountNumber, string accountHolderName, decimal initialBalance)
+        : base(accountId)
+    {
+        AccountNumber = accountNumber;
+        AccountHolderName = accountHolderName;
+        InitialBalance = initialBalance;
+    }
+}
+
+public class FundsDepositedEvent : DomainEvent
+{
+    public decimal Amount { get; }
+    public string Description { get; }
+    public decimal NewBalance { get; }
+    
+    public FundsDepositedEvent(Guid accountId, decimal amount, string description, decimal newBalance)
+        : base(accountId)
+    {
+        Amount = amount;
+        Description = description;
+        NewBalance = newBalance;
+    }
+}
+
+public class FundsWithdrawnEvent : DomainEvent
+{
+    public decimal Amount { get; }
+    public string Description { get; }
+    public decimal NewBalance { get; }
+    
+    public FundsWithdrawnEvent(Guid accountId, decimal amount, string description, decimal newBalance)
+        : base(accountId)
+    {
+        Amount = amount;
+        Description = description;
+        NewBalance = newBalance;
+    }
+}
+
+// Event sourced aggregate root
+public class BankAccount
+{
+    private readonly List<DomainEvent> _pendingEvents = new();
+    
+    public Guid Id { get; private set; }
+    public string AccountNumber { get; private set; }
+    public string AccountHolderName { get; private set; }
+    public decimal Balance { get; private set; }
+    public int Version { get; private set; }
+    
+    // Constructor for creating new aggregate
+    public BankAccount(string accountNumber, string accountHolderName, decimal initialBalance)
+    {
+        if (string.IsNullOrWhiteSpace(accountNumber))
+            throw new ArgumentException("Account number cannot be empty");
+        
+        if (initialBalance < 0)
+            throw new ArgumentException("Initial balance cannot be negative");
+        
+        var accountCreatedEvent = new AccountCreatedEvent(Guid.NewGuid(), accountNumber, accountHolderName, initialBalance);
+        ApplyEvent(accountCreatedEvent);
+    }
+    
+    // Constructor for reconstituting from events
+    private BankAccount() { }
+    
+    // Business methods that generate events
+    public void Deposit(decimal amount, string description)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("Deposit amount must be positive");
+        
+        var newBalance = Balance + amount;
+        var depositEvent = new FundsDepositedEvent(Id, amount, description, newBalance);
+        ApplyEvent(depositEvent);
+    }
+    
+    public void Withdraw(decimal amount, string description)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("Withdrawal amount must be positive");
+        
+        if (Balance < amount)
+            throw new InvalidOperationException("Insufficient funds");
+        
+        var newBalance = Balance - amount;
+        var withdrawEvent = new FundsWithdrawnEvent(Id, amount, description, newBalance);
+        ApplyEvent(withdrawEvent);
+    }
+    
+    // Apply event and add to pending events
+    private void ApplyEvent(DomainEvent @event)
+    {
+        @event.Version = Version + 1;
+        Apply(@event); // Update state
+        _pendingEvents.Add(@event); // Track for persistence
+        Version = @event.Version;
+    }
+    
+    // State changes based on events (event handlers)
+    private void Apply(DomainEvent @event)
+    {
+        switch (@event)
+        {
+            case AccountCreatedEvent accountCreated:
+                Id = accountCreated.AggregateId;
+                AccountNumber = accountCreated.AccountNumber;
+                AccountHolderName = accountCreated.AccountHolderName;
+                Balance = accountCreated.InitialBalance;
+                break;
+                
+            case FundsDepositedEvent fundsDeposited:
+                Balance = fundsDeposited.NewBalance;
+                break;
+                
+            case FundsWithdrawnEvent fundsWithdrawn:
+                Balance = fundsWithdrawn.NewBalance;
+                break;
+                
+            default:
+                throw new ArgumentException($"Unknown event type: {@event.GetType().Name}");
+        }
+    }
+    
+    // Get pending events for persistence
+    public IEnumerable<DomainEvent> GetPendingEvents() => _pendingEvents.AsReadOnly();
+    
+    // Mark events as committed
+    public void MarkEventsAsCommitted() => _pendingEvents.Clear();
+    
+    // Reconstitute aggregate from historical events
+    public static BankAccount FromHistory(IEnumerable<DomainEvent> events)
+    {
+        var account = new BankAccount();
+        
+        foreach (var @event in events.OrderBy(e => e.Version))
+        {
+            account.Apply(@event);
+            account.Version = @event.Version;
+        }
+        
+        return account;
+    }
+}
+
+// Commands for event sourced operations
+public class CreateBankAccountCommand : IRequest<CreateBankAccountResponse>
+{
+    public string AccountNumber { get; set; }
+    public string AccountHolderName { get; set; }
+    public decimal InitialBalance { get; set; }
+}
+
+public class DepositFundsCommand : IRequest<DepositFundsResponse>
+{
+    public Guid AccountId { get; set; }
+    public decimal Amount { get; set; }
+    public string Description { get; set; }
+}
+
+public class WithdrawFundsCommand : IRequest<WithdrawFundsResponse>
+{
+    public Guid AccountId { get; set; }
+    public decimal Amount { get; set; }
+    public string Description { get; set; }
+}
+
+// Event store interface
+public interface IEventStore
+{
+    Task SaveEventsAsync(Guid aggregateId, IEnumerable<DomainEvent> events, int expectedVersion);
+    Task<IEnumerable<DomainEvent>> GetEventsAsync(Guid aggregateId);
+    Task<IEnumerable<DomainEvent>> GetEventsAsync(Guid aggregateId, int fromVersion);
+}
+
+// Event sourced repository
+public class EventSourcedBankAccountRepository
+{
+    private readonly IEventStore _eventStore;
+    private readonly ILogger<EventSourcedBankAccountRepository> _logger;
+    
+    public EventSourcedBankAccountRepository(IEventStore eventStore, ILogger<EventSourcedBankAccountRepository> logger)
+    {
+        _eventStore = eventStore;
+        _logger = logger;
+    }
+    
+    public async Task<BankAccount> GetByIdAsync(Guid accountId)
+    {
+        var events = await _eventStore.GetEventsAsync(accountId);
+        
+        if (!events.Any())
+        {
+            throw new AggregateNotFoundException($"Bank account {accountId} not found");
+        }
+        
+        _logger.LogInformation("Reconstituting bank account {AccountId} from {EventCount} events", 
+                             accountId, events.Count());
+        
+        return BankAccount.FromHistory(events);
+    }
+    
+    public async Task SaveAsync(BankAccount account)
+    {
+        var pendingEvents = account.GetPendingEvents().ToList();
+        
+        if (!pendingEvents.Any())
+        {
+            _logger.LogInformation("No pending events for account {AccountId}", account.Id);
+            return;
+        }
+        
+        try
+        {
+            await _eventStore.SaveEventsAsync(account.Id, pendingEvents, account.Version - pendingEvents.Count);
+            account.MarkEventsAsCommitted();
+            
+            _logger.LogInformation("Saved {EventCount} events for account {AccountId}", 
+                                 pendingEvents.Count, account.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save events for account {AccountId}", account.Id);
+            throw;
+        }
+    }
+}
+
+// Command handlers for event sourced operations
+public class CreateBankAccountCommandHandler : IRequestHandler<CreateBankAccountCommand, CreateBankAccountResponse>
+{
+    private readonly EventSourcedBankAccountRepository _repository;
+    private readonly ILogger<CreateBankAccountCommandHandler> _logger;
+    
+    public CreateBankAccountCommandHandler(EventSourcedBankAccountRepository repository,
+                                         ILogger<CreateBankAccountCommandHandler> logger)
+    {
+        _repository = repository;
+        _logger = logger;
+    }
+    
+    public async Task<CreateBankAccountResponse> Handle(CreateBankAccountCommand request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Create new aggregate - this generates AccountCreatedEvent
+            var account = new BankAccount(request.AccountNumber, request.AccountHolderName, request.InitialBalance);
+            
+            // Save to event store
+            await _repository.SaveAsync(account);
+            
+            _logger.LogInformation("Bank account created successfully: {AccountId}", account.Id);
+            
+            return new CreateBankAccountResponse
+            {
+                AccountId = account.Id,
+                AccountNumber = account.AccountNumber,
+                Success = true
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create bank account for {AccountNumber}", request.AccountNumber);
+            return new CreateBankAccountResponse
+            {
+                Success = false,
+                ErrorMessage = ex.Message
+            };
+        }
+    }
+}
+
+public class DepositFundsCommandHandler : IRequestHandler<DepositFundsCommand, DepositFundsResponse>
+{
+    private readonly EventSourcedBankAccountRepository _repository;
+    private readonly ILogger<DepositFundsCommandHandler> _logger;
+    
+    public DepositFundsCommandHandler(EventSourcedBankAccountRepository repository,
+                                    ILogger<DepositFundsCommandHandler> logger)
+    {
+        _repository = repository;
+        _logger = logger;
+    }
+    
+    public async Task<DepositFundsResponse> Handle(DepositFundsCommand request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Load aggregate from event history
+            var account = await _repository.GetByIdAsync(request.AccountId);
+            
+            // Execute business operation - generates FundsDepositedEvent
+            account.Deposit(request.Amount, request.Description);
+            
+            // Save new events
+            await _repository.SaveAsync(account);
+            
+            _logger.LogInformation("Funds deposited successfully: {Amount} to account {AccountId}", 
+                                 request.Amount, request.AccountId);
+            
+            return new DepositFundsResponse
+            {
+                NewBalance = account.Balance,
+                Success = true
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to deposit funds to account {AccountId}", request.AccountId);
+            return new DepositFundsResponse
+            {
+                Success = false,
+                ErrorMessage = ex.Message
+            };
+        }
+    }
+}
+
+// Event projections for read models
+public class AccountBalanceProjection
+{
+    private readonly IEventStore _eventStore;
+    private readonly IAccountBalanceReadModelRepository _readModelRepository;
+    private readonly ILogger<AccountBalanceProjection> _logger;
+    
+    public AccountBalanceProjection(IEventStore eventStore,
+                                  IAccountBalanceReadModelRepository readModelRepository,
+                                  ILogger<AccountBalanceProjection> logger)
+    {
+        _eventStore = eventStore;
+        _readModelRepository = readModelRepository;
+        _logger = logger;
+    }
+    
+    // Handle events to update read models
+    public async Task HandleAsync(DomainEvent domainEvent)
+    {
+        switch (domainEvent)
+        {
+            case AccountCreatedEvent accountCreated:
+                await HandleAccountCreatedAsync(accountCreated);
+                break;
+                
+            case FundsDepositedEvent fundsDeposited:
+                await HandleFundsDepositedAsync(fundsDeposited);
+                break;
+                
+            case FundsWithdrawnEvent fundsWithdrawn:
+                await HandleFundsWithdrawnAsync(fundsWithdrawn);
+                break;
+                
+            default:
+                _logger.LogWarning("Unknown event type: {EventType}", domainEvent.GetType().Name);
+                break;
+        }
+    }
+    
+    private async Task HandleAccountCreatedAsync(AccountCreatedEvent @event)
+    {
+        var readModel = new AccountBalanceReadModel
+        {
+            AccountId = @event.AggregateId,
+            AccountNumber = @event.AccountNumber,
+            AccountHolderName = @event.AccountHolderName,
+            Balance = @event.InitialBalance,
+            LastUpdated = @event.Timestamp
+        };
+        
+        await _readModelRepository.CreateAsync(readModel);
+        _logger.LogInformation("Account balance read model created for account {AccountId}", @event.AggregateId);
+    }
+    
+    private async Task HandleFundsDepositedAsync(FundsDepositedEvent @event)
+    {
+        var readModel = await _readModelRepository.GetByAccountIdAsync(@event.AggregateId);
+        if (readModel != null)
+        {
+            readModel.Balance = @event.NewBalance;
+            readModel.LastUpdated = @event.Timestamp;
+            
+            await _readModelRepository.UpdateAsync(readModel);
+            _logger.LogInformation("Account balance read model updated for deposit: {AccountId}", @event.AggregateId);
+        }
+    }
+    
+    private async Task HandleFundsWithdrawnAsync(FundsWithdrawnEvent @event)
+    {
+        var readModel = await _readModelRepository.GetByAccountIdAsync(@event.AggregateId);
+        if (readModel != null)
+        {
+            readModel.Balance = @event.NewBalance;
+            readModel.LastUpdated = @event.Timestamp;
+            
+            await _readModelRepository.UpdateAsync(readModel);
+            _logger.LogInformation("Account balance read model updated for withdrawal: {AccountId}", @event.AggregateId);
+        }
+    }
+}
+```
+
+## 8. Chain of Responsibility - Command Validation Pipeline
+
+**Chain of Responsibility** with Command Pattern creates flexible validation and processing pipelines.
+
+### Command Validation Chain Implementation
+
+```csharp
+// Base validation handler
+public abstract class ValidationHandler<TCommand> where TCommand : IRequest
+{
+    private ValidationHandler<TCommand> _nextHandler;
+    protected readonly ILogger<ValidationHandler<TCommand>> Logger;
+    
+    protected ValidationHandler(ILogger<ValidationHandler<TCommand>> logger)
+    {
+        Logger = logger;
+    }
+    
+    public ValidationHandler<TCommand> SetNext(ValidationHandler<TCommand> nextHandler)
+    {
+        _nextHandler = nextHandler;
+        return nextHandler;
+    }
+    
+    public async Task<ValidationResult> HandleAsync(TCommand command)
+    {
+        var result = await ValidateAsync(command);
+        
+        if (!result.IsValid || _nextHandler == null)
+        {
+            return result;
+        }
+        
+        // Continue to next handler if validation passed
+        return await _nextHandler.HandleAsync(command);
+    }
+    
+    protected abstract Task<ValidationResult> ValidateAsync(TCommand command);
+}
+
+// Specific validation handlers
+public class BusinessRuleValidationHandler<TCommand> : ValidationHandler<TCommand> 
+    where TCommand : IRequest
+{
+    private readonly IBusinessRuleEngine _businessRuleEngine;
+    
+    public BusinessRuleValidationHandler(IBusinessRuleEngine businessRuleEngine,
+                                       ILogger<BusinessRuleValidationHandler<TCommand>> logger) : base(logger)
+    {
+        _businessRuleEngine = businessRuleEngine;
+    }
+    
+    protected override async Task<ValidationResult> ValidateAsync(TCommand command)
+    {
+        Logger.LogInformation("Validating business rules for {CommandType}", typeof(TCommand).Name);
+        
+        var violations = await _businessRuleEngine.ValidateAsync(command);
+        
+        if (violations.Any())
+        {
+            var errorMessage = string.Join("; ", violations.Select(v => v.Message));
+            Logger.LogWarning("Business rule validation failed: {Errors}", errorMessage);
+            
+            return ValidationResult.Invalid(errorMessage);
+        }
+        
+        Logger.LogInformation("Business rule validation passed for {CommandType}", typeof(TCommand).Name);
+        return ValidationResult.Valid();
+    }
+}
+
+public class SecurityValidationHandler<TCommand> : ValidationHandler<TCommand> 
+    where TCommand : IRequest
+{
+    private readonly ISecurityService _securityService;
+    private readonly ICurrentUserService _currentUserService;
+    
+    public SecurityValidationHandler(ISecurityService securityService,
+                                   ICurrentUserService currentUserService,
+                                   ILogger<SecurityValidationHandler<TCommand>> logger) : base(logger)
+    {
+        _securityService = securityService;
+        _currentUserService = currentUserService;
+    }
+    
+    protected override async Task<ValidationResult> ValidateAsync(TCommand command)
+    {
+        Logger.LogInformation("Validating security permissions for {CommandType}", typeof(TCommand).Name);
+        
+        var currentUser = _currentUserService.GetCurrentUser();
+        var hasPermission = await _securityService.CanExecuteCommandAsync(currentUser.Id, typeof(TCommand));
+        
+        if (!hasPermission)
+        {
+            Logger.LogWarning("User {UserId} lacks permission to execute {CommandType}", 
+                            currentUser.Id, typeof(TCommand).Name);
+            
+            return ValidationResult.Invalid($"Access denied for command: {typeof(TCommand).Name}");
+        }
+        
+        Logger.LogInformation("Security validation passed for {CommandType}", typeof(TCommand).Name);
+        return ValidationResult.Valid();
+    }
+}
+
+public class DataValidationHandler<TCommand> : ValidationHandler<TCommand> 
+    where TCommand : IRequest
+{
+    private readonly IValidator<TCommand> _validator;
+    
+    public DataValidationHandler(IValidator<TCommand> validator,
+                               ILogger<DataValidationHandler<TCommand>> logger) : base(logger)
+    {
+        _validator = validator;
+    }
+    
+    protected override async Task<ValidationResult> ValidateAsync(TCommand command)
+    {
+        Logger.LogInformation("Validating data for {CommandType}", typeof(TCommand).Name);
+        
+        var validationResult = await _validator.ValidateAsync(command);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+            Logger.LogWarning("Data validation failed: {Errors}", errors);
+            
+            return ValidationResult.Invalid(errors);
+        }
+        
+        Logger.LogInformation("Data validation passed for {CommandType}", typeof(TCommand).Name);
+        return ValidationResult.Valid();
+    }
+}
+
+// Validation pipeline builder
+public class ValidationPipelineBuilder<TCommand> where TCommand : IRequest
+{
+    private ValidationHandler<TCommand> _firstHandler;
+    private ValidationHandler<TCommand> _lastHandler;
+    
+    public ValidationPipelineBuilder<TCommand> AddHandler(ValidationHandler<TCommand> handler)
+    {
+        if (_firstHandler == null)
+        {
+            _firstHandler = handler;
+            _lastHandler = handler;
+        }
+        else
+        {
+            _lastHandler.SetNext(handler);
+            _lastHandler = handler;
+        }
+        
+        return this;
+    }
+    
+    public ValidationHandler<TCommand> Build()
+    {
+        return _firstHandler ?? throw new InvalidOperationException("No validation handlers configured");
+    }
+}
+
+// Command handler with validation chain
+public class ValidatedCommandHandler<TCommand, TResponse> : IRequestHandler<TCommand, TResponse>
+    where TCommand : IRequest<TResponse>
+{
+    private readonly IRequestHandler<TCommand, TResponse> _innerHandler;
+    private readonly ValidationHandler<TCommand> _validationChain;
+    private readonly ILogger<ValidatedCommandHandler<TCommand, TResponse>> _logger;
+    
+    public ValidatedCommandHandler(IRequestHandler<TCommand, TResponse> innerHandler,
+                                 ValidationHandler<TCommand> validationChain,
+                                 ILogger<ValidatedCommandHandler<TCommand, TResponse>> logger)
+    {
+        _innerHandler = innerHandler;
+        _validationChain = validationChain;
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(TCommand request, CancellationToken cancellationToken)
+    {
+        // Run validation chain
+        var validationResult = await _validationChain.HandleAsync(request);
+        
+        if (!validationResult.IsValid)
+        {
+            _logger.LogWarning("Command validation failed: {Errors}", validationResult.ErrorMessage);
+            throw new ValidationException(validationResult.ErrorMessage);
+        }
+        
+        // Proceed with actual command execution
+        return await _innerHandler.Handle(request, cancellationToken);
+    }
+}
+
+// Usage example
+public class CreateProductCommandValidationSetup
+{
+    public static ValidationHandler<CreateProductCommand> CreateValidationChain(IServiceProvider serviceProvider)
+    {
+        var builder = new ValidationPipelineBuilder<CreateProductCommand>();
+        
+        return builder
+            .AddHandler(serviceProvider.GetRequiredService<DataValidationHandler<CreateProductCommand>>())
+            .AddHandler(serviceProvider.GetRequiredService<SecurityValidationHandler<CreateProductCommand>>())
+            .AddHandler(serviceProvider.GetRequiredService<BusinessRuleValidationHandler<CreateProductCommand>>())
+            .Build();
+    }
+}
+```
+
+## 9. Composite Pattern - Batch Command Operations
+
+**Composite Pattern** with Command Pattern enables batch operations and macro commands.
+
+### Batch Command Implementation
+
+```csharp
+// Composite command interface
+public interface ICompositeCommand : ICommand
+{
+    void Add(ICommand command);
+    void Remove(ICommand command);
+    IReadOnlyList<ICommand> GetCommands();
+}
+
+// Composite command implementation
+public class BatchCommand : ICompositeCommand
+{
+    private readonly List<ICommand> _commands = new();
+    private readonly ILogger<BatchCommand> _logger;
+    
+    public string BatchId { get; } = Guid.NewGuid().ToString("N")[..8];
+    
+    public BatchCommand(ILogger<BatchCommand> logger)
+    {
+        _logger = logger;
+    }
+    
+    public void Add(ICommand command)
+    {
+        if (command == null) throw new ArgumentNullException(nameof(command));
+        _commands.Add(command);
+        _logger.LogDebug("Command added to batch {BatchId}: {CommandType}", BatchId, command.GetType().Name);
+    }
+    
+    public void Remove(ICommand command)
+    {
+        _commands.Remove(command);
+        _logger.LogDebug("Command removed from batch {BatchId}: {CommandType}", BatchId, command.GetType().Name);
+    }
+    
+    public IReadOnlyList<ICommand> GetCommands() => _commands.AsReadOnly();
+    
+    public async Task ExecuteAsync()
+    {
+        _logger.LogInformation("Executing batch command {BatchId} with {CommandCount} commands", 
+                             BatchId, _commands.Count);
+        
+        var executedCommands = new List<ICommand>();
+        
+        try
+        {
+            foreach (var command in _commands)
+            {
+                _logger.LogDebug("Executing command in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+                
+                await command.ExecuteAsync();
+                executedCommands.Add(command);
+                
+                _logger.LogDebug("Command executed successfully in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+            }
+            
+            _logger.LogInformation("Batch command {BatchId} executed successfully", BatchId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Batch command {BatchId} failed. Rolling back {ExecutedCount} commands", 
+                           BatchId, executedCommands.Count);
+            
+            // Rollback executed commands in reverse order
+            await RollbackAsync(executedCommands);
+            throw;
+        }
+    }
+    
+    public async Task UndoAsync()
+    {
+        _logger.LogInformation("Undoing batch command {BatchId} with {CommandCount} commands", 
+                             BatchId, _commands.Count);
+        
+        // Undo in reverse order
+        foreach (var command in _commands.AsEnumerable().Reverse())
+        {
+            try
+            {
+                await command.UndoAsync();
+                _logger.LogDebug("Command undone in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to undo command in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+            }
+        }
+        
+        _logger.LogInformation("Batch command {BatchId} undo completed", BatchId);
+    }
+    
+    private async Task RollbackAsync(List<ICommand> executedCommands)
+    {
+        foreach (var command in executedCommands.AsEnumerable().Reverse())
+        {
+            try
+            {
+                await command.UndoAsync();
+                _logger.LogDebug("Rolled back command in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to rollback command in batch {BatchId}: {CommandType}", 
+                               BatchId, command.GetType().Name);
+            }
+        }
+    }
+}
+
+// Transactional batch command with database transactions
+public class TransactionalBatchCommand : ICompositeCommand
+{
+    private readonly List<ICommand> _commands = new();
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
+    private readonly ILogger<TransactionalBatchCommand> _logger;
+    
+    public string BatchId { get; } = Guid.NewGuid().ToString("N")[..8];
+    
+    public TransactionalBatchCommand(IDbContextFactory<ApplicationDbContext> dbContextFactory,
+                                   ILogger<TransactionalBatchCommand> logger)
+    {
+        _dbContextFactory = dbContextFactory;
+        _logger = logger;
+    }
+    
+    public void Add(ICommand command) => _commands.Add(command);
+    public void Remove(ICommand command) => _commands.Remove(command);
+    public IReadOnlyList<ICommand> GetCommands() => _commands.AsReadOnly();
+    
+    public async Task ExecuteAsync()
+    {
+        using var context = _dbContextFactory.CreateDbContext();
+        using var transaction = await context.Database.BeginTransactionAsync();
+        
+        try
+        {
+            _logger.LogInformation("Starting transactional batch {BatchId} with {CommandCount} commands", 
+                                 BatchId, _commands.Count);
+            
+            foreach (var command in _commands)
+            {
+                await command.ExecuteAsync();
+            }
+            
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            
+            _logger.LogInformation("Transactional batch {BatchId} committed successfully", BatchId);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Transactional batch {BatchId} failed and was rolled back", BatchId);
+            throw;
+        }
+    }
+    
+    public async Task UndoAsync()
+    {
+        // For transactional batch, undo would require separate compensating transaction
+        foreach (var command in _commands.AsEnumerable().Reverse())
+        {
+            await command.UndoAsync();
+        }
+    }
+}
+
+// Batch command builder with fluent interface
+public class BatchCommandBuilder
+{
+    private readonly ICompositeCommand _batchCommand;
+    
+    public BatchCommandBuilder(ICompositeCommand batchCommand)
+    {
+        _batchCommand = batchCommand;
+    }
+    
+    public BatchCommandBuilder AddCommand(ICommand command)
+    {
+        _batchCommand.Add(command);
+        return this;
+    }
+    
+    public BatchCommandBuilder AddCommands(IEnumerable<ICommand> commands)
+    {
+        foreach (var command in commands)
+        {
+            _batchCommand.Add(command);
+        }
+        return this;
+    }
+    
+    public ICompositeCommand Build() => _batchCommand;
+}
+
+// Usage example
+public class BulkProductUpdateHandler : IRequestHandler<BulkProductUpdateCommand, BulkProductUpdateResponse>
+{
+    private readonly ILogger<BulkProductUpdateHandler> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    
+    public BulkProductUpdateHandler(ILogger<BulkProductUpdateHandler> logger, IServiceProvider serviceProvider)
+    {
+        _logger = logger;
+        _serviceProvider = serviceProvider;
+    }
+    
+    public async Task<BulkProductUpdateResponse> Handle(BulkProductUpdateCommand request, CancellationToken cancellationToken)
+    {
+        var batchCommand = new BatchCommand(_serviceProvider.GetRequiredService<ILogger<BatchCommand>>());
+        var builder = new BatchCommandBuilder(batchCommand);
+        
+        // Build batch from individual product updates
+        foreach (var productUpdate in request.ProductUpdates)
+        {
+            var updateCommand = new UpdateProductCommand
+            {
+                ProductId = productUpdate.ProductId,
+                Name = productUpdate.Name,
+                Price = productUpdate.Price
+            };
+            
+            builder.AddCommand(updateCommand);
+        }
+        
+        try
+        {
+            await batchCommand.ExecuteAsync();
+            
+            return new BulkProductUpdateResponse
+            {
+                Success = true,
+                UpdatedCount = request.ProductUpdates.Count,
+                BatchId = batchCommand.BatchId
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Bulk product update failed");
+            
+            return new BulkProductUpdateResponse
+            {
+                Success = false,
+                ErrorMessage = ex.Message,
+                BatchId = batchCommand.BatchId
+            };
+        }
+    }
+}
+```
+
+## 10. Factory Pattern - Command Creation and Configuration
+
+**Factory Pattern** with Command Pattern provides centralized command creation and configuration.
+
+### Command Factory Implementation
+
+```csharp
+// Command factory interface
+public interface ICommandFactory
+{
+    TCommand Create<TCommand>() where TCommand : class, ICommand;
+    TCommand Create<TCommand>(object parameters) where TCommand : class, ICommand;
+    ICommand Create(Type commandType, object parameters);
+}
+
+// Advanced command factory with dependency injection
+public class CommandFactory : ICommandFactory
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<CommandFactory> _logger;
+    private readonly Dictionary<Type, Func<object, ICommand>> _commandCreators;
+    
+    public CommandFactory(IServiceProvider serviceProvider, ILogger<CommandFactory> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+        _commandCreators = new Dictionary<Type, Func<object, ICommand>>();
+        
+        RegisterCommandCreators();
+    }
+    
+    public TCommand Create<TCommand>() where TCommand : class, ICommand
+    {
+        _logger.LogDebug("Creating command: {CommandType}", typeof(TCommand).Name);
+        
+        var command = _serviceProvider.GetRequiredService<TCommand>();
+        
+        // Apply cross-cutting concerns
+        return ApplyCrossCuttingConcerns(command);
+    }
+    
+    public TCommand Create<TCommand>(object parameters) where TCommand : class, ICommand
+    {
+        _logger.LogDebug("Creating command with parameters: {CommandType}", typeof(TCommand).Name);
+        
+        var command = Create<TCommand>();
+        
+        // Map parameters to command properties
+        MapParametersToCommand(command, parameters);
+        
+        return command;
+    }
+    
+    public ICommand Create(Type commandType, object parameters)
+    {
+        _logger.LogDebug("Creating command by type: {CommandType}", commandType.Name);
+        
+        if (_commandCreators.TryGetValue(commandType, out var creator))
+        {
+            return creator(parameters);
+        }
+        
+        // Fallback to reflection-based creation
+        var command = (ICommand)_serviceProvider.GetRequiredService(commandType);
+        MapParametersToCommand(command, parameters);
+        
+        return ApplyCrossCuttingConcerns(command);
+    }
+    
+    private void RegisterCommandCreators()
+    {
+        // Register specific command creators for complex scenarios
+        _commandCreators[typeof(CreateOrderCommand)] = parameters =>
+        {
+            var orderParams = (CreateOrderParameters)parameters;
+            return new CreateOrderCommand
+            {
+                CustomerId = orderParams.CustomerId,
+                Items = orderParams.Items,
+                ShippingAddress = orderParams.ShippingAddress,
+                // Apply business rules, validation, etc.
+                Priority = DeterminePriority(orderParams),
+                EstimatedDeliveryDate = CalculateDeliveryDate(orderParams)
+            };
+        };
+        
+        _commandCreators[typeof(ProcessPaymentCommand)] = parameters =>
+        {
+            var paymentParams = (ProcessPaymentParameters)parameters;
+            return new ProcessPaymentCommand
+            {
+                Amount = paymentParams.Amount,
+                PaymentMethod = paymentParams.PaymentMethod,
+                PaymentDetails = paymentParams.PaymentDetails,
+                // Apply payment-specific logic
+                ProcessingFee = CalculateProcessingFee(paymentParams.Amount, paymentParams.PaymentMethod)
+            };
+        };
+    }
+    
+    private TCommand ApplyCrossCuttingConcerns<TCommand>(TCommand command) where TCommand : ICommand
+    {
+        // Apply logging, metrics, tracing decorators
+        var decoratedCommand = _serviceProvider.GetRequiredService<ICommandDecorator>().Decorate(command);
+        
+        _logger.LogDebug("Applied cross-cutting concerns to command: {CommandType}", typeof(TCommand).Name);
+        
+        return (TCommand)decoratedCommand;
+    }
+    
+    private void MapParametersToCommand(object command, object parameters)
+    {
+        if (parameters == null) return;
+        
+        // Use reflection or AutoMapper for parameter mapping
+        var commandType = command.GetType();
+        var parametersType = parameters.GetType();
+        
+        foreach (var property in parametersType.GetProperties())
+        {
+            var commandProperty = commandType.GetProperty(property.Name);
+            if (commandProperty != null && commandProperty.CanWrite)
+            {
+                var value = property.GetValue(parameters);
+                commandProperty.SetValue(command, value);
+            }
+        }
+    }
+    
+    private OrderPriority DeterminePriority(CreateOrderParameters parameters)
+    {
+        // Business logic to determine order priority
+        if (parameters.TotalAmount > 1000) return OrderPriority.High;
+        if (parameters.IsExpressShipping) return OrderPriority.Medium;
+        return OrderPriority.Normal;
+    }
+    
+    private DateTime CalculateDeliveryDate(CreateOrderParameters parameters)
+    {
+        // Business logic for delivery date calculation
+        var baseDays = parameters.IsExpressShipping ? 1 : 3;
+        return DateTime.UtcNow.AddBusinessDays(baseDays);
+    }
+    
+    private decimal CalculateProcessingFee(decimal amount, PaymentMethod method)
+    {
+        // Payment method specific fee calculation
+        return method switch
+        {
+            PaymentMethod.CreditCard => amount * 0.029m + 0.30m,
+            PaymentMethod.PayPal => amount * 0.034m + 0.30m,
+            PaymentMethod.BankTransfer => 0m,
+            _ => throw new ArgumentException($"Unknown payment method: {method}")
+        };
+    }
+}
+
+// Command decorator interface
+public interface ICommandDecorator
+{
+    ICommand Decorate(ICommand command);
+}
+
+// Command decorator implementation
+public class CommandDecorator : ICommandDecorator
+{
+    private readonly ILogger<CommandDecorator> _logger;
+    private readonly IMetricsCollector _metricsCollector;
+    private readonly ITracingService _tracingService;
+    
+    public CommandDecorator(ILogger<CommandDecorator> logger, 
+                          IMetricsCollector metricsCollector,
+                          ITracingService tracingService)
+    {
+        _logger = logger;
+        _metricsCollector = metricsCollector;
+        _tracingService = tracingService;
+    }
+    
+    public ICommand Decorate(ICommand command)
+    {
+        // Wrap command with monitoring and tracing
+        return new MonitoredCommand(command, _logger, _metricsCollector, _tracingService);
+    }
+}
+
+// Monitored command wrapper
+public class MonitoredCommand : ICommand
+{
+    private readonly ICommand _innerCommand;
+    private readonly ILogger _logger;
+    private readonly IMetricsCollector _metricsCollector;
+    private readonly ITracingService _tracingService;
+    
+    public MonitoredCommand(ICommand innerCommand, 
+                          ILogger logger,
+                          IMetricsCollector metricsCollector,
+                          ITracingService tracingService)
+    {
+        _innerCommand = innerCommand;
+        _logger = logger;
+        _metricsCollector = metricsCollector;
+        _tracingService = tracingService;
+    }
+    
+    public async Task ExecuteAsync()
+    {
+        var commandType = _innerCommand.GetType().Name;
+        using var activity = _tracingService.StartActivity($"Command.{commandType}");
+        
+        var stopwatch = Stopwatch.StartNew();
+        
+        try
+        {
+            _logger.LogInformation("Executing monitored command: {CommandType}", commandType);
+            
+            await _innerCommand.ExecuteAsync();
+            
+            stopwatch.Stop();
+            _metricsCollector.RecordCommandExecution(commandType, stopwatch.ElapsedMilliseconds, true);
+            
+            _logger.LogInformation("Command executed successfully: {CommandType} in {Duration}ms", 
+                                 commandType, stopwatch.ElapsedMilliseconds);
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            _metricsCollector.RecordCommandExecution(commandType, stopwatch.ElapsedMilliseconds, false);
+            
+            _logger.LogError(ex, "Command execution failed: {CommandType} in {Duration}ms", 
+                           commandType, stopwatch.ElapsedMilliseconds);
+            
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
+        }
+    }
+    
+    public async Task UndoAsync()
+    {
+        var commandType = _innerCommand.GetType().Name;
+        
+        try
+        {
+            _logger.LogInformation("Undoing monitored command: {CommandType}", commandType);
+            await _innerCommand.UndoAsync();
+            _logger.LogInformation("Command undo completed: {CommandType}", commandType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Command undo failed: {CommandType}", commandType);
+            throw;
+        }
+    }
+}
+
+// Command factory usage example
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly ICommandFactory _commandFactory;
+    private readonly IMediator _mediator;
+    
+    public OrdersController(ICommandFactory commandFactory, IMediator mediator)
+    {
+        _commandFactory = commandFactory;
+        _mediator = mediator;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
+    {
+        // Use factory to create properly configured command
+        var command = _commandFactory.Create<CreateOrderCommand>(new CreateOrderParameters
+        {
+            CustomerId = request.CustomerId,
+            Items = request.Items,
+            ShippingAddress = request.ShippingAddress,
+            TotalAmount = request.Items.Sum(i => i.Price * i.Quantity),
+            IsExpressShipping = request.IsExpressShipping
+        });
+        
+        var result = await _mediator.Send(command);
+        
+        return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+    }
+    
+    [HttpPost("batch")]
+    public async Task<IActionResult> CreateBatchOrder([FromBody] BatchOrderRequest request)
+    {
+        // Use factory to create batch command
+        var batchCommand = new BatchCommand(_serviceProvider.GetRequiredService<ILogger<BatchCommand>>());
+        var builder = new BatchCommandBuilder(batchCommand);
+        
+        foreach (var orderRequest in request.Orders)
+        {
+            var command = _commandFactory.Create<CreateOrderCommand>(new CreateOrderParameters
+            {
+                CustomerId = orderRequest.CustomerId,
+                Items = orderRequest.Items,
+                ShippingAddress = orderRequest.ShippingAddress,
+                TotalAmount = orderRequest.Items.Sum(i => i.Price * i.Quantity),
+                IsExpressShipping = orderRequest.IsExpressShipping
+            });
+            
+            builder.AddCommand(command);
+        }
+        
+        try
+        {
+            await batchCommand.ExecuteAsync();
+            return Ok(new { BatchId = batchCommand.BatchId, Success = true });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = ex.Message, BatchId = batchCommand.BatchId });
+        }
+    }
+}
+```
+
+## Advanced Interview Questions You Should Prepare For
+
+1. **"How would you implement a saga pattern using Command Pattern?"**
+   - **Answer**: Use Command Pattern for individual steps, orchestrate with a saga manager, implement compensating actions through command undo methods
+
+2. **"What's the difference between Command Pattern and Chain of Responsibility in error handling scenarios?"**
+   - **Answer**: Command encapsulates operations, Chain handles validation/processing pipeline - often used together for comprehensive request processing
+
+3. **"How do you handle distributed transactions across multiple commands?"**
+   - **Answer**: Implement saga pattern with orchestration, use event sourcing for audit trails, implement compensating transactions through command undo
+
+4. **"Explain how Command Pattern enables event sourcing in a microservices architecture."**
+   - **Answer**: Commands become events in event store, aggregate reconstruction from command history, CQRS separation with command/query sides
+
+5. **"How would you implement command versioning for API backward compatibility?"**
+   - **Answer**: Version command interfaces, use command transformers, implement adapter pattern for legacy commands
+
+6. **"How do you ensure command idempotency in distributed systems?"**
+   - **Answer**: Include command IDs, implement deduplication logic, use event sourcing with unique event IDs
+
+7. **"What's your approach to command validation across multiple bounded contexts?"**
+   - **Answer**: Chain of responsibility for validation pipeline, distributed validation through domain services, eventual consistency patterns
+
+8. **"How would you implement command scheduling and delayed execution?"**
+   - **Answer**: Command serialization, background job queues, command scheduling with temporal triggers
+
+9. **"Explain command pattern implementation in CQRS with different data stores."**
+   - **Answer**: Separate write/read models, event projections, polyglot persistence with command/query optimization
+
+10. **"How do you handle command failures in high-availability systems?"**
+    - **Answer**: Circuit breaker pattern, retry policies, dead letter queues, saga compensation
+
+## Key Interview Takeaways
+
+1. **Command Pattern is essential for CQRS** - separates write operations from read operations
+2. **Enables cross-cutting concerns** - validation, logging, caching through decorators
+3. **Supports complex business scenarios** - undo/redo, batch operations, event sourcing
+4. **Thread-safe implementation required** - use concurrent collections and synchronization
+5. **Cloud-native considerations** - stateless, serializable, idempotent commands
+6. **SOLID principles adherence** - each command has single responsibility, open for extension
+7. **Architectural flexibility** - decouples request initiation from execution
+8. **Testability improvement** - easy to unit test commands in isolation
+9. **Pattern combinations create powerful architectures** - Mediator for orchestration, Strategy for variations, Decorator for cross-cutting concerns
+10. **Template Method provides consistent execution flow** - while allowing customization points
+11. **Saga Pattern enables distributed transactions** - with compensating actions and orchestration
+12. **Event Sourcing provides complete audit trails** - commands as events with state reconstruction
+13. **Chain of Responsibility creates flexible pipelines** - for validation and processing
+14. **Composite Pattern enables batch operations** - with transaction boundaries and rollback
+15. **Factory Pattern centralizes command creation** - with dependency injection and configuration
+
+## Real-World Architecture Scenarios
+
+### **E-Commerce Platform Architecture**
+- **Commands**: CreateOrder, ProcessPayment, ReserveInventory, ShipOrder
+- **Patterns**: Saga (distributed transactions), Event Sourcing (audit), Mediator (orchestration)
+- **Cross-cutting**: Validation chains, monitoring decorators, retry policies
+
+### **Financial Trading System**
+- **Commands**: PlaceOrder, ExecuteTrade, SettleTrade, CancelOrder
+- **Patterns**: Event Sourcing (regulatory compliance), Command queuing (performance)
+- **Cross-cutting**: Security validation, risk management, real-time monitoring
+
+### **Content Management System**
+- **Commands**: CreateArticle, PublishContent, ModerateComment, ArchiveContent
+- **Patterns**: Strategy (content types), Template Method (publishing workflow)
+- **Cross-cutting**: Permission validation, workflow orchestration, caching
+
+### **IoT Data Processing**
+- **Commands**: ProcessSensorData, TriggerAlert, UpdateDevice, AnalyzePattern
+- **Patterns**: Batch processing, Event streaming, Command scheduling
+- **Cross-cutting**: Data validation, anomaly detection, scalable processing
+
+Remember: The Command Pattern is not just about encapsulating method calls - it's about creating a flexible, maintainable, and extensible architecture that can evolve with changing business requirements. When combined with other patterns, it forms the backbone of modern enterprise applications.
+
+---
+
 10. **Observer Pattern**
     - How would you implement event-driven architecture using Observer?
     - Show domain events implementation in .NET Core.
+
+---
+I'll provide you with a comprehensive, interview-ready guide to the Observer Pattern from a solution-oriented architect's perspective.This comprehensive guide covers the Observer Pattern from a solution-oriented architect's perspective. Here are the key interview-ready highlights:
+
+**Core Strengths to Emphasize:**
+- **Loose Coupling**: The pattern's primary benefit - subjects don't need to know concrete observer implementations
+- **SOLID Compliance**: Particularly strong with OCP and DIP principles
+- **Scalability**: Runtime subscription management without code modification
+
+**Critical Implementation Details:**
+- Memory leak prevention through proper unsubscription
+- Thread safety considerations for concurrent environments
+- Error isolation between observers
+- Performance optimization with async operations
+
+**Architecture Context:**
+- Foundation for event-driven architecture and CQRS
+- Essential for domain events in DDD
+- Core pattern in reactive programming and microservices
+
+**Interview-Ready Code Examples:**
+- Basic implementation (10-15 lines with detailed comments)
+- .NET event-based approach
+- Domain events with dependency injection
+- Thread-safe implementations
+
+**Red Flags to Avoid:**
+- Observer hell (cascading updates)
+- Blocking operations in Update methods
+- Not handling observer exceptions
+- Forgetting to unsubscribe observers
+
+The guide includes UML diagrams, real-world use cases, and practical implementation strategies that demonstrate deep architectural understanding - exactly what senior .NET architect interviews expect.
+
+# Observer Pattern - Complete Technical Interview Guide
+
+## Core Category of Pattern
+**Behavioral Design Pattern** - Defines how objects communicate and interact with each other by establishing one-to-many dependencies between objects.
+
+## What is this Pattern?
+The Observer Pattern defines a one-to-many dependency relationship between objects so that when one object (Subject/Publisher) changes state, all its dependents (Observers/Subscribers) are notified and updated automatically. It promotes loose coupling between the subject and observers.
+
+## What Problem Does It Solve?
+- **Tight Coupling**: Direct dependencies between objects that need to stay synchronized
+- **Hard-coded Notifications**: Objects having to know about all dependent objects
+- **Scalability Issues**: Adding new dependent objects requires modifying existing code
+- **Event Propagation**: Need for automatic notification when state changes occur
+
+## Why Should I Use This Pattern?
+- **Loose Coupling**: Subject only knows observers implement a common interface
+- **Dynamic Relationships**: Can add/remove observers at runtime
+- **Open/Closed Principle**: Can add new observers without modifying existing code
+- **Broadcast Communication**: One-to-many notification mechanism
+- **Separation of Concerns**: Business logic separated from notification logic
+
+## When Should I Use This Pattern?
+**Better fit than alternatives when:**
+- **vs Command Pattern**: When you need broadcast notifications rather than encapsulating requests
+- **vs Mediator Pattern**: When you have one-to-many relationships rather than many-to-many
+- **vs Chain of Responsibility**: When all handlers should process the event, not just one
+
+**Ideal scenarios:**
+- Model-View architectures (MVC, MVVM)
+- Event-driven systems
+- Real-time notifications
+- State synchronization across multiple objects
+
+## Use Cases of This Pattern
+- **GUI Applications**: View updates when model changes
+- **Stock Market**: Price updates to multiple dashboards
+- **News Subscriptions**: Broadcasting news to subscribers
+- **Gaming**: Player actions triggering multiple system responses
+- **IoT Systems**: Sensor data updates to multiple monitors
+- **Microservices**: Domain events across service boundaries
+
+## Implementation in .NET Framework and .NET Core
+
+### Basic Observer Pattern Implementation
+
+```csharp
+// Observer interface - contract for all observers
+public interface IObserver<T>
+{
+    void Update(T data); // Called when subject state changes
+}
+
+// Subject interface - contract for observable objects
+public interface ISubject<T>
+{
+    void Attach(IObserver<T> observer);    // Subscribe observer
+    void Detach(IObserver<T> observer);    // Unsubscribe observer  
+    void Notify(T data);                   // Notify all observers
+}
+
+// Concrete Subject - maintains observer list and notifies them
+public class StockPrice : ISubject<decimal>
+{
+    private readonly List<IObserver<decimal>> _observers = new();
+    private decimal _price;
+    
+    public void Attach(IObserver<decimal> observer) => _observers.Add(observer);
+    public void Detach(IObserver<decimal> observer) => _observers.Remove(observer);
+    public void Notify(decimal data) => _observers.ForEach(o => o.Update(data));
+    
+    public decimal Price 
+    { 
+        get => _price; 
+        set { _price = value; Notify(value); } // Auto-notify on state change
+    }
+}
+
+// Concrete Observer - implements specific update behavior
+public class Dashboard : IObserver<decimal>
+{
+    public string Name { get; }
+    public Dashboard(string name) => Name = name;
+    
+    public void Update(decimal price) => 
+        Console.WriteLine($"{Name} received price update: ${price}");
+}
+```
+
+### .NET Event-Based Implementation
+
+```csharp
+// Using .NET events for built-in observer pattern
+public class EventDrivenStock
+{
+    public event Action<decimal> PriceChanged; // Event declaration
+    private decimal _price;
+    
+    public decimal Price 
+    { 
+        get => _price; 
+        set 
+        { 
+            _price = value; 
+            PriceChanged?.Invoke(value); // Null-safe event invocation
+        } 
+    }
+}
+
+// Usage - demonstrates loose coupling
+var stock = new EventDrivenStock();
+stock.PriceChanged += price => Console.WriteLine($"Alert: Price is {price}");
+stock.PriceChanged += price => Console.WriteLine($"Log: {DateTime.Now} - {price}");
+stock.Price = 100.50m; // Triggers both subscribers
+```
+
+## Architecture Relevance
+- **Clean Architecture**: Enables dependency inversion in application layers
+- **Domain-Driven Design**: Perfect for domain events and aggregate boundaries
+- **Microservices**: Event-driven communication between services
+- **CQRS/Event Sourcing**: Core pattern for event propagation
+- **Reactive Architecture**: Foundation for reactive programming paradigms
+
+## SOLID Principles Connection
+
+### Single Responsibility Principle (SRP)
+- Subject handles state management, observers handle their specific responses
+- Each observer has one reason to change
+
+### Open/Closed Principle (OCP)  
+- Open for extension (new observers) without modifying existing code
+- Core pattern design supports this principle
+
+### Liskov Substitution Principle (LSP)
+- Any IObserver implementation can substitute another
+- Polymorphic behavior through interface contracts
+
+### Interface Segregation Principle (ISP)
+- Small, focused interfaces (IObserver, ISubject)
+- Clients depend only on methods they use
+
+### Dependency Inversion Principle (DIP)
+- Subject depends on IObserver abstraction, not concrete implementations
+- High-level modules don't depend on low-level modules
+
+## UML Diagram
+
+```
+    ┌─────────────┐         ┌─────────────────┐
+    │  <<interface>> │         │   <<interface>>     │
+    │   ISubject<T>   │         │   IObserver<T>      │
+    │─────────────│         │─────────────────│
+    │ +Attach()   │         │ +Update(T data) │
+    │ +Detach()   │         │                 │
+    │ +Notify()   │         │                 │
+    └─────┬───────┘         └─────────┬───────┘
+          │                           │
+          │                           │
+    ┌─────▼───────┐         ┌─────────▼───────┐
+    │ StockPrice  │◆────────│   Dashboard     │
+    │─────────────│         │─────────────────│
+    │ -observers  │1      * │ +Name           │
+    │ -price      │         │ +Update()       │
+    │ +Price      │         │                 │
+    └─────────────┘         └─────────────────┘
+```
+
+## Concurrency and Cloud Context
+
+### Thread-Safe Implementation
+```csharp
+public class ThreadSafeSubject<T> : ISubject<T>
+{
+    private readonly ConcurrentBag<IObserver<T>> _observers = new();
+    private readonly object _lock = new();
+    
+    public void Attach(IObserver<T> observer) => _observers.Add(observer);
+    public void Detach(IObserver<T> observer) => 
+        throw new NotSupportedException("ConcurrentBag doesn't support removal");
+    
+    public void Notify(T data)
+    {
+        lock (_lock) // Ensure thread-safe notification
+        {
+            Parallel.ForEach(_observers, observer => 
+            {
+                try { observer.Update(data); }
+                catch { /* Handle observer failures gracefully */ }
+            });
+        }
+    }
+}
+```
+
+### Cloud-Native Considerations
+- **Service Bus Integration**: Azure Service Bus, AWS SQS for distributed observers
+- **Event Grid**: Cloud-native pub/sub for cross-service communication  
+- **SignalR**: Real-time web notifications
+- **Message Queues**: RabbitMQ, Kafka for reliable event delivery
+
+## Trade-offs & Misuse
+
+### Trade-offs
+**Pros:**
+- Loose coupling and flexibility
+- Dynamic subscription management
+- Supports broadcast communication
+- Follows SOLID principles
+
+**Cons:**
+- Memory leaks if observers aren't detached
+- Unexpected update cascades
+- Debugging complexity in large systems
+- Performance overhead with many observers
+
+### Common Misuse Patterns
+- **Observer Hell**: Too many nested observers causing cascade effects
+- **Memory Leaks**: Not unsubscribing observers, especially in events
+- **Synchronous Processing**: Blocking operations in Update() methods
+- **Exception Propagation**: One observer failure breaking the entire chain
+
+## Risks in Multi-thread/Cloud Native World
+
+### Multi-threading Risks
+- **Race Conditions**: Concurrent modifications to observer list
+- **Deadlocks**: Observers modifying subject state during notifications
+- **Inconsistent State**: Partial updates during concurrent operations
+
+### Cloud Native Risks
+- **Network Failures**: Distributed observers may not receive notifications
+- **Eventual Consistency**: Delayed propagation in distributed systems
+- **Service Discovery**: Dynamic observer registration/deregistration
+- **Circuit Breaker**: Handling cascade failures across services
+
+## Drawbacks of Not Using Observer Pattern
+- **Tight Coupling**: Direct dependencies between related objects
+- **Code Duplication**: Manual notification logic scattered throughout codebase
+- **Poor Scalability**: Adding new dependent objects requires extensive modifications
+- **Violation of OCP**: Existing code must change when adding new behaviors
+- **Maintenance Nightmare**: Changes ripple through tightly coupled components
+
+## Domain Events Implementation in .NET Core
+
+```csharp
+// Domain Event Base Class
+public abstract class DomainEvent
+{
+    public DateTime OccurredOn { get; protected set; } = DateTime.UtcNow;
+    public Guid EventId { get; protected set; } = Guid.NewGuid();
+}
+
+// Specific Domain Event
+public class OrderCreatedEvent : DomainEvent
+{
+    public int OrderId { get; }
+    public decimal Amount { get; }
+    
+    public OrderCreatedEvent(int orderId, decimal amount)
+    {
+        OrderId = orderId;
+        Amount = amount;
+    }
+}
+
+// Domain Event Handler Interface
+public interface IDomainEventHandler<in T> where T : DomainEvent
+{
+    Task Handle(T domainEvent);
+}
+
+// Concrete Event Handler
+public class SendOrderConfirmationHandler : IDomainEventHandler<OrderCreatedEvent>
+{
+    public async Task Handle(OrderCreatedEvent domainEvent)
+    {
+        // Send confirmation email, update inventory, etc.
+        Console.WriteLine($"Order {domainEvent.OrderId} confirmed for ${domainEvent.Amount}");
+        await Task.CompletedTask;
+    }
+}
+
+// Domain Event Dispatcher (Mediator + Observer)
+public class DomainEventDispatcher
+{
+    private readonly IServiceProvider _serviceProvider;
+    
+    public DomainEventDispatcher(IServiceProvider serviceProvider) => 
+        _serviceProvider = serviceProvider;
+    
+    public async Task Dispatch<T>(T domainEvent) where T : DomainEvent
+    {
+        var handlers = _serviceProvider.GetServices<IDomainEventHandler<T>>();
+        var tasks = handlers.Select(handler => handler.Handle(domainEvent));
+        await Task.WhenAll(tasks); // Parallel processing of all handlers
+    }
+}
+```
+
+## Event-Driven Architecture Implementation
+
+```csharp
+// Service Registration in Program.cs (.NET 6+)
+builder.Services.AddScoped<IDomainEventHandler<OrderCreatedEvent>, SendOrderConfirmationHandler>();
+builder.Services.AddScoped<IDomainEventHandler<OrderCreatedEvent>, UpdateInventoryHandler>();
+builder.Services.AddScoped<DomainEventDispatcher>();
+
+// Aggregate Root with Domain Events
+public abstract class AggregateRoot
+{
+    private readonly List<DomainEvent> _domainEvents = new();
+    public IReadOnlyList<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    
+    protected void AddDomainEvent(DomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    public void ClearDomainEvents() => _domainEvents.Clear();
+}
+
+public class Order : AggregateRoot
+{
+    public int Id { get; private set; }
+    public decimal Amount { get; private set; }
+    
+    public static Order Create(decimal amount)
+    {
+        var order = new Order { Amount = amount };
+        order.AddDomainEvent(new OrderCreatedEvent(order.Id, amount)); // Observer pattern trigger
+        return order;
+    }
+}
+
+// Repository with Event Publishing
+public class OrderRepository
+{
+    private readonly DomainEventDispatcher _eventDispatcher;
+    
+    public async Task Save(Order order)
+    {
+        // Save to database
+        // Then publish domain events (Observer pattern in action)
+        foreach (var domainEvent in order.DomainEvents)
+        {
+            await _eventDispatcher.Dispatch(domainEvent);
+        }
+        order.ClearDomainEvents();
+    }
+}
+```
+
+## Key Interview Talking Points
+
+1. **Pattern Recognition**: "Observer is ideal when you see phrases like 'notify when...', 'update all...', or 'broadcast to...'"
+
+2. **Memory Management**: "Always emphasize the importance of unsubscribing observers to prevent memory leaks"
+
+3. **Performance**: "Consider async/await for I/O bound observer operations and Parallel.ForEach for CPU-bound work"
+
+4. **Error Handling**: "One observer's failure shouldn't break the notification chain - implement circuit breaker patterns"
+
+5. **Architecture Impact**: "Observer enables reactive architecture and is foundational for event-driven systems and CQRS"
+
+This comprehensive guide covers all aspects an architect should know about the Observer Pattern for technical interviews.
+
+I'll elaborate on advanced implementation patterns and add Reactive Extensions (Rx.NET) integration to make your interview preparation even more comprehensive.I've significantly expanded the guide with advanced implementation patterns and Rx.NET integration. Here are the key additions that will set you apart in senior architect interviews:
+
+## **Advanced Patterns Added:**
+
+### **1. Reactive Extensions (Rx.NET) Integration**
+- Hot vs Cold Observables with practical examples
+- Complex Event Processing (throttling, windowing, filtering)
+- Moving averages and volatility detection
+- Real-world financial data processing scenarios
+
+### **2. Enterprise-Grade Patterns**
+- **Weak Reference Observer**: Prevents memory leaks in long-lived applications
+- **Priority-Based Observer**: Critical for systems where execution order matters
+- **Conditional Observer**: Filtering at observer level for efficiency
+- **Batch Observer**: Performance optimization for high-frequency events
+
+### **3. Event Sourcing Integration**
+- Advanced Event Store with parallel observer processing
+- Custom disposable implementation for clean resource management
+- Version-based event replay capabilities
+
+### **4. Microservices Patterns**
+- **Service Bus Publisher/Subscriber**: Distributed observer across services
+- **Circuit Breaker Observer**: Fault tolerance in distributed systems
+- **Backpressure Control**: Prevents overwhelming slow consumers
+
+### **5. Production-Ready Considerations**
+- Thread-safe implementations with proper error handling
+- Async observers with concurrency limits
+- Performance monitoring and structured logging
+- Testing strategies with mock observers
+
+## **Interview Differentiators:**
+
+**For Senior/Principal Architect Roles:**
+- Discuss trade-offs between push vs pull models
+- Explain when to use Observer vs Mediator vs Event Aggregator
+- Demonstrate understanding of CAP theorem implications in distributed observers
+- Show knowledge of reactive programming principles
+
+**Architecture Decision Points:**
+- When to choose Rx.NET over traditional Observer
+- How to handle observer failures without cascading effects  
+- Scaling strategies for high-throughput event systems
+- Memory management in long-running observer chains
+
+**Production Experience Indicators:**
+- Understanding of backpressure and flow control
+- Knowledge of distributed tracing through observer chains
+- Experience with cloud-native messaging patterns
+- Ability to discuss performance characteristics and bottlenecks
+
+This enhanced guide demonstrates deep architectural thinking and production experience that senior technical interviews expect. The combination of theoretical knowledge, practical implementation patterns, and real-world considerations shows you can architect robust, scalable systems using the Observer pattern effectively.
+
+# Observer Pattern - Complete Technical Interview Guide
+
+## Core Category of Pattern
+**Behavioral Design Pattern** - Defines how objects communicate and interact with each other by establishing one-to-many dependencies between objects.
+
+## What is this Pattern?
+The Observer Pattern defines a one-to-many dependency relationship between objects so that when one object (Subject/Publisher) changes state, all its dependents (Observers/Subscribers) are notified and updated automatically. It promotes loose coupling between the subject and observers.
+
+## What Problem Does It Solve?
+- **Tight Coupling**: Direct dependencies between objects that need to stay synchronized
+- **Hard-coded Notifications**: Objects having to know about all dependent objects
+- **Scalability Issues**: Adding new dependent objects requires modifying existing code
+- **Event Propagation**: Need for automatic notification when state changes occur
+
+## Why Should I Use This Pattern?
+- **Loose Coupling**: Subject only knows observers implement a common interface
+- **Dynamic Relationships**: Can add/remove observers at runtime
+- **Open/Closed Principle**: Can add new observers without modifying existing code
+- **Broadcast Communication**: One-to-many notification mechanism
+- **Separation of Concerns**: Business logic separated from notification logic
+
+## When Should I Use This Pattern?
+**Better fit than alternatives when:**
+- **vs Command Pattern**: When you need broadcast notifications rather than encapsulating requests
+- **vs Mediator Pattern**: When you have one-to-many relationships rather than many-to-many
+- **vs Chain of Responsibility**: When all handlers should process the event, not just one
+
+**Ideal scenarios:**
+- Model-View architectures (MVC, MVVM)
+- Event-driven systems
+- Real-time notifications
+- State synchronization across multiple objects
+
+## Use Cases of This Pattern
+- **GUI Applications**: View updates when model changes
+- **Stock Market**: Price updates to multiple dashboards
+- **News Subscriptions**: Broadcasting news to subscribers
+- **Gaming**: Player actions triggering multiple system responses
+- **IoT Systems**: Sensor data updates to multiple monitors
+- **Microservices**: Domain events across service boundaries
+
+## Implementation in .NET Framework and .NET Core
+
+### Basic Observer Pattern Implementation
+
+```csharp
+// Observer interface - contract for all observers
+public interface IObserver<T>
+{
+    void Update(T data); // Called when subject state changes
+}
+
+// Subject interface - contract for observable objects
+public interface ISubject<T>
+{
+    void Attach(IObserver<T> observer);    // Subscribe observer
+    void Detach(IObserver<T> observer);    // Unsubscribe observer  
+    void Notify(T data);                   // Notify all observers
+}
+
+// Concrete Subject - maintains observer list and notifies them
+public class StockPrice : ISubject<decimal>
+{
+    private readonly List<IObserver<decimal>> _observers = new();
+    private decimal _price;
+    
+    public void Attach(IObserver<decimal> observer) => _observers.Add(observer);
+    public void Detach(IObserver<decimal> observer) => _observers.Remove(observer);
+    public void Notify(decimal data) => _observers.ForEach(o => o.Update(data));
+    
+    public decimal Price 
+    { 
+        get => _price; 
+        set { _price = value; Notify(value); } // Auto-notify on state change
+    }
+}
+
+// Concrete Observer - implements specific update behavior
+public class Dashboard : IObserver<decimal>
+{
+    public string Name { get; }
+    public Dashboard(string name) => Name = name;
+    
+    public void Update(decimal price) => 
+        Console.WriteLine($"{Name} received price update: ${price}");
+}
+```
+
+### .NET Event-Based Implementation
+
+```csharp
+// Using .NET events for built-in observer pattern
+public class EventDrivenStock
+{
+    public event Action<decimal> PriceChanged; // Event declaration
+    private decimal _price;
+    
+    public decimal Price 
+    { 
+        get => _price; 
+        set 
+        { 
+            _price = value; 
+            PriceChanged?.Invoke(value); // Null-safe event invocation
+        } 
+    }
+}
+
+// Usage - demonstrates loose coupling
+var stock = new EventDrivenStock();
+stock.PriceChanged += price => Console.WriteLine($"Alert: Price is {price}");
+stock.PriceChanged += price => Console.WriteLine($"Log: {DateTime.Now} - {price}");
+stock.Price = 100.50m; // Triggers both subscribers
+```
+
+## Architecture Relevance
+- **Clean Architecture**: Enables dependency inversion in application layers
+- **Domain-Driven Design**: Perfect for domain events and aggregate boundaries
+- **Microservices**: Event-driven communication between services
+- **CQRS/Event Sourcing**: Core pattern for event propagation
+- **Reactive Architecture**: Foundation for reactive programming paradigms
+
+## SOLID Principles Connection
+
+### Single Responsibility Principle (SRP)
+- Subject handles state management, observers handle their specific responses
+- Each observer has one reason to change
+
+### Open/Closed Principle (OCP)  
+- Open for extension (new observers) without modifying existing code
+- Core pattern design supports this principle
+
+### Liskov Substitution Principle (LSP)
+- Any IObserver implementation can substitute another
+- Polymorphic behavior through interface contracts
+
+### Interface Segregation Principle (ISP)
+- Small, focused interfaces (IObserver, ISubject)
+- Clients depend only on methods they use
+
+### Dependency Inversion Principle (DIP)
+- Subject depends on IObserver abstraction, not concrete implementations
+- High-level modules don't depend on low-level modules
+
+## UML Diagram
+
+```
+    ┌─────────────┐         ┌─────────────────┐
+    │  <<interface>> │         │   <<interface>>     │
+    │   ISubject<T>   │         │   IObserver<T>      │
+    │─────────────│         │─────────────────│
+    │ +Attach()   │         │ +Update(T data) │
+    │ +Detach()   │         │                 │
+    │ +Notify()   │         │                 │
+    └─────┬───────┘         └─────────┬───────┘
+          │                           │
+          │                           │
+    ┌─────▼───────┐         ┌─────────▼───────┐
+    │ StockPrice  │◆────────│   Dashboard     │
+    │─────────────│         │─────────────────│
+    │ -observers  │1      * │ +Name           │
+    │ -price      │         │ +Update()       │
+    │ +Price      │         │                 │
+    └─────────────┘         └─────────────────┘
+```
+
+## Concurrency and Cloud Context
+
+### Thread-Safe Implementation
+```csharp
+public class ThreadSafeSubject<T> : ISubject<T>
+{
+    private readonly ConcurrentBag<IObserver<T>> _observers = new();
+    private readonly object _lock = new();
+    
+    public void Attach(IObserver<T> observer) => _observers.Add(observer);
+    public void Detach(IObserver<T> observer) => 
+        throw new NotSupportedException("ConcurrentBag doesn't support removal");
+    
+    public void Notify(T data)
+    {
+        lock (_lock) // Ensure thread-safe notification
+        {
+            Parallel.ForEach(_observers, observer => 
+            {
+                try { observer.Update(data); }
+                catch { /* Handle observer failures gracefully */ }
+            });
+        }
+    }
+}
+```
+
+### Cloud-Native Considerations
+- **Service Bus Integration**: Azure Service Bus, AWS SQS for distributed observers
+- **Event Grid**: Cloud-native pub/sub for cross-service communication  
+- **SignalR**: Real-time web notifications
+- **Message Queues**: RabbitMQ, Kafka for reliable event delivery
+
+## Trade-offs & Misuse
+
+### Trade-offs
+**Pros:**
+- Loose coupling and flexibility
+- Dynamic subscription management
+- Supports broadcast communication
+- Follows SOLID principles
+
+**Cons:**
+- Memory leaks if observers aren't detached
+- Unexpected update cascades
+- Debugging complexity in large systems
+- Performance overhead with many observers
+
+### Common Misuse Patterns
+- **Observer Hell**: Too many nested observers causing cascade effects
+- **Memory Leaks**: Not unsubscribing observers, especially in events
+- **Synchronous Processing**: Blocking operations in Update() methods
+- **Exception Propagation**: One observer failure breaking the entire chain
+
+## Risks in Multi-thread/Cloud Native World
+
+### Multi-threading Risks
+- **Race Conditions**: Concurrent modifications to observer list
+- **Deadlocks**: Observers modifying subject state during notifications
+- **Inconsistent State**: Partial updates during concurrent operations
+
+### Cloud Native Risks
+- **Network Failures**: Distributed observers may not receive notifications
+- **Eventual Consistency**: Delayed propagation in distributed systems
+- **Service Discovery**: Dynamic observer registration/deregistration
+- **Circuit Breaker**: Handling cascade failures across services
+
+## Drawbacks of Not Using Observer Pattern
+- **Tight Coupling**: Direct dependencies between related objects
+- **Code Duplication**: Manual notification logic scattered throughout codebase
+- **Poor Scalability**: Adding new dependent objects requires extensive modifications
+- **Violation of OCP**: Existing code must change when adding new behaviors
+- **Maintenance Nightmare**: Changes ripple through tightly coupled components
+
+## Domain Events Implementation in .NET Core
+
+```csharp
+// Domain Event Base Class
+public abstract class DomainEvent
+{
+    public DateTime OccurredOn { get; protected set; } = DateTime.UtcNow;
+    public Guid EventId { get; protected set; } = Guid.NewGuid();
+}
+
+// Specific Domain Event
+public class OrderCreatedEvent : DomainEvent
+{
+    public int OrderId { get; }
+    public decimal Amount { get; }
+    
+    public OrderCreatedEvent(int orderId, decimal amount)
+    {
+        OrderId = orderId;
+        Amount = amount;
+    }
+}
+
+// Domain Event Handler Interface
+public interface IDomainEventHandler<in T> where T : DomainEvent
+{
+    Task Handle(T domainEvent);
+}
+
+// Concrete Event Handler
+public class SendOrderConfirmationHandler : IDomainEventHandler<OrderCreatedEvent>
+{
+    public async Task Handle(OrderCreatedEvent domainEvent)
+    {
+        // Send confirmation email, update inventory, etc.
+        Console.WriteLine($"Order {domainEvent.OrderId} confirmed for ${domainEvent.Amount}");
+        await Task.CompletedTask;
+    }
+}
+
+// Domain Event Dispatcher (Mediator + Observer)
+public class DomainEventDispatcher
+{
+    private readonly IServiceProvider _serviceProvider;
+    
+    public DomainEventDispatcher(IServiceProvider serviceProvider) => 
+        _serviceProvider = serviceProvider;
+    
+    public async Task Dispatch<T>(T domainEvent) where T : DomainEvent
+    {
+        var handlers = _serviceProvider.GetServices<IDomainEventHandler<T>>();
+        var tasks = handlers.Select(handler => handler.Handle(domainEvent));
+        await Task.WhenAll(tasks); // Parallel processing of all handlers
+    }
+}
+```
+
+## Event-Driven Architecture Implementation
+
+```csharp
+// Service Registration in Program.cs (.NET 6+)
+builder.Services.AddScoped<IDomainEventHandler<OrderCreatedEvent>, SendOrderConfirmationHandler>();
+builder.Services.AddScoped<IDomainEventHandler<OrderCreatedEvent>, UpdateInventoryHandler>();
+builder.Services.AddScoped<DomainEventDispatcher>();
+
+// Aggregate Root with Domain Events
+public abstract class AggregateRoot
+{
+    private readonly List<DomainEvent> _domainEvents = new();
+    public IReadOnlyList<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    
+    protected void AddDomainEvent(DomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    public void ClearDomainEvents() => _domainEvents.Clear();
+}
+
+public class Order : AggregateRoot
+{
+    public int Id { get; private set; }
+    public decimal Amount { get; private set; }
+    
+    public static Order Create(decimal amount)
+    {
+        var order = new Order { Amount = amount };
+        order.AddDomainEvent(new OrderCreatedEvent(order.Id, amount)); // Observer pattern trigger
+        return order;
+    }
+}
+
+// Repository with Event Publishing
+public class OrderRepository
+{
+    private readonly DomainEventDispatcher _eventDispatcher;
+    
+    public async Task Save(Order order)
+    {
+        // Save to database
+        // Then publish domain events (Observer pattern in action)
+        foreach (var domainEvent in order.DomainEvents)
+        {
+            await _eventDispatcher.Dispatch(domainEvent);
+        }
+        order.ClearDomainEvents();
+    }
+}
+```
+
+## Reactive Extensions (Rx.NET) Integration
+
+### Advanced Observer with Rx.NET
+```csharp
+// Install-Package System.Reactive
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
+
+// Reactive Subject - Hot Observable (starts immediately)
+public class ReactiveStockPrice
+{
+    private readonly Subject<decimal> _priceSubject = new();
+    private decimal _price;
+    
+    public IObservable<decimal> PriceStream => _priceSubject.AsObservable();
+    
+    public decimal Price 
+    { 
+        get => _price; 
+        set { _price = value; _priceSubject.OnNext(value); } // Push to stream
+    }
+    
+    public void Dispose() => _priceSubject?.Dispose(); // Proper cleanup
+}
+
+// Advanced Reactive Patterns
+public class ReactiveStockAnalyzer
+{
+    public void AnalyzePriceStream(ReactiveStockPrice stock)
+    {
+        // Throttle updates - only emit every 500ms to prevent spam
+        stock.PriceStream
+            .Throttle(TimeSpan.FromMilliseconds(500))
+            .Subscribe(price => Console.WriteLine($"Throttled: {price}"));
+        
+        // Moving Average - sliding window of last 5 prices
+        stock.PriceStream
+            .Buffer(5, 1) // Buffer 5 items, slide by 1
+            .Select(prices => prices.Average())
+            .Subscribe(avg => Console.WriteLine($"Moving Average: {avg:F2}"));
+        
+        // Price Alerts - only when crossing thresholds
+        stock.PriceStream
+            .Where(price => price > 100 || price < 50)
+            .DistinctUntilChanged() // Only when crossing boundary
+            .Subscribe(price => Console.WriteLine($"Alert: Price breach at {price}"));
+        
+        // Complex Event Processing - price volatility detection
+        stock.PriceStream
+            .Buffer(TimeSpan.FromSeconds(10)) // 10-second windows
+            .Where(window => window.Count > 0)
+            .Select(window => new { 
+                Max = window.Max(), 
+                Min = window.Min(),
+                Volatility = window.Max() - window.Min()
+            })
+            .Where(stats => stats.Volatility > 5) // High volatility threshold
+            .Subscribe(stats => Console.WriteLine($"High volatility detected: {stats.Volatility}"));
+    }
+}
+```
+
+### Cold vs Hot Observables
+```csharp
+// Cold Observable - starts when subscribed (like Netflix on-demand)
+public static IObservable<int> CreateColdObservable()
+{
+    return Observable.Create<int>(observer =>
+    {
+        Console.WriteLine("Cold observable started"); // Runs for each subscriber
+        for (int i = 1; i <= 5; i++)
+        {
+            observer.OnNext(i);
+            Thread.Sleep(1000);
+        }
+        observer.OnCompleted();
+        return Disposable.Empty;
+    });
+}
+
+// Hot Observable - always running (like live TV broadcast)
+public static IObservable<long> CreateHotObservable()
+{
+    return Observable.Interval(TimeSpan.FromSeconds(1)) // Starts immediately
+        .Publish() // Convert cold to hot
+        .RefCount(); // Auto-connect when first subscriber arrives
+}
+```
+
+## Advanced Implementation Patterns
+
+### 1. Weak Reference Observer Pattern
+```csharp
+// Prevents memory leaks by using weak references
+public class WeakReferenceSubject<T>
+{
+    private readonly List<WeakReference<IObserver<T>>> _weakObservers = new();
+    
+    public void Subscribe(IObserver<T> observer)
+    {
+        _weakObservers.Add(new WeakReference<IObserver<T>>(observer));
+    }
+    
+    public void Notify(T data)
+    {
+        var deadReferences = new List<WeakReference<IObserver<T>>>();
+        
+        foreach (var weakRef in _weakObservers)
+        {
+            if (weakRef.TryGetTarget(out var observer))
+            {
+                try { observer.Update(data); }
+                catch { /* Log error but continue */ }
+            }
+            else
+            {
+                deadReferences.Add(weakRef); // Mark for cleanup
+            }
+        }
+        
+        // Clean up dead references automatically
+        deadReferences.ForEach(deadRef => _weakObservers.Remove(deadRef));
+    }
+}
+```
+
+### 2. Priority-Based Observer Pattern
+```csharp
+public class PriorityObserver<T> : IObserver<T>
+{
+    public int Priority { get; }
+    public Action<T> UpdateAction { get; }
+    
+    public PriorityObserver(int priority, Action<T> updateAction)
+    {
+        Priority = priority;
+        UpdateAction = updateAction;
+    }
+    
+    public void Update(T data) => UpdateAction(data);
+}
+
+public class PrioritySubject<T>
+{
+    private readonly SortedSet<PriorityObserver<T>> _observers = 
+        new(Comparer<PriorityObserver<T>>.Create((a, b) => b.Priority.CompareTo(a.Priority)));
+    
+    public void Subscribe(int priority, Action<T> updateAction)
+    {
+        _observers.Add(new PriorityObserver<T>(priority, updateAction));
+    }
+    
+    public void Notify(T data)
+    {
+        foreach (var observer in _observers) // Executes in priority order (high to low)
+        {
+            observer.Update(data);
+        }
+    }
+}
+```
+
+### 3. Conditional Observer Pattern
+```csharp
+public class ConditionalObserver<T> : IObserver<T>
+{
+    private readonly Predicate<T> _condition;
+    private readonly Action<T> _updateAction;
+    
+    public ConditionalObserver(Predicate<T> condition, Action<T> updateAction)
+    {
+        _condition = condition;
+        _updateAction = updateAction;
+    }
+    
+    public void Update(T data)
+    {
+        if (_condition(data)) // Only update if condition is met
+        {
+            _updateAction(data);
+        }
+    }
+}
+
+// Usage Example
+var stockPrice = new StockPrice();
+var highPriceAlert = new ConditionalObserver<decimal>(
+    price => price > 100, // Condition
+    price => Console.WriteLine($"HIGH PRICE ALERT: {price}") // Action
+);
+stockPrice.Attach(highPriceAlert);
+```
+
+### 4. Batch Observer Pattern
+```csharp
+public class BatchObserver<T> : IObserver<T>, IDisposable
+{
+    private readonly List<T> _batch = new();
+    private readonly int _batchSize;
+    private readonly Action<IReadOnlyList<T>> _batchProcessor;
+    private readonly Timer _flushTimer;
+    
+    public BatchObserver(int batchSize, TimeSpan flushInterval, Action<IReadOnlyList<T>> batchProcessor)
+    {
+        _batchSize = batchSize;
+        _batchProcessor = batchProcessor;
+        _flushTimer = new Timer(FlushBatch, null, flushInterval, flushInterval);
+    }
+    
+    public void Update(T data)
+    {
+        lock (_batch)
+        {
+            _batch.Add(data);
+            if (_batch.Count >= _batchSize)
+            {
+                ProcessBatch();
+            }
+        }
+    }
+    
+    private void FlushBatch(object state) => ProcessBatch();
+    
+    private void ProcessBatch()
+    {
+        lock (_batch)
+        {
+            if (_batch.Count > 0)
+            {
+                _batchProcessor(_batch.ToList()); // Process batch
+                _batch.Clear();
+            }
+        }
+    }
+    
+    public void Dispose() => _flushTimer?.Dispose();
+}
+```
+
+## Event Sourcing with Observer Pattern
+
+### Advanced Event Store Implementation
+```csharp
+public class Event
+{
+    public Guid EventId { get; } = Guid.NewGuid();
+    public DateTime Timestamp { get; } = DateTime.UtcNow;
+    public string EventType { get; set; }
+    public string Data { get; set; }
+    public int Version { get; set; }
+}
+
+public class EventStore : IObservable<Event>
+{
+    private readonly List<Event> _events = new();
+    private readonly List<IObserver<Event>> _observers = new();
+    
+    public void AppendEvent(Event @event)
+    {
+        _events.Add(@event);
+        NotifyObservers(@event); // Immediate notification
+    }
+    
+    public IEnumerable<Event> GetEventsAfter(int version) => 
+        _events.Where(e => e.Version > version);
+    
+    private void NotifyObservers(Event @event)
+    {
+        // Use TPL for parallel processing of observers
+        Parallel.ForEach(_observers, observer =>
+        {
+            try { observer.OnNext(@event); }
+            catch (Exception ex) 
+            { 
+                Console.WriteLine($"Observer error: {ex.Message}"); 
+            }
+        });
+    }
+    
+    public IDisposable Subscribe(IObserver<Event> observer)
+    {
+        _observers.Add(observer);
+        return new Unsubscriber(_observers, observer); // Custom disposable
+    }
+}
+
+// Custom Disposable for clean unsubscription
+public class Unsubscriber : IDisposable
+{
+    private readonly List<IObserver<Event>> _observers;
+    private readonly IObserver<Event> _observer;
+    
+    public Unsubscriber(List<IObserver<Event>> observers, IObserver<Event> observer)
+    {
+        _observers = observers;
+        _observer = observer;
+    }
+    
+    public void Dispose() => _observers?.Remove(_observer);
+}
+```
+
+## Microservices Integration Patterns
+
+### Service Bus Observer Pattern
+```csharp
+// Using Azure Service Bus for distributed observers
+public class ServiceBusPublisher
+{
+    private readonly ServiceBusClient _client;
+    private readonly ServiceBusSender _sender;
+    
+    public ServiceBusPublisher(string connectionString, string topicName)
+    {
+        _client = new ServiceBusClient(connectionString);
+        _sender = _client.CreateSender(topicName);
+    }
+    
+    public async Task PublishEvent<T>(T domainEvent) where T : DomainEvent
+    {
+        var message = new ServiceBusMessage(JsonSerializer.Serialize(domainEvent))
+        {
+            Subject = typeof(T).Name, // Event type for filtering
+            MessageId = domainEvent.EventId.ToString(),
+            CorrelationId = domainEvent.EventId.ToString()
+        };
+        
+        await _sender.SendMessageAsync(message); // Distributed observer notification
+    }
+}
+
+// Subscriber service in different microservice
+public class ServiceBusSubscriber : BackgroundService
+{
+    private readonly ServiceBusProcessor _processor;
+    private readonly IDomainEventHandler<OrderCreatedEvent> _handler;
+    
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _processor.ProcessMessageAsync += ProcessMessage;
+        _processor.ProcessErrorAsync += ProcessError;
+        await _processor.StartProcessingAsync(stoppingToken);
+    }
+    
+    private async Task ProcessMessage(ProcessMessageEventArgs args)
+    {
+        var eventType = args.Message.Subject;
+        var eventData = args.Message.Body.ToString();
+        
+        // Deserialize and handle based on event type
+        if (eventType == nameof(OrderCreatedEvent))
+        {
+            var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(eventData);
+            await _handler.Handle(orderEvent); // Observer pattern across services
+        }
+        
+        await args.CompleteMessageAsync(); // Acknowledge processing
+    }
+}
+```
+
+### Circuit Breaker with Observer
+```csharp
+public class CircuitBreakerObserver<T> : IObserver<T>
+{
+    private readonly IObserver<T> _innerObserver;
+    private readonly CircuitBreaker _circuitBreaker;
+    
+    public CircuitBreakerObserver(IObserver<T> innerObserver, CircuitBreaker circuitBreaker)
+    {
+        _innerObserver = innerObserver;
+        _circuitBreaker = circuitBreaker;
+    }
+    
+    public void Update(T data)
+    {
+        if (_circuitBreaker.State == CircuitBreakerState.Open)
+        {
+            Console.WriteLine("Circuit breaker is open. Skipping observer.");
+            return; // Fast fail
+        }
+        
+        try
+        {
+            _innerObserver.Update(data);
+            _circuitBreaker.RecordSuccess(); // Track success
+        }
+        catch (Exception ex)
+        {
+            _circuitBreaker.RecordFailure(); // Track failure
+            throw; // Re-throw for logging
+        }
+    }
+}
+```
+
+## Performance Optimization Patterns
+
+### Async Observer with Backpressure
+```csharp
+public class AsyncObserverWithBackpressure<T> : IObserver<T>
+{
+    private readonly SemaphoreSlim _semaphore;
+    private readonly Func<T, Task> _asyncHandler;
+    
+    public AsyncObserverWithBackpressure(Func<T, Task> asyncHandler, int maxConcurrency = 10)
+    {
+        _asyncHandler = asyncHandler;
+        _semaphore = new SemaphoreSlim(maxConcurrency, maxConcurrency);
+    }
+    
+    public void Update(T data)
+    {
+        // Fire-and-forget with concurrency control
+        _ = Task.Run(async () =>
+        {
+            await _semaphore.WaitAsync(); // Backpressure control
+            try
+            {
+                await _asyncHandler(data);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        });
+    }
+}
+```
+
+## Testing Patterns
+
+### Mock Observer for Testing
+```csharp
+public class MockObserver<T> : IObserver<T>
+{
+    public List<T> ReceivedUpdates { get; } = new();
+    public int UpdateCount => ReceivedUpdates.Count;
+    public bool WasUpdated => UpdateCount > 0;
+    
+    public void Update(T data) => ReceivedUpdates.Add(data);
+    
+    public void VerifyUpdate(T expectedData) =>
+        Assert.Contains(expectedData, ReceivedUpdates);
+    
+    public void VerifyUpdateCount(int expectedCount) =>
+        Assert.Equal(expectedCount, UpdateCount);
+}
+
+// Unit Test Example
+[Test]
+public void Should_Notify_All_Observers_When_Price_Changes()
+{
+    // Arrange
+    var stockPrice = new StockPrice();
+    var mockObserver1 = new MockObserver<decimal>();
+    var mockObserver2 = new MockObserver<decimal>();
+    
+    stockPrice.Attach(mockObserver1);
+    stockPrice.Attach(mockObserver2);
+    
+    // Act
+    stockPrice.Price = 100.50m;
+    
+    // Assert
+    mockObserver1.VerifyUpdate(100.50m);
+    mockObserver2.VerifyUpdate(100.50m);
+    Assert.Equal(1, mockObserver1.UpdateCount);
+    Assert.Equal(1, mockObserver2.UpdateCount);
+}
+```
+
+## Key Interview Talking Points
+
+### 1. **Advanced Pattern Recognition**
+- "Observer shines in event-driven architectures, especially with Rx.NET for complex event processing"
+- "Consider weak references for long-lived subjects to prevent memory leaks"
+- "Use priority observers when order matters, batch observers for performance"
+
+### 2. **Reactive Programming Integration**
+- "Rx.NET extends Observer pattern with powerful operators like throttle, buffer, and window"
+- "Hot vs Cold observables solve different scenarios - understand when to use each"
+- "Backpressure handling prevents overwhelming slow observers"
+
+### 3. **Microservices Architecture**
+- "Distributed Observer via Service Bus enables cross-service communication"
+- "Circuit breaker pattern prevents cascading failures in observer chains"
+- "Event sourcing naturally implements Observer for read model updates"
+
+### 4. **Performance Considerations**
+- "Async observers with semaphore-based backpressure for high-throughput scenarios"
+- "Parallel.ForEach for CPU-bound observer operations"
+- "Consider batching for scenarios with high-frequency updates"
+
+### 5. **Production Readiness**
+- "Always implement proper error isolation between observers"
+- "Use structured logging to trace event flow through observer chains"
+- "Monitor observer performance metrics in production systems"
+
+### 6. **Testing Strategy**
+- "Mock observers enable testing of notification logic without side effects"
+- "Time-based testing with TestScheduler for Rx.NET scenarios"
+- "Integration testing with real message queues for distributed observers"
+
+This expanded guide now covers enterprise-grade patterns and advanced scenarios that senior architects encounter in production systems.
+
+---
 
 ## **DESIGN PRINCIPLES QUESTIONS**
 
@@ -5789,13 +12483,6102 @@ This comprehensive guide covers all aspects of the Decorator Pattern from an ent
     - Show a controller that violates SRP and how to fix it.
     - How do you ensure each class has only one reason to change?
 
+---
+I'll provide you with a comprehensive guide to the Single Responsibility Principle (SRP) tailored for your .NET technical interview preparation. This covers all the aspects you've requested with practical examples and detailed explanations.I've created a comprehensive guide covering all aspects of the Single Responsibility Principle (SRP) that you requested. This guide is specifically tailored for .NET technical interviews and includes:
+
+## Key Highlights:
+
+1. **Practical Examples**: Short, interview-ready code examples (10-15 lines) with detailed explanations
+2. **Before/After Refactoring**: Clear demonstrations of SRP violations and their corrections
+3. **Real-world Context**: Industry scenarios, enterprise applications, and microservices considerations
+4. **Interview-Specific Content**: Common questions, whiteboard explanations, and code review red flags
+5. **Advanced Topics**: Thread safety, cloud-native implications, and performance trade-offs
+
+## Interview Preparation Tips:
+
+- **Practice the UserService example** - it's a classic SRP violation scenario
+- **Understand the trade-offs** - be ready to discuss when NOT to apply SRP
+- **Know the measurement techniques** - static analysis tools and metrics
+- **Connect to other SOLID principles** - show how SRP enables the other principles
+
+The guide covers everything from basic understanding to advanced architectural considerations, making it suitable for senior .NET developer interviews. Each section includes practical examples and detailed explanations that will help you articulate your understanding clearly during technical discussions.
+
+# Single Responsibility Principle (SRP) - Complete .NET Interview Guide
+
+## Core Understanding
+
+### What is this principle?
+The Single Responsibility Principle states that **"A class should have only one reason to change."** More precisely, a class should have only one responsibility or job within the system. This principle was coined by Robert C. Martin (Uncle Bob) as the first of the SOLID principles.
+
+**Key Definition**: Every software module (class, method, package) should have responsibility over a single part of the functionality provided by the software, and that responsibility should be entirely encapsulated by the module.
+
+### What problem does it solve?
+SRP addresses several critical software engineering challenges:
+
+1. **High Coupling**: Classes doing multiple things become tightly coupled to various parts of the system
+2. **Fragile Code**: Changes in one responsibility can break unrelated functionality
+3. **Poor Testability**: Testing becomes complex when a class has multiple concerns
+4. **Code Duplication**: Multiple responsibilities often lead to scattered, duplicated logic
+5. **Difficulty in Understanding**: Classes with mixed concerns are harder to comprehend and maintain
+
+### Why should I follow this principle?
+**Benefits and Value Proposition:**
+
+1. **Enhanced Maintainability**: Easier to locate, understand, and modify specific functionality
+2. **Improved Testability**: Focused classes are easier to unit test with fewer dependencies
+3. **Better Code Reusability**: Single-purpose classes can be reused across different contexts
+4. **Reduced Bug Risk**: Changes affect fewer areas, reducing the chance of introducing bugs
+5. **Team Collaboration**: Developers can work on different responsibilities without conflicts
+6. **Clearer Code Intent**: Each class has a clear, well-defined purpose
+
+### What are the consequences of violating this principle?
+**Technical Debt and Maintenance Issues:**
+
+1. **God Objects**: Classes become massive, handling too many concerns
+2. **Shotgun Surgery**: Simple changes require modifications across multiple methods/classes
+3. **Fragile Base Class Problem**: Changes break seemingly unrelated functionality
+4. **Testing Nightmares**: Complex mocking and setup required for unit tests
+5. **Deployment Risks**: Changes to one feature might affect unrelated features
+6. **Team Bottlenecks**: Multiple developers can't work on the same class simultaneously
+
+## Practical Application
+
+### When should I apply this principle?
+**Specific Scenarios and Triggers:**
+
+1. **Class Growth**: When a class exceeds 200-300 lines or has 7+ methods
+2. **Multiple Import Statements**: When a class requires many different namespaces
+3. **Complex Constructor**: When constructor has many dependencies (5+ parameters)
+4. **Method Diversity**: When methods in a class serve completely different purposes
+5. **Change Frequency**: When different parts of a class change for different reasons
+6. **Testing Difficulty**: When mocking becomes complex due to multiple responsibilities
+
+### When should I NOT apply this principle?
+**Over-engineering Scenarios and Exceptions:**
+
+1. **Simple DTOs**: Data Transfer Objects with basic properties don't need decomposition
+2. **Utility Classes**: Mathematical or string utility classes naturally group related functions
+3. **Performance-Critical Code**: Sometimes consolidation is needed for performance optimization
+4. **Framework Constraints**: Some frameworks require specific class structures
+5. **Very Small Applications**: Micro-applications might not justify the added complexity
+6. **Legacy Integration**: When interfacing with legacy systems that expect specific structures
+
+### How does this principle fit with other SOLID principles?
+**Synergies and Conflicts:**
+
+- **With OCP**: SRP enables easier extension by creating focused extension points
+- **With LSP**: Single responsibilities make substitution more predictable
+- **With ISP**: SRP naturally leads to smaller, more focused interfaces
+- **With DIP**: Focused classes are easier to abstract and depend upon
+- **Potential Conflicts**: Sometimes following SRP strictly can increase complexity when dealing with simple scenarios
+
+### What are the trade-offs of following this principle?
+**Benefits vs Costs:**
+
+**Benefits:**
+- Higher maintainability and testability
+- Better code organization and readability
+- Easier parallel development
+
+**Costs:**
+- Increased number of classes and files
+- More complex navigation in large codebases
+- Potential over-engineering for simple scenarios
+- Additional abstraction overhead
+
+## Implementation Guidelines
+
+### How to implement this principle in .NET Framework and .NET Core?
+
+#### Example 1: Violation of SRP
+```csharp
+// BAD: This class violates SRP - it has multiple responsibilities
+public class UserService
+{
+    // Responsibility 1: User management
+    public void CreateUser(User user) { /* create logic */ }
+    
+    // Responsibility 2: Email notification
+    public void SendWelcomeEmail(string email) { /* email logic */ }
+    
+    // Responsibility 3: Data validation
+    public bool ValidateUserData(User user) { /* validation logic */ }
+    
+    // Responsibility 4: Logging
+    public void LogUserAction(string action) { /* logging logic */ }
+}
+```
+
+#### Example 2: Following SRP
+```csharp
+// GOOD: Each class has a single, well-defined responsibility
+
+// Responsibility 1: User management operations
+public class UserRepository
+{
+    public void CreateUser(User user)
+    {
+        // Focus only on data persistence operations
+        // No validation, logging, or notification concerns
+    }
+}
+
+// Responsibility 2: Business rules and validation
+public class UserValidator
+{
+    public bool ValidateUserData(User user)
+    {
+        // Focus only on user data validation logic
+        // No persistence or notification concerns
+    }
+}
+
+// Responsibility 3: Communication services
+public class EmailNotificationService
+{
+    public void SendWelcomeEmail(string email)
+    {
+        // Focus only on email sending logic
+        // No user management or validation concerns
+    }
+}
+
+// Responsibility 4: System logging
+public class UserLogger
+{
+    public void LogUserAction(string action)
+    {
+        // Focus only on logging user activities
+        // No business logic or data manipulation
+    }
+}
+
+// Orchestrator that coordinates all services
+public class UserManager
+{
+    private readonly UserRepository _repository;
+    private readonly UserValidator _validator;
+    private readonly EmailNotificationService _emailService;
+    private readonly UserLogger _logger;
+
+    public UserManager(UserRepository repository, UserValidator validator, 
+                      EmailNotificationService emailService, UserLogger logger)
+    {
+        // Dependency injection for loose coupling
+        _repository = repository;
+        _validator = validator;
+        _emailService = emailService;
+        _logger = logger;
+    }
+
+    public void RegisterUser(User user)
+    {
+        // Coordinates multiple single-responsibility services
+        if (_validator.ValidateUserData(user))
+        {
+            _repository.CreateUser(user);
+            _emailService.SendWelcomeEmail(user.Email);
+            _logger.LogUserAction($"User {user.Id} registered");
+        }
+    }
+}
+```
+
+### Common violations of this principle in .NET applications
+**Anti-patterns to avoid:**
+
+1. **Controller Bloat**: MVC controllers handling business logic, data access, and formatting
+2. **Service Layer Mixing**: Services handling both business logic and data transformation
+3. **Model Contamination**: Domain models containing formatting, validation, and persistence logic
+4. **Helper Class Sprawl**: Utility classes doing unrelated operations
+5. **Manager Classes**: Classes trying to manage multiple unrelated subsystems
+
+### How to refactor existing code to follow this principle?
+**Step-by-step transformation:**
+
+1. **Identify Responsibilities**: List all the different reasons the class might change
+2. **Extract Methods**: Group related methods together
+3. **Create New Classes**: Move grouped methods to new, focused classes
+4. **Define Interfaces**: Create abstractions for each responsibility
+5. **Inject Dependencies**: Use dependency injection to coordinate services
+6. **Update Tests**: Create focused unit tests for each extracted class
+
+### What design patterns naturally support this principle?
+**Pattern Relationships:**
+
+1. **Strategy Pattern**: Encapsulates algorithms in separate classes
+2. **Decorator Pattern**: Adds single responsibilities without modifying existing classes
+3. **Command Pattern**: Encapsulates single operations in separate classes
+4. **Factory Pattern**: Separates object creation from business logic
+5. **Repository Pattern**: Isolates data access concerns
+6. **Observer Pattern**: Separates notification logic from business logic
+
+## Architecture and Design Context
+
+### Architecture Relevance
+**Different Architectural Styles:**
+
+- **Layered Architecture**: Each layer has a single architectural responsibility
+- **Clean Architecture**: Enforces separation of concerns across layers
+- **Microservices**: Each service has a single business responsibility
+- **Event-Driven**: Event handlers focus on single event types
+- **CQRS**: Commands and queries are separated into single-purpose handlers
+
+### Enterprise Application Context
+**Large-scale Application Considerations:**
+
+1. **Module Boundaries**: SRP helps define clear module boundaries in large applications
+2. **Team Ownership**: Each team can own classes with related responsibilities
+3. **Deployment Independence**: Single-responsibility services can be deployed independently
+4. **Scaling**: Different responsibilities can be scaled independently
+5. **Monitoring**: Easier to monitor and troubleshoot focused components
+
+### Domain-Driven Design Connection
+**DDD Concepts:**
+
+- **Aggregate Roots**: Should have single responsibility within their bounded context
+- **Domain Services**: Encapsulate single domain operations
+- **Value Objects**: Represent single concepts with related data and behavior
+- **Repository Interfaces**: Focus solely on data access for specific aggregates
+
+### Microservices Architecture Impact
+**Service Design Implications:**
+
+1. **Service Boundaries**: Each microservice should have a single business responsibility
+2. **Data Ownership**: Each service owns data related to its specific responsibility
+3. **API Design**: Service APIs should be focused and cohesive
+4. **Fault Isolation**: Failures in one responsibility don't affect others
+
+## Advanced Scenarios
+
+### Concurrency and Multi-threading Context
+**Thread Safety Implications:**
+
+```csharp
+// Thread-safe implementation following SRP
+public class ThreadSafeUserCounter
+{
+    private readonly object _lock = new object();
+    private int _count = 0;
+
+    // Single responsibility: maintaining thread-safe count
+    public void IncrementUser()
+    {
+        lock (_lock)
+        {
+            _count++;
+        }
+    }
+
+    public int GetCurrentCount()
+    {
+        lock (_lock)
+        {
+            return _count;
+        }
+    }
+}
+```
+
+### Cloud-Native and Distributed Systems
+**Scalability and Resilience Considerations:**
+
+1. **Service Isolation**: Single-responsibility services fail independently
+2. **Resource Allocation**: Each service can be allocated resources based on its specific needs
+3. **Monitoring**: Easier to create targeted health checks and metrics
+4. **Deployment**: Independent deployment reduces system-wide risks
+
+### Performance Impact
+**Runtime Performance vs Maintainability Trade-offs:**
+
+- **Additional Method Calls**: More classes may mean more method calls
+- **Memory Allocation**: More objects might increase GC pressure
+- **JIT Optimization**: Smaller, focused methods are often better optimized
+- **Caching**: Single-responsibility services are easier to cache effectively
+
+### Testing Implications
+**How following this principle affects testability:**
+
+```csharp
+[Test]
+public void Should_Validate_User_Successfully()
+{
+    // Easy to test single responsibility
+    var validator = new UserValidator();
+    var user = new User { Name = "John", Email = "john@test.com" };
+    
+    var result = validator.ValidateUserData(user);
+    
+    Assert.IsTrue(result);
+    // No need to mock email services, repositories, or loggers
+}
+```
+
+## Real-World Application
+
+### Industry Use Cases
+**Common scenarios where this principle is critical:**
+
+1. **E-commerce Platforms**: Order processing, payment handling, inventory management
+2. **Financial Systems**: Transaction processing, risk assessment, audit logging
+3. **Healthcare Applications**: Patient management, billing, compliance reporting
+4. **Content Management**: Content creation, publishing, user management
+
+### Code Review Red Flags
+**What to look for during code reviews:**
+
+1. **Large Class Files**: Classes with 500+ lines of code
+2. **Mixed Import Statements**: Classes importing from many different namespaces
+3. **Diverse Method Names**: Methods that seem to serve different purposes
+4. **Complex Constructors**: Too many dependencies injected
+5. **Multiple Change Reasons**: Class documentation mentioning multiple purposes
+
+### Refactoring Strategies
+**Practical approaches to improve existing code:**
+
+1. **Extract Class**: Move related methods to a new class
+2. **Extract Interface**: Create abstractions for different responsibilities
+3. **Move Method**: Relocate methods to more appropriate classes
+4. **Replace Conditional with Polymorphism**: Use strategy pattern for different behaviors
+
+### Team Development Guidelines
+**How to enforce this principle in team settings:**
+
+1. **Code Review Checklist**: Include SRP validation in review process
+2. **Architecture Guidelines**: Define clear responsibility boundaries
+3. **Naming Conventions**: Class names should clearly indicate their single purpose
+4. **Documentation Standards**: Each class should have a clear purpose statement
+
+## Interview-Specific Content
+
+### Common Interview Questions
+
+1. **"Explain SRP with a real-world example"**
+   - Use analogies like kitchen tools (knife for cutting, not stirring)
+
+2. **"How do you identify SRP violations?"**
+   - Look for classes with multiple reasons to change
+
+3. **"Show me code that violates SRP and refactor it"**
+   - Use the UserService example above
+
+4. **"What are the trade-offs of following SRP strictly?"**
+   - Discuss increased complexity vs. maintainability benefits
+
+### Whiteboard-Friendly Explanations
+**Simple diagrams and examples:**
+
+```
+Before SRP:
+┌─────────────────┐
+│   UserService   │
+├─────────────────┤
+│ + CreateUser()  │
+│ + SendEmail()   │
+│ + ValidateUser()│
+│ + LogAction()   │
+└─────────────────┘
+
+After SRP:
+┌─────────────┐  ┌──────────────────┐  ┌─────────────┐
+│ UserRepo    │  │ EmailService     │  │ UserLogger  │
+├─────────────┤  ├──────────────────┤  ├─────────────┤
+│+CreateUser()│  │ + SendEmail()    │  │+LogAction() │
+└─────────────┘  └──────────────────┘  └─────────────┘
+       ▲                    ▲                    ▲
+       │                    │                    │
+       └────────────────────┼────────────────────┘
+                            │
+                   ┌─────────────────┐
+                   │  UserManager    │
+                   ├─────────────────┤
+                   │+ RegisterUser() │
+                   └─────────────────┘
+```
+
+## Measurement and Validation
+
+### How to measure compliance with this principle?
+**Metrics and tools:**
+
+1. **Cyclomatic Complexity**: Lower complexity often indicates better SRP compliance
+2. **Lines of Code per Class**: Smaller classes often follow SRP better
+3. **Number of Dependencies**: Fewer dependencies might indicate focused responsibility
+4. **Change Frequency Analysis**: Classes that change for multiple reasons violate SRP
+
+### Code Quality Indicators
+**Static analysis rules:**
+
+1. **Class Size Rules**: Maximum lines of code per class
+2. **Method Count Rules**: Maximum number of methods per class
+3. **Dependency Rules**: Maximum number of constructor parameters
+4. **Naming Conventions**: Class names should indicate single purpose
+
+### Technical Debt Assessment
+**How violations accumulate over time:**
+
+1. **Defect Density**: Classes violating SRP tend to have more bugs
+2. **Maintenance Cost**: Time spent on changes increases with SRP violations
+3. **Test Coverage**: Poorly structured classes often have lower test coverage
+
+### Automated Enforcement
+**Tools and analyzers:**
+
+1. **SonarQube**: Rules for class complexity and size
+2. **StyleCop**: Naming and structure conventions
+3. **FxCop/Code Analysis**: Microsoft's static analysis tools
+4. **Custom Roslyn Analyzers**: Create rules specific to your organization
+
+## Advanced Topics
+
+### Principle Conflicts
+**When following one principle conflicts with another:**
+
+Sometimes SRP conflicts with performance requirements or framework constraints. In such cases, document the trade-off decision and ensure the violation is contained and well-understood.
+
+### Context-Dependent Application
+**How the principle varies by domain:**
+
+- **Domain Models**: Should focus on single business concepts
+- **Infrastructure**: May combine related technical concerns
+- **UI Components**: Balance between single responsibility and user experience
+
+### Evolution and Maintenance
+**Long-term implications:**
+
+1. **Refactoring Safety**: Easier to refactor single-responsibility classes
+2. **Feature Addition**: New features can be added without modifying existing classes
+3. **Bug Isolation**: Issues are contained within specific responsibilities
+
+### Cross-Cutting Concerns
+**Logging, security, caching implications:**
+
+Use Aspect-Oriented Programming (AOP) or decorators to handle cross-cutting concerns without violating SRP:
+
+```csharp
+// Use decorators for cross-cutting concerns
+public class CachedUserRepository : IUserRepository
+{
+    private readonly IUserRepository _innerRepository;
+    private readonly ICacheService _cache;
+
+    public User GetUser(int id)
+    {
+        // Caching responsibility is separate from data access
+        return _cache.GetOrSet($"user_{id}", 
+               () => _innerRepository.GetUser(id));
+    }
+}
+```
+
+## Conclusion
+
+The Single Responsibility Principle is fundamental to writing maintainable, testable, and scalable .NET applications. While it may seem to increase complexity initially, the long-term benefits in terms of code quality, team productivity, and system reliability far outweigh the costs. Remember that SRP is about having a single reason to change, not necessarily doing only one thing – the key is ensuring that all the things a class does are closely related and serve a single, well-defined purpose.
+
+For interviews, focus on practical examples, understand the trade-offs, and be able to identify and refactor SRP violations quickly. The principle becomes intuitive with practice and is essential for senior .NET developer roles.
+
+Explain the point: `Use Aspect-Oriented Programming (AOP) or decorators to handle cross-cutting concerns without violating SRP` by creating additional examples for ERP (Descrete ERP, for manufacturing indeutry).
+
+I'll create detailed examples showing how to use AOP and decorators to handle cross-cutting concerns in a discrete manufacturing ERP system without violating SRP.I've created a comprehensive example showing how to use the Decorator pattern to handle cross-cutting concerns in a discrete manufacturing ERP system while maintaining SRP. Let me explain the key concepts:
+
+## **Key Concepts Demonstrated:**
+
+### **1. Pure SRP-Compliant Core Services**
+Each core service has a single responsibility:
+- `ProductionOrderService`: Only manages production orders
+- `InventoryService`: Only handles inventory operations  
+- `WorkOrderService`: Only manages work orders
+
+### **2. Cross-Cutting Concerns Handled via Decorators**
+Instead of mixing concerns in core classes, decorators add:
+- **Audit Logging**: Tracks who did what and when
+- **Performance Monitoring**: Measures operation times
+- **Caching**: Improves performance for read operations
+- **Security Authorization**: Validates permissions
+- **Error Handling**: Manages exceptions consistently
+
+### **3. Manufacturing ERP-Specific Examples**
+
+**Audit Logging for Production Orders:**
+```csharp
+// Tracks critical manufacturing operations
+await _auditLogger.LogOperationAsync(
+    "ProductionOrderCreated", 
+    new { OrderId = result.Id, OrderNumber = result.OrderNumber },
+    _securityContext.GetCurrentUserId());
+```
+
+**Performance Monitoring for Inventory:**
+```csharp
+// Critical for real-time inventory systems
+if (stopwatch.ElapsedMilliseconds > 1000)
+{
+    _logger.LogWarning("Slow inventory lookup for part {PartNumber}: {ElapsedMs}ms");
+}
+```
+
+**Security for Production Operations:**
+```csharp
+// Business rule: Only supervisors can complete orders
+if (status == "Completed" && !_securityContext.HasPermission("PRODUCTION_SUPERVISOR"))
+{
+    throw new UnauthorizedAccessException("Only supervisors can complete production orders");
+}
+```
+
+## **Benefits of This Approach:**
+
+### **1. SRP Compliance**
+- Core services focus solely on business logic
+- Cross-cutting concerns are separated into dedicated decorators
+- Each class has exactly one reason to change
+
+### **2. Flexible Composition**
+```csharp
+// Chain decorators as needed: Security -> Audit -> Performance -> Core
+var decoratedService = 
+    new SecurityAuthorizationDecorator(
+        new AuditLoggingDecorator(
+            new PerformanceMonitoringDecorator(coreService)));
+```
+
+### **3. Manufacturing-Specific Advantages**
+- **Traceability**: Every production change is audited automatically
+- **Performance**: Critical inventory lookups are cached and monitored
+- **Compliance**: Security rules enforce manufacturing business rules
+- **Maintenance**: Core manufacturing logic remains clean and focused
+
+### **4. Testability**
+```csharp
+// Test core logic without cross-cutting concerns
+var coreService = new ProductionOrderService();
+var result = await coreService.CreateProductionOrderAsync(order);
+
+// Test decorators independently
+var auditDecorator = new AuditLoggingDecorator(mockCore, mockAudit, mockSecurity);
+```
+
+## **Real-World Manufacturing Scenarios:**
+
+1. **Production Planning**: Cache production schedules, audit schedule changes, monitor planning performance
+2. **Inventory Management**: Log all stock movements, cache frequently accessed parts, monitor slow operations
+3. **Quality Control**: Audit quality decisions, secure quality approval workflows, monitor inspection times
+4. **Work Order Management**: Track operator actions, enforce skill-based security, monitor cycle times
+
+This approach allows you to build robust, maintainable manufacturing systems where business logic stays pure and focused, while essential concerns like security, auditing, and performance are handled transparently through composition rather than inheritance or mixing responsibilities within classes.
+
+```csharp
+// ===================================================================
+// MANUFACTURING ERP: AOP AND DECORATORS FOR CROSS-CUTTING CONCERNS
+// ===================================================================
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+
+// ===================================================================
+// CORE BUSINESS ENTITIES (Manufacturing ERP Domain)
+// ===================================================================
+
+public class ProductionOrder
+{
+    public int Id { get; set; }
+    public string OrderNumber { get; set; }
+    public int ProductId { get; set; }
+    public int Quantity { get; set; }
+    public DateTime ScheduledDate { get; set; }
+    public string Status { get; set; }
+    public int LineId { get; set; }
+}
+
+public class InventoryItem
+{
+    public int Id { get; set; }
+    public string PartNumber { get; set; }
+    public int Quantity { get; set; }
+    public string Location { get; set; }
+    public decimal UnitCost { get; set; }
+}
+
+public class WorkOrder
+{
+    public int Id { get; set; }
+    public int ProductionOrderId { get; set; }
+    public string Operation { get; set; }
+    public TimeSpan EstimatedTime { get; set; }
+    public string Status { get; set; }
+    public int WorkstationId { get; set; }
+}
+
+// ===================================================================
+// PURE SRP-COMPLIANT CORE SERVICES (Single Responsibility Each)
+// ===================================================================
+
+// Single Responsibility: Production Order Management
+public interface IProductionOrderService
+{
+    Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order);
+    Task<ProductionOrder> GetProductionOrderAsync(int orderId);
+    Task UpdateProductionOrderStatusAsync(int orderId, string status);
+    Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date);
+}
+
+// Single Responsibility: Inventory Management
+public interface IInventoryService
+{
+    Task<InventoryItem> GetInventoryItemAsync(string partNumber);
+    Task UpdateInventoryQuantityAsync(string partNumber, int quantity);
+    Task<bool> CheckAvailabilityAsync(string partNumber, int requiredQuantity);
+    Task ReserveInventoryAsync(List<(string PartNumber, int Quantity)> items);
+}
+
+// Single Responsibility: Work Order Management
+public interface IWorkOrderService
+{
+    Task<WorkOrder> CreateWorkOrderAsync(WorkOrder workOrder);
+    Task UpdateWorkOrderStatusAsync(int workOrderId, string status);
+    Task<List<WorkOrder>> GetWorkOrdersByProductionOrderAsync(int productionOrderId);
+    Task RecordWorkOrderCompletionAsync(int workOrderId, TimeSpan actualTime);
+}
+
+// ===================================================================
+// BASIC IMPLEMENTATIONS (Without Cross-Cutting Concerns)
+// ===================================================================
+
+public class ProductionOrderService : IProductionOrderService
+{
+    // Pure business logic - no logging, caching, security, or audit
+    public async Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order)
+    {
+        // Core business logic only
+        order.Id = new Random().Next(1000, 9999);
+        order.Status = "Created";
+        
+        // Simulate database save
+        await Task.Delay(100);
+        return order;
+    }
+
+    public async Task<ProductionOrder> GetProductionOrderAsync(int orderId)
+    {
+        // Pure data retrieval logic
+        await Task.Delay(50);
+        return new ProductionOrder 
+        { 
+            Id = orderId, 
+            OrderNumber = $"PO-{orderId}",
+            Status = "In Progress"
+        };
+    }
+
+    public async Task UpdateProductionOrderStatusAsync(int orderId, string status)
+    {
+        // Pure status update logic
+        await Task.Delay(30);
+    }
+
+    public async Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date)
+    {
+        // Pure scheduling logic
+        await Task.Delay(200);
+        return new List<ProductionOrder>();
+    }
+}
+
+public class InventoryService : IInventoryService
+{
+    // Pure inventory management logic - no cross-cutting concerns
+    public async Task<InventoryItem> GetInventoryItemAsync(string partNumber)
+    {
+        await Task.Delay(50);
+        return new InventoryItem 
+        { 
+            PartNumber = partNumber, 
+            Quantity = 100,
+            Location = "A1-B2"
+        };
+    }
+
+    public async Task UpdateInventoryQuantityAsync(string partNumber, int quantity)
+    {
+        // Pure quantity update logic
+        await Task.Delay(75);
+    }
+
+    public async Task<bool> CheckAvailabilityAsync(string partNumber, int requiredQuantity)
+    {
+        // Pure availability checking logic
+        await Task.Delay(25);
+        return true;
+    }
+
+    public async Task ReserveInventoryAsync(List<(string PartNumber, int Quantity)> items)
+    {
+        // Pure reservation logic
+        await Task.Delay(100);
+    }
+}
+
+// ===================================================================
+// CROSS-CUTTING CONCERN INTERFACES
+// ===================================================================
+
+public interface IAuditLogger
+{
+    Task LogOperationAsync(string operation, object data, string userId);
+}
+
+public interface IPerformanceMonitor
+{
+    void StartOperation(string operationName);
+    void EndOperation(string operationName, TimeSpan elapsed);
+}
+
+public interface ICacheService
+{
+    Task<T> GetAsync<T>(string key);
+    Task SetAsync<T>(string key, T value, TimeSpan expiration);
+    Task RemoveAsync(string key);
+}
+
+public interface ISecurityContext
+{
+    string GetCurrentUserId();
+    bool HasPermission(string operation);
+    void ValidateAccess(string resource);
+}
+
+// ===================================================================
+// DECORATOR PATTERN IMPLEMENTATION FOR CROSS-CUTTING CONCERNS
+// ===================================================================
+
+// Decorator for Audit Logging
+public class AuditLoggingProductionOrderDecorator : IProductionOrderService
+{
+    private readonly IProductionOrderService _innerService;
+    private readonly IAuditLogger _auditLogger;
+    private readonly ISecurityContext _securityContext;
+
+    public AuditLoggingProductionOrderDecorator(
+        IProductionOrderService innerService,
+        IAuditLogger auditLogger,
+        ISecurityContext securityContext)
+    {
+        _innerService = innerService;
+        _auditLogger = auditLogger;
+        _securityContext = securityContext;
+    }
+
+    public async Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order)
+    {
+        // Cross-cutting concern: Audit logging without affecting core business logic
+        var result = await _innerService.CreateProductionOrderAsync(order);
+        
+        await _auditLogger.LogOperationAsync(
+            "ProductionOrderCreated", 
+            new { OrderId = result.Id, OrderNumber = result.OrderNumber },
+            _securityContext.GetCurrentUserId());
+        
+        return result;
+    }
+
+    public async Task UpdateProductionOrderStatusAsync(int orderId, string status)
+    {
+        // Audit the status change operation
+        var oldOrder = await _innerService.GetProductionOrderAsync(orderId);
+        await _innerService.UpdateProductionOrderStatusAsync(orderId, status);
+        
+        await _auditLogger.LogOperationAsync(
+            "ProductionOrderStatusChanged",
+            new { OrderId = orderId, OldStatus = oldOrder.Status, NewStatus = status },
+            _securityContext.GetCurrentUserId());
+    }
+
+    // Delegate other methods to inner service (could add audit for these too)
+    public Task<ProductionOrder> GetProductionOrderAsync(int orderId) 
+        => _innerService.GetProductionOrderAsync(orderId);
+
+    public Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date) 
+        => _innerService.GetProductionScheduleAsync(date);
+}
+
+// Decorator for Performance Monitoring
+public class PerformanceMonitoringInventoryDecorator : IInventoryService
+{
+    private readonly IInventoryService _innerService;
+    private readonly IPerformanceMonitor _performanceMonitor;
+    private readonly ILogger<PerformanceMonitoringInventoryDecorator> _logger;
+
+    public PerformanceMonitoringInventoryDecorator(
+        IInventoryService innerService,
+        IPerformanceMonitor performanceMonitor,
+        ILogger<PerformanceMonitoringInventoryDecorator> logger)
+    {
+        _innerService = innerService;
+        _performanceMonitor = performanceMonitor;
+        _logger = logger;
+    }
+
+    public async Task<InventoryItem> GetInventoryItemAsync(string partNumber)
+    {
+        // Performance monitoring without affecting business logic
+        var stopwatch = Stopwatch.StartNew();
+        _performanceMonitor.StartOperation("GetInventoryItem");
+        
+        try
+        {
+            var result = await _innerService.GetInventoryItemAsync(partNumber);
+            return result;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _performanceMonitor.EndOperation("GetInventoryItem", stopwatch.Elapsed);
+            
+            // Log slow operations (cross-cutting concern)
+            if (stopwatch.ElapsedMilliseconds > 1000)
+            {
+                _logger.LogWarning(
+                    "Slow inventory lookup detected for part {PartNumber}: {ElapsedMs}ms",
+                    partNumber, stopwatch.ElapsedMilliseconds);
+            }
+        }
+    }
+
+    public async Task UpdateInventoryQuantityAsync(string partNumber, int quantity)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        _performanceMonitor.StartOperation("UpdateInventoryQuantity");
+        
+        try
+        {
+            await _innerService.UpdateInventoryQuantityAsync(partNumber, quantity);
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _performanceMonitor.EndOperation("UpdateInventoryQuantity", stopwatch.Elapsed);
+        }
+    }
+
+    // Delegate remaining methods with performance monitoring
+    public Task<bool> CheckAvailabilityAsync(string partNumber, int requiredQuantity) 
+        => _innerService.CheckAvailabilityAsync(partNumber, requiredQuantity);
+
+    public Task ReserveInventoryAsync(List<(string PartNumber, int Quantity)> items) 
+        => _innerService.ReserveInventoryAsync(items);
+}
+
+// Decorator for Caching
+public class CachingInventoryDecorator : IInventoryService
+{
+    private readonly IInventoryService _innerService;
+    private readonly ICacheService _cacheService;
+
+    public CachingInventoryDecorator(
+        IInventoryService innerService,
+        ICacheService cacheService)
+    {
+        _innerService = innerService;
+        _cacheService = cacheService;
+    }
+
+    public async Task<InventoryItem> GetInventoryItemAsync(string partNumber)
+    {
+        // Cross-cutting concern: Caching without affecting core logic
+        var cacheKey = $"inventory_item_{partNumber}";
+        var cachedItem = await _cacheService.GetAsync<InventoryItem>(cacheKey);
+        
+        if (cachedItem != null)
+        {
+            return cachedItem;
+        }
+
+        // Cache miss - get from core service and cache result
+        var item = await _innerService.GetInventoryItemAsync(partNumber);
+        await _cacheService.SetAsync(cacheKey, item, TimeSpan.FromMinutes(5));
+        
+        return item;
+    }
+
+    public async Task UpdateInventoryQuantityAsync(string partNumber, int quantity)
+    {
+        // Update core data
+        await _innerService.UpdateInventoryQuantityAsync(partNumber, quantity);
+        
+        // Cross-cutting concern: Invalidate cache
+        var cacheKey = $"inventory_item_{partNumber}";
+        await _cacheService.RemoveAsync(cacheKey);
+    }
+
+    // Other methods delegate to inner service
+    public Task<bool> CheckAvailabilityAsync(string partNumber, int requiredQuantity) 
+        => _innerService.CheckAvailabilityAsync(partNumber, requiredQuantity);
+
+    public Task ReserveInventoryAsync(List<(string PartNumber, int Quantity)> items) 
+        => _innerService.ReserveInventoryAsync(items);
+}
+
+// Security Authorization Decorator
+public class SecurityAuthorizationDecorator<T> : IProductionOrderService where T : IProductionOrderService
+{
+    private readonly T _innerService;
+    private readonly ISecurityContext _securityContext;
+
+    public SecurityAuthorizationDecorator(T innerService, ISecurityContext securityContext)
+    {
+        _innerService = innerService;
+        _securityContext = securityContext;
+    }
+
+    public async Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order)
+    {
+        // Cross-cutting concern: Security authorization
+        _securityContext.ValidateAccess("CreateProductionOrder");
+        
+        if (!_securityContext.HasPermission("PRODUCTION_CREATE"))
+        {
+            throw new UnauthorizedAccessException("Insufficient permissions to create production orders");
+        }
+
+        // Delegate to core business logic
+        return await _innerService.CreateProductionOrderAsync(order);
+    }
+
+    public async Task UpdateProductionOrderStatusAsync(int orderId, string status)
+    {
+        _securityContext.ValidateAccess("UpdateProductionOrder");
+        
+        // Business rule: Only supervisors can mark orders as completed
+        if (status == "Completed" && !_securityContext.HasPermission("PRODUCTION_SUPERVISOR"))
+        {
+            throw new UnauthorizedAccessException("Only supervisors can complete production orders");
+        }
+
+        await _innerService.UpdateProductionOrderStatusAsync(orderId, status);
+    }
+
+    // Read operations might have different security requirements
+    public Task<ProductionOrder> GetProductionOrderAsync(int orderId)
+    {
+        _securityContext.ValidateAccess("ReadProductionOrder");
+        return _innerService.GetProductionOrderAsync(orderId);
+    }
+
+    public Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date)
+    {
+        _securityContext.ValidateAccess("ReadProductionSchedule");
+        return _innerService.GetProductionScheduleAsync(date);
+    }
+}
+
+// ===================================================================
+// COMPOSITE DECORATOR (Multiple Cross-Cutting Concerns)
+// ===================================================================
+
+public class CompositeProductionOrderService : IProductionOrderService
+{
+    private readonly IProductionOrderService _coreService;
+
+    public CompositeProductionOrderService(
+        IProductionOrderService coreService,
+        IAuditLogger auditLogger,
+        IPerformanceMonitor performanceMonitor,
+        ISecurityContext securityContext,
+        ILogger<CompositeProductionOrderService> logger)
+    {
+        // Chain decorators: Security -> Audit -> Performance -> Core
+        _coreService = 
+            new SecurityAuthorizationDecorator<IProductionOrderService>(
+                new AuditLoggingProductionOrderDecorator(
+                    new PerformanceMonitoringProductionOrderDecorator(
+                        coreService, performanceMonitor, logger),
+                    auditLogger, securityContext),
+                securityContext);
+    }
+
+    // Delegate all methods to the decorated chain
+    public Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order) 
+        => _coreService.CreateProductionOrderAsync(order);
+
+    public Task<ProductionOrder> GetProductionOrderAsync(int orderId) 
+        => _coreService.GetProductionOrderAsync(orderId);
+
+    public Task UpdateProductionOrderStatusAsync(int orderId, string status) 
+        => _coreService.UpdateProductionOrderStatusAsync(orderId, status);
+
+    public Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date) 
+        => _coreService.GetProductionScheduleAsync(date);
+}
+
+// Additional Performance Monitoring Decorator for any service
+public class PerformanceMonitoringProductionOrderDecorator : IProductionOrderService
+{
+    private readonly IProductionOrderService _innerService;
+    private readonly IPerformanceMonitor _performanceMonitor;
+    private readonly ILogger _logger;
+
+    public PerformanceMonitoringProductionOrderDecorator(
+        IProductionOrderService innerService,
+        IPerformanceMonitor performanceMonitor,
+        ILogger logger)
+    {
+        _innerService = innerService;
+        _performanceMonitor = performanceMonitor;
+        _logger = logger;
+    }
+
+    public async Task<ProductionOrder> CreateProductionOrderAsync(ProductionOrder order)
+    {
+        return await ExecuteWithMonitoring(
+            "CreateProductionOrder",
+            async () => await _innerService.CreateProductionOrderAsync(order));
+    }
+
+    public async Task<ProductionOrder> GetProductionOrderAsync(int orderId)
+    {
+        return await ExecuteWithMonitoring(
+            "GetProductionOrder",
+            async () => await _innerService.GetProductionOrderAsync(orderId));
+    }
+
+    public async Task UpdateProductionOrderStatusAsync(int orderId, string status)
+    {
+        await ExecuteWithMonitoring(
+            "UpdateProductionOrderStatus",
+            async () => await _innerService.UpdateProductionOrderStatusAsync(orderId, status));
+    }
+
+    public async Task<List<ProductionOrder>> GetProductionScheduleAsync(DateTime date)
+    {
+        return await ExecuteWithMonitoring(
+            "GetProductionSchedule",
+            async () => await _innerService.GetProductionScheduleAsync(date));
+    }
+
+    private async Task<T> ExecuteWithMonitoring<T>(string operationName, Func<Task<T>> operation)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        _performanceMonitor.StartOperation(operationName);
+        
+        try
+        {
+            return await operation();
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _performanceMonitor.EndOperation(operationName, stopwatch.Elapsed);
+            
+            if (stopwatch.ElapsedMilliseconds > 2000) // Log operations taking > 2 seconds
+            {
+                _logger.LogWarning("Slow {Operation}: {ElapsedMs}ms", 
+                    operationName, stopwatch.ElapsedMilliseconds);
+            }
+        }
+    }
+
+    private async Task ExecuteWithMonitoring(string operationName, Func<Task> operation)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        _performanceMonitor.StartOperation(operationName);
+        
+        try
+        {
+            await operation();
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _performanceMonitor.EndOperation(operationName, stopwatch.Elapsed);
+        }
+    }
+}
+
+// ===================================================================
+// DEPENDENCY INJECTION SETUP (Program.cs or Startup.cs)
+// ===================================================================
+
+/*
+// In your DI container setup:
+services.AddScoped<ProductionOrderService>(); // Core service
+services.AddScoped<InventoryService>(); // Core service
+
+// Cross-cutting concern services
+services.AddScoped<IAuditLogger, AuditLogger>();
+services.AddScoped<IPerformanceMonitor, PerformanceMonitor>();
+services.AddScoped<ICacheService, MemoryCacheService>();
+services.AddScoped<ISecurityContext, SecurityContext>();
+
+// Register decorated services
+services.AddScoped<IProductionOrderService>(provider =>
+{
+    var coreService = provider.GetService<ProductionOrderService>();
+    var auditLogger = provider.GetService<IAuditLogger>();
+    var perfMonitor = provider.GetService<IPerformanceMonitor>();
+    var security = provider.GetService<ISecurityContext>();
+    var logger = provider.GetService<ILogger<CompositeProductionOrderService>>();
+    
+    return new CompositeProductionOrderService(coreService, auditLogger, perfMonitor, security, logger);
+});
+
+services.AddScoped<IInventoryService>(provider =>
+{
+    var coreService = provider.GetService<InventoryService>();
+    var cacheService = provider.GetService<ICacheService>();
+    var perfMonitor = provider.GetService<IPerformanceMonitor>();
+    var logger = provider.GetService<ILogger<PerformanceMonitoringInventoryDecorator>>();
+    
+    // Chain: Caching -> Performance -> Core
+    return new CachingInventoryDecorator(
+        new PerformanceMonitoringInventoryDecorator(coreService, perfMonitor, logger),
+        cacheService);
+});
+*/
+
+// ===================================================================
+// USAGE EXAMPLE IN CONTROLLER OR APPLICATION SERVICE
+// ===================================================================
+
+public class ProductionController
+{
+    private readonly IProductionOrderService _productionOrderService;
+    private readonly IInventoryService _inventoryService;
+
+    public ProductionController(
+        IProductionOrderService productionOrderService,
+        IInventoryService inventoryService)
+    {
+        // These services automatically include all cross-cutting concerns
+        // without the controller needing to know about logging, caching, security, etc.
+        _productionOrderService = productionOrderService;
+        _inventoryService = inventoryService;
+    }
+
+    public async Task<ProductionOrder> CreateProductionOrder(ProductionOrder order)
+    {
+        // All cross-cutting concerns (security, audit, performance) are handled automatically
+        // The controller focuses only on its responsibility: HTTP request/response handling
+        return await _productionOrderService.CreateProductionOrderAsync(order);
+    }
+
+    public async Task<InventoryItem> GetInventoryItem(string partNumber)
+    {
+        // Caching and performance monitoring are handled automatically
+        return await _inventoryService.GetInventoryItemAsync(partNumber);
+    }
+}
+```
+
+---
+
 12. **Open/Closed Principle (OCP)**
     - How do you design extensible API endpoints without modifying existing code?
     - Show plugin architecture implementation.
 
+---
+I've provided you with a comprehensive, architect-level guide to the Open/Closed Principle that covers all the points you requested. This guide is specifically tailored for senior/principal architect interviews and demonstrates deep understanding of enterprise-level .NET development.
+
+## Key Highlights of This Guide:
+
+**✅ Complete Coverage**: All your requested topics are covered in detail
+**✅ Interview-Ready**: Short, focused code examples with detailed explanations
+**✅ Architect Perspective**: Enterprise considerations, team dynamics, business value
+**✅ Practical Focus**: Real-world scenarios, before/after examples, refactoring strategies
+**✅ .NET Specific**: Framework-specific implementations, Microsoft recommendations
+**✅ Advanced Topics**: Concurrency, cloud-native, performance trade-offs
+
+## How to Use This for Interview Prep:
+
+1. **Study the Core Understanding section** for fundamental concepts and clear definitions
+2. **Practice the code examples** - they're sized perfectly for whiteboard discussions
+3. **Memorize the common violations** to quickly identify OCP issues in code reviews
+4. **Understand the business value** - architects must connect technical decisions to business outcomes
+5. **Review the advanced scenarios** for principal-level discussions
+
+## Interview Tips:
+
+- **Start with simple examples** (shapes, discount calculator) then progress to enterprise scenarios
+- **Always explain the business value** - reduced risk, faster delivery, lower maintenance cost
+- **Show both violation and compliant examples** to demonstrate clear understanding
+- **Discuss trade-offs** - when OCP adds value vs when it's over-engineering
+- **Connect to other SOLID principles** and architectural patterns
+
+This guide positions you to answer questions ranging from basic OCP understanding to complex architectural decisions involving microservices, domain-driven design, and enterprise-scale systems. The examples are production-ready and demonstrate the kind of thinking expected from senior architects.
+
+# Open/Closed Principle (OCP) - Comprehensive Architect Guide
+
+## Core Understanding
+
+### What is the Open/Closed Principle?
+
+**Definition**: Software entities (classes, modules, functions) should be **open for extension** but **closed for modification**. This means you should be able to add new functionality without changing existing, tested code.
+
+**Bertrand Meyer's Original Definition (1988)**: "A module will be said to be open if it is still available for extension. A module will be said to be closed if it is available for use by other modules."
+
+**Robert Martin's Polymorphic Interpretation**: Use abstraction and polymorphism to allow new behavior without modifying existing code.
+
+### What Problem Does It Solve?
+
+**Primary Pain Points Addressed:**
+
+1. **Fragile Base Class Problem**: Changes in base classes break derived implementations
+2. **Shotgun Surgery**: Single requirement change requires modifications across multiple files
+3. **Regression Risk**: Every modification risks breaking existing functionality
+4. **Testing Overhead**: Modified code requires complete re-testing of all dependent modules
+5. **Deployment Complexity**: Changes require redeploying entire applications instead of just new components
+
+**Real-World Example**: In a payment processing system, adding a new payment method (Apple Pay) shouldn't require modifying the existing PayPal, Stripe, or credit card processing code.
+
+### Why Should I Follow This Principle?
+
+**Business Value Proposition:**
+
+1. **Faster Time-to-Market**: New features can be added as plugins/extensions
+2. **Reduced Risk**: Existing functionality remains untouched and tested
+3. **Lower Maintenance Cost**: Bug fixes in one area don't cascade to others
+4. **Better Scalability**: Teams can work independently on different extensions
+5. **Enhanced Testability**: New code can be tested in isolation
+
+**Technical Benefits:**
+
+- **Stability**: Core system remains stable while evolving
+- **Modularity**: Clear separation of concerns and responsibilities  
+- **Reusability**: Abstract components can be reused across contexts
+- **Maintainability**: Easier to understand and modify specific behaviors
+
+### Consequences of Violating OCP
+
+**Technical Debt Accumulation:**
+
+1. **Exponential Complexity**: Each new feature requires understanding and modifying existing code
+2. **Bug Multiplication**: Changes in one area introduce bugs in seemingly unrelated features
+3. **Testing Burden**: Complete regression testing required for every change
+4. **Deployment Risk**: Higher probability of production issues due to widespread changes
+
+**Maintenance Issues:**
+
+```csharp
+// VIOLATION EXAMPLE - Adding new discount type requires modifying existing code
+public decimal CalculateDiscount(OrderType orderType, decimal amount)
+{
+    switch (orderType)  // Adding new type requires modifying this method
+    {
+        case OrderType.Regular:
+            return amount * 0.05m;
+        case OrderType.Premium:
+            return amount * 0.10m;
+        case OrderType.VIP:     // New requirement = code modification
+            return amount * 0.15m;
+        default:
+            return 0;
+    }
+}
+```
+
+## Practical Application
+
+### When Should I Apply OCP?
+
+**Specific Scenarios and Triggers:**
+
+1. **Variation Points Identified**: When you anticipate multiple implementations of similar behavior
+2. **Plugin Architecture**: Building extensible systems with third-party integrations
+3. **Business Rule Engines**: When business logic changes frequently
+4. **Cross-Cutting Concerns**: Logging, caching, security policies that may evolve
+5. **Multi-Tenant Applications**: Different tenants requiring different behavior
+
+**Early Warning Signs:**
+- Frequent changes to the same class for different reasons
+- Switch statements based on type or enum values
+- Multiple similar classes with slight behavioral differences
+- Copy-paste programming patterns
+
+### When Should I NOT Apply OCP?
+
+**Over-Engineering Scenarios:**
+
+1. **Simple, Stable Requirements**: When requirements are unlikely to change
+2. **Performance-Critical Code**: Abstraction overhead may be unacceptable
+3. **Early Development Stages**: Premature abstraction before patterns emerge
+4. **Single-Use Components**: When extension scenarios are highly improbable
+
+**Exception Examples:**
+```csharp
+// DON'T over-abstract simple calculations that won't change
+public static class MathConstants 
+{
+    public const double PI = 3.14159;  // No need for abstraction here
+}
+
+// DON'T abstract performance-critical inner loops
+private int SumArray(int[] values) 
+{
+    int sum = 0;
+    for (int i = 0; i < values.Length; i++)  // Direct access for performance
+        sum += values[i];
+    return sum;
+}
+```
+
+### Relationship with Other SOLID Principles
+
+**Synergies:**
+- **SRP**: Classes with single responsibility are easier to extend without modification
+- **LSP**: Proper substitutability enables safe extension through inheritance
+- **ISP**: Small, focused interfaces facilitate extension without breaking clients
+- **DIP**: Dependency on abstractions enables extension through new implementations
+
+**Potential Conflicts:**
+- **Performance vs. Flexibility**: Abstraction layers may impact performance
+- **Simplicity vs. Extensibility**: More flexible design often means more complex code
+
+### Trade-offs of Following OCP
+
+**Benefits:**
+- Reduced regression risk
+- Faster feature development
+- Better code organization
+- Enhanced testability
+
+**Costs:**
+- Initial design complexity
+- More classes and interfaces
+- Potential performance overhead
+- Steeper learning curve for new developers
+
+## Implementation Guidelines
+
+### .NET Framework and .NET Core Implementation
+
+**Strategy Pattern Implementation:**
+
+```csharp
+// Abstract strategy defining the contract - CLOSED for modification
+public interface IDiscountStrategy
+{
+    decimal CalculateDiscount(decimal amount, CustomerInfo customer);
+    bool IsApplicable(CustomerInfo customer);
+}
+
+// Concrete implementations - OPEN for extension
+public class RegularCustomerDiscount : IDiscountStrategy
+{
+    public decimal CalculateDiscount(decimal amount, CustomerInfo customer)
+    {
+        // Regular customers get 5% discount on orders over $100
+        return amount > 100 ? amount * 0.05m : 0;
+    }
+    
+    public bool IsApplicable(CustomerInfo customer) => 
+        customer.Type == CustomerType.Regular;
+}
+
+public class PremiumCustomerDiscount : IDiscountStrategy
+{
+    public decimal CalculateDiscount(decimal amount, CustomerInfo customer)
+    {
+        // Premium customers get 10% discount always + extra 5% for large orders
+        var baseDiscount = amount * 0.10m;
+        var extraDiscount = amount > 500 ? amount * 0.05m : 0;
+        return baseDiscount + extraDiscount;
+    }
+    
+    public bool IsApplicable(CustomerInfo customer) => 
+        customer.Type == CustomerType.Premium;
+}
+
+// Context class that uses strategies - CLOSED for modification
+public class OrderProcessor
+{
+    private readonly IEnumerable<IDiscountStrategy> _discountStrategies;
+    
+    public OrderProcessor(IEnumerable<IDiscountStrategy> discountStrategies)
+    {
+        _discountStrategies = discountStrategies ?? throw new ArgumentNullException();
+    }
+    
+    public decimal ProcessOrder(Order order)
+    {
+        // Find applicable discount strategy without modifying existing code
+        var strategy = _discountStrategies.FirstOrDefault(s => s.IsApplicable(order.Customer));
+        var discount = strategy?.CalculateDiscount(order.Amount, order.Customer) ?? 0;
+        
+        return order.Amount - discount;
+    }
+}
+```
+
+**Plugin Architecture with .NET Core:**
+
+```csharp
+// Plugin contract - CLOSED for modification
+public interface IPaymentProcessor
+{
+    Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request);
+    bool CanProcess(PaymentMethod method);
+}
+
+// Host application service - CLOSED for modification, OPEN for extension via DI
+public class PaymentService
+{
+    private readonly IEnumerable<IPaymentProcessor> _processors;
+    
+    public PaymentService(IEnumerable<IPaymentProcessor> processors)
+    {
+        _processors = processors;
+    }
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Dynamically select processor without modifying core logic
+        var processor = _processors.FirstOrDefault(p => p.CanProcess(request.Method));
+        
+        if (processor == null)
+            throw new NotSupportedException($"Payment method {request.Method} not supported");
+            
+        return await processor.ProcessPaymentAsync(request);
+    }
+}
+
+// New payment processor can be added without touching existing code
+public class ApplePayProcessor : IPaymentProcessor
+{
+    public bool CanProcess(PaymentMethod method) => method == PaymentMethod.ApplePay;
+    
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Apple Pay specific implementation
+        // This is EXTENSION without MODIFICATION
+        return new PaymentResult { Success = true, TransactionId = Guid.NewGuid().ToString() };
+    }
+}
+
+// DI Registration - Adding new processors without changing existing registrations
+services.AddTransient<IPaymentProcessor, CreditCardProcessor>();
+services.AddTransient<IPaymentProcessor, PayPalProcessor>();
+services.AddTransient<IPaymentProcessor, ApplePayProcessor>(); // New addition
+```
+
+### Common Violations in .NET Applications
+
+**Anti-Pattern 1: Switch Statement Violation**
+
+```csharp
+// VIOLATION - Adding new report type requires modifying this method
+public class ReportGenerator
+{
+    public string GenerateReport(ReportType type, IEnumerable<Data> data)
+    {
+        switch (type)  // Modification point - violates OCP
+        {
+            case ReportType.PDF:
+                return GeneratePdfReport(data);
+            case ReportType.Excel:
+                return GenerateExcelReport(data);
+            case ReportType.CSV:  // New type = modification required
+                return GenerateCsvReport(data);
+            default:
+                throw new ArgumentException("Unknown report type");
+        }
+    }
+}
+```
+
+**Anti-Pattern 2: Direct Type Checking**
+
+```csharp
+// VIOLATION - Type checking forces modification for new types
+public decimal CalculateShipping(Customer customer, Order order)
+{
+    if (customer is PremiumCustomer)  // Hard-coded type check
+    {
+        return 0; // Free shipping
+    }
+    else if (customer is RegularCustomer regular)
+    {
+        return regular.IsFirstOrder ? 5.99m : 9.99m;
+    }
+    // Adding VIP customer requires modifying this method
+    
+    return 9.99m;
+}
+```
+
+### Refactoring to Follow OCP
+
+**Step-by-Step Transformation:**
+
+**Step 1: Identify Extension Points**
+```csharp
+// Original violation - switch statement
+public class NotificationService
+{
+    public void SendNotification(NotificationType type, string message, string recipient)
+    {
+        switch (type)
+        {
+            case NotificationType.Email:
+                SendEmail(message, recipient);
+                break;
+            case NotificationType.SMS:
+                SendSMS(message, recipient);
+                break;
+            // Adding push notification requires modification here
+        }
+    }
+}
+```
+
+**Step 2: Extract Interface**
+```csharp
+// Define abstraction for extension point
+public interface INotificationChannel
+{
+    Task SendAsync(string message, string recipient);
+    bool CanHandle(NotificationType type);
+}
+```
+
+**Step 3: Implement Concrete Strategies**
+```csharp
+public class EmailNotificationChannel : INotificationChannel
+{
+    public bool CanHandle(NotificationType type) => type == NotificationType.Email;
+    
+    public async Task SendAsync(string message, string recipient)
+    {
+        // Email-specific implementation
+        await Task.Delay(100); // Simulate email sending
+    }
+}
+
+public class SmsNotificationChannel : INotificationChannel
+{
+    public bool CanHandle(NotificationType type) => type == NotificationType.SMS;
+    
+    public async Task SendAsync(string message, string recipient)
+    {
+        // SMS-specific implementation
+        await Task.Delay(50); // Simulate SMS sending
+    }
+}
+```
+
+**Step 4: Refactor Context Class**
+```csharp
+public class NotificationService
+{
+    private readonly IEnumerable<INotificationChannel> _channels;
+    
+    public NotificationService(IEnumerable<INotificationChannel> channels)
+    {
+        _channels = channels;
+    }
+    
+    public async Task SendNotificationAsync(NotificationType type, string message, string recipient)
+    {
+        var channel = _channels.FirstOrDefault(c => c.CanHandle(type));
+        if (channel == null)
+            throw new NotSupportedException($"Notification type {type} not supported");
+            
+        await channel.SendAsync(message, recipient);
+    }
+}
+```
+
+**Step 5: Add New Functionality (Extension without Modification)**
+```csharp
+// New push notification can be added without touching existing code
+public class PushNotificationChannel : INotificationChannel
+{
+    public bool CanHandle(NotificationType type) => type == NotificationType.Push;
+    
+    public async Task SendAsync(string message, string recipient)
+    {
+        // Push notification implementation - completely new code
+        await Task.Delay(25); // Simulate push sending
+    }
+}
+```
+
+### Design Patterns Supporting OCP
+
+**1. Strategy Pattern**: Different algorithms for the same problem
+**2. Template Method Pattern**: Fixed algorithm structure with variable steps
+**3. Observer Pattern**: Extensible event handling
+**4. Chain of Responsibility**: Extensible request processing pipeline
+**5. Decorator Pattern**: Extensible object behavior modification
+**6. Factory Pattern**: Extensible object creation
+
+## Architecture and Design Context
+
+### Architecture Relevance
+
+**Layered Architecture:**
+- Each layer should be extensible without modifying lower layers
+- New business rules added as new services without touching data layer
+- Presentation layer extensions through new controllers/views
+
+**Clean Architecture:**
+- Use cases are extended through new implementations
+- Infrastructure layer plugins without core domain changes
+- External interfaces defined as abstractions
+
+**Microservices Architecture:**
+- New services added without modifying existing services
+- API gateways route to new services through configuration
+- Service discovery enables dynamic service registration
+
+### Enterprise Application Context
+
+**Large-Scale Considerations:**
+
+1. **Team Autonomy**: Teams can develop new features independently
+2. **Deployment Flexibility**: New features deployed as separate modules
+3. **Risk Mitigation**: Core functionality remains stable during extensions
+4. **Compliance**: Audit trails preserved when extending functionality
+
+**Enterprise Pattern Example:**
+```csharp
+// Enterprise service bus that's extensible
+public interface IMessageHandler<T>
+{
+    Task HandleAsync(T message);
+}
+
+public class MessageBus
+{
+    private readonly IServiceProvider _serviceProvider;
+    
+    public async Task PublishAsync<T>(T message)
+    {
+        // Dynamically discover handlers without modifying core bus
+        var handlers = _serviceProvider.GetServices<IMessageHandler<T>>();
+        var tasks = handlers.Select(h => h.HandleAsync(message));
+        await Task.WhenAll(tasks);
+    }
+}
+```
+
+### Domain-Driven Design Connection
+
+**Aggregate Extension:**
+```csharp
+public abstract class OrderProcessor
+{
+    // Template method that's closed for modification
+    public async Task<ProcessResult> ProcessAsync(Order order)
+    {
+        ValidateOrder(order);
+        var result = await ProcessOrderAsync(order);  // Open for extension
+        await NotifyStakeholdersAsync(order, result);
+        return result;
+    }
+    
+    // Extension point for different order processing strategies
+    protected abstract Task<ProcessResult> ProcessOrderAsync(Order order);
+    
+    private void ValidateOrder(Order order) { /* Common validation */ }
+    private async Task NotifyStakeholdersAsync(Order order, ProcessResult result) { /* Common notification */ }
+}
+```
+
+**Domain Service Extension:**
+```csharp
+// Domain services can be extended through composition
+public class PricingService
+{
+    private readonly IEnumerable<IPricingRule> _rules;
+    
+    public decimal CalculatePrice(Product product, Customer customer)
+    {
+        return _rules.Aggregate(product.BasePrice, 
+            (price, rule) => rule.ApplyRule(price, product, customer));
+    }
+}
+```
+
+### Microservices Architecture Impact
+
+**Service Design Implications:**
+
+1. **API Versioning**: New endpoints without breaking existing contracts
+2. **Event-Driven Architecture**: New event handlers without modifying publishers
+3. **Service Mesh Integration**: New routing rules without touching services
+4. **Configuration-Driven Behavior**: Runtime behavior changes through configuration
+
+## Advanced Scenarios
+
+### Concurrency and Multi-threading Context
+
+**Thread-Safe Extension Points:**
+```csharp
+public class ConcurrentTaskProcessor<T>
+{
+    private readonly ConcurrentBag<ITaskProcessor<T>> _processors;
+    private readonly SemaphoreSlim _semaphore;
+    
+    public ConcurrentTaskProcessor(IEnumerable<ITaskProcessor<T>> processors, int maxConcurrency = 10)
+    {
+        _processors = new ConcurrentBag<ITaskProcessor<T>>(processors);
+        _semaphore = new SemaphoreSlim(maxConcurrency, maxConcurrency);
+    }
+    
+    public async Task ProcessAsync(T item)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            // Thread-safe extension point - new processors can be added
+            var applicableProcessors = _processors.Where(p => p.CanProcess(item));
+            var tasks = applicableProcessors.Select(p => p.ProcessAsync(item));
+            await Task.WhenAll(tasks);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+}
+```
+
+### Cloud-Native and Distributed Systems
+
+**Scalability Considerations:**
+```csharp
+// Circuit breaker pattern that's extensible
+public interface ICircuitBreakerPolicy
+{
+    bool ShouldCircuitOpen(FailureContext context);
+    TimeSpan GetRetryDelay(int attemptNumber);
+}
+
+public class DistributedServiceClient
+{
+    private readonly IEnumerable<ICircuitBreakerPolicy> _policies;
+    
+    // New policies can be added without modifying the client
+    public async Task<T> ExecuteAsync<T>(Func<Task<T>> operation)
+    {
+        foreach (var policy in _policies)
+        {
+            if (policy.ShouldCircuitOpen(GetFailureContext()))
+            {
+                await Task.Delay(policy.GetRetryDelay(GetAttemptNumber()));
+                continue;
+            }
+        }
+        
+        return await operation();
+    }
+}
+```
+
+### Performance Impact
+
+**Runtime Performance vs Maintainability:**
+
+**High-Performance Scenario:**
+```csharp
+// When performance is critical, consider sealed classes and direct calls
+public sealed class HighPerformanceCalculator  // Sealed prevents extension overhead
+{
+    // Direct method calls for performance-critical paths
+    public double Calculate(double x, double y) => x * y + Math.Sqrt(x);
+}
+```
+
+**Balanced Approach:**
+```csharp
+// Use abstractions for business logic, direct calls for infrastructure
+public class OrderService
+{
+    private readonly IEnumerable<IOrderValidator> _validators;  // Extensible business rules
+    private readonly PerformanceCounter _counter;              // Direct infrastructure call
+    
+    public async Task<bool> ValidateOrderAsync(Order order)
+    {
+        _counter.Increment();  // Direct call for performance
+        
+        // Extensible validation through abstraction
+        return await _validators.AllAsync(v => v.ValidateAsync(order));
+    }
+}
+```
+
+### Testing Implications
+
+**Testability Benefits:**
+```csharp
+[Test]
+public async Task OrderProcessor_WithMockPaymentProcessor_ShouldProcessSuccessfully()
+{
+    // Arrange - Easy to mock dependencies due to abstraction
+    var mockProcessor = new Mock<IPaymentProcessor>();
+    mockProcessor.Setup(p => p.CanProcess(PaymentMethod.CreditCard)).Returns(true);
+    mockProcessor.Setup(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
+             .ReturnsAsync(new PaymentResult { Success = true });
+    
+    var orderService = new OrderService(new[] { mockProcessor.Object });
+    
+    // Act & Assert - Test new functionality in isolation
+    var result = await orderService.ProcessOrderAsync(new Order 
+    { 
+        PaymentMethod = PaymentMethod.CreditCard 
+    });
+    
+    Assert.True(result.Success);
+    mockProcessor.Verify(p => p.ProcessPaymentAsync(It.IsAny<PaymentRequest>()), Times.Once);
+}
+```
+
+## Real-World Application
+
+### Industry Use Cases
+
+**1. E-commerce Platform:**
+- Payment processors (credit cards, digital wallets, buy-now-pay-later)
+- Shipping providers (FedEx, UPS, DHL)
+- Tax calculation services (different regions, tax types)
+- Inventory management strategies (JIT, bulk, dropshipping)
+
+**2. Content Management System:**
+- Content renderers (HTML, PDF, mobile)
+- Authentication providers (OAuth, SAML, local)
+- Storage backends (file system, cloud, CDN)
+- Search engines (Elasticsearch, SQL Server, Lucene)
+
+**3. Financial Services:**
+- Risk assessment algorithms
+- Compliance rules for different jurisdictions
+- Trading strategies
+- Reporting formats for regulators
+
+### Code Review Red Flags
+
+**Watch for these patterns:**
+
+1. **Large switch/if-else chains** based on type or enum
+2. **Modification of existing classes** for new functionality
+3. **Copy-paste code** with slight variations
+4. **Hard-coded type checks** using `is` or `GetType()`
+5. **Monolithic classes** handling multiple responsibilities
+
+**Review Checklist Questions:**
+- Can new functionality be added without modifying existing code?
+- Are extension points clearly defined through abstractions?
+- Is the system testable with mocked dependencies?
+- Are there clear boundaries between stable core and variable extensions?
+
+### Refactoring Strategies
+
+**Incremental Approach:**
+
+1. **Identify Hot Spots**: Classes that change frequently
+2. **Extract Interfaces**: Define abstractions for variable behavior
+3. **Implement Strategies**: Create concrete implementations
+4. **Inject Dependencies**: Use IoC container for composition
+5. **Validate**: Ensure existing tests still pass
+
+**Big Bang Approach (for legacy systems):**
+1. **Create New Abstractions**: Define target architecture
+2. **Implement Adapters**: Wrap existing code behind new interfaces
+3. **Gradually Replace**: Implement new features using new architecture
+4. **Deprecate Old**: Phase out legacy implementations
+
+### Team Development Guidelines
+
+**Enforcement Strategies:**
+
+1. **Architecture Decision Records (ADRs)**: Document extension points
+2. **Code Templates**: Provide templates following OCP
+3. **Static Analysis Rules**: Configure analyzers to detect violations
+4. **Peer Reviews**: Train team to identify OCP opportunities
+5. **Design Sessions**: Regular architecture reviews
+
+**Training Approach:**
+- Show before/after examples
+- Practice refactoring exercises
+- Code kata focusing on extensibility
+- Architecture decision workshops
+
+## Interview-Specific Content
+
+### Common Interview Questions
+
+**Q1: "Explain OCP with a real-world example"**
+
+**Answer Framework:**
+1. Define OCP clearly
+2. Present business scenario (e.g., payment processing)
+3. Show violation example (switch statement)
+4. Demonstrate compliant solution (strategy pattern)
+5. Explain benefits and trade-offs
+
+**Q2: "How would you refactor this switch statement to follow OCP?"**
+
+**Approach:**
+1. Identify the variation point
+2. Extract common interface
+3. Implement concrete strategies
+4. Show dependency injection setup
+5. Demonstrate how new cases can be added
+
+**Q3: "When would you NOT follow OCP?"**
+
+**Key Points:**
+- Performance-critical scenarios
+- Simple, stable requirements
+- Early development phases
+- Over-engineering concerns
+
+### Whiteboard-Friendly Explanations
+
+**Simple UML Diagram:**
+```
+    [Context]
+        |
+        v
+[IStrategy] <<interface>>
+        ^
+        |
+   +----+----+
+   |         |
+[StrategyA] [StrategyB]
+```
+
+**Extension Visualization:**
+```
+Existing System: [Context] -> [IStrategy] -> [StrategyA, StrategyB]
+New Requirement: [Context] -> [IStrategy] -> [StrategyA, StrategyB, StrategyC]
+                                                                    ^
+                                                                   New!
+```
+
+### Before/After Refactoring Examples
+
+**Before (Violation):**
+```csharp
+public class DocumentExporter
+{
+    public byte[] Export(Document doc, ExportFormat format)
+    {
+        switch (format)  // Modification point
+        {
+            case ExportFormat.PDF:
+                return ExportToPdf(doc);
+            case ExportFormat.Word:
+                return ExportToWord(doc);
+            default:
+                throw new NotSupportedException();
+        }
+    }
+}
+```
+
+**After (Compliant):**
+```csharp
+public interface IDocumentExporter
+{
+    byte[] Export(Document document);
+    bool SupportsFormat(ExportFormat format);
+}
+
+public class DocumentExportService
+{
+    private readonly IEnumerable<IDocumentExporter> _exporters;
+    
+    public DocumentExportService(IEnumerable<IDocumentExporter> exporters)
+    {
+        _exporters = exporters;
+    }
+    
+    public byte[] Export(Document doc, ExportFormat format)
+    {
+        var exporter = _exporters.FirstOrDefault(e => e.SupportsFormat(format));
+        return exporter?.Export(doc) ?? throw new NotSupportedException();
+    }
+}
+```
+
+## Measurement and Validation
+
+### Metrics and Tools
+
+**Static Analysis Metrics:**
+- Cyclomatic complexity of methods with conditional logic
+- Number of switch statements based on types
+- Class coupling and cohesion metrics
+- Interface segregation ratio
+
+**Code Quality Indicators:**
+
+**Violation Indicators:**
+```csharp
+// High cyclomatic complexity due to type checking
+public void ProcessOrder(OrderType type, Order order)  // CC = 6
+{
+    if (type == OrderType.Regular) { /* ... */ }
+    else if (type == OrderType.Premium) { /* ... */ }
+    else if (type == OrderType.VIP) { /* ... */ }
+    // ... more conditions
+}
+```
+
+**Compliance Indicators:**
+```csharp
+// Low cyclomatic complexity, extensible design
+public void ProcessOrder(Order order)  // CC = 1
+{
+    var processor = _processors.FirstOrDefault(p => p.CanProcess(order));
+    processor?.Process(order);
+}
+```
+
+### Automated Enforcement
+
+**Roslyn Analyzers:**
+```csharp
+// Custom analyzer rule
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class OpenClosedPrincipleAnalyzer : DiagnosticAnalyzer
+{
+    public static readonly DiagnosticDescriptor SwitchStatementRule = new DiagnosticDescriptor(
+        "OCP001",
+        "Avoid switch statements on types",
+        "Consider using strategy pattern instead of switch on {0}",
+        "Design",
+        DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+}
+```
+
+**Build Pipeline Integration:**
+```yaml
+# Azure DevOps Pipeline
+- task: DotNetCoreCLI@2
+  displayName: 'Run Code Analysis'
+  inputs:
+    command: 'custom'
+    custom: 'run-analyzers'
+    arguments: '--verbosity normal --configuration Release'
+    
+- task: SonarCloudAnalyze@1
+  displayName: 'Run SonarCloud Analysis'
+  inputs:
+    organization: 'your-org'
+```
+
+## Advanced Topics
+
+### Principle Conflicts
+
+**OCP vs Performance:**
+```csharp
+// OCP-compliant but slower
+public interface ICalculationStrategy
+{
+    double Calculate(double[] values);
+}
+
+// Performance-optimized but closed
+public static class OptimizedCalculator
+{
+    public static double Calculate(double[] values)
+    {
+        // Direct, optimized implementation
+        var sum = 0.0;
+        for (int i = 0; i < values.Length; i++)
+            sum += values[i];
+        return sum / values.Length;
+    }
+}
+```
+
+**OCP vs YAGNI (You Aren't Gonna Need It):**
+- Don't create abstractions until you have at least 2-3 concrete implementations
+- Start simple, refactor to OCP when variation points emerge
+- Balance future flexibility with current simplicity
+
+### Context-Dependent Application
+
+**Domain Considerations:**
+
+**Financial Domain**: Strict compliance, audit trails, regulatory changes
+```csharp
+// Compliance rules change frequently - high OCP value
+public interface IComplianceRule
+{
+    bool IsCompliant(Transaction transaction);
+    string GetViolationReason(Transaction transaction);
+}
+```
+
+**Gaming Domain**: Performance critical, fewer regulatory constraints
+```csharp
+// Game physics - performance over flexibility
+public sealed class PhysicsEngine  // Direct implementation for performance
+{
+    public void UpdatePhysics(GameState state) { /* optimized code */ }
+}
+```
+
+### Cross-Cutting Concerns
+
+**Aspect-Oriented Programming with OCP:**
+```csharp
+// Extensible concern handling
+public interface ICrossCuttingConcern
+{
+    Task BeforeExecutionAsync(MethodContext context);
+    Task AfterExecutionAsync(MethodContext context, object result);
+    Task OnExceptionAsync(MethodContext context, Exception exception);
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public class ExtensibleAspectAttribute : Attribute
+{
+    public Type[] ConcernTypes { get; set; }
+}
+
+public class ServiceProxy
+{
+    private readonly IEnumerable<ICrossCuttingConcern> _concerns;
+    
+    public async Task<T> ExecuteAsync<T>(Func<Task<T>> method, MethodContext context)
+    {
+        // Extensible cross-cutting concern pipeline
+        foreach (var concern in _concerns)
+            await concern.BeforeExecutionAsync(context);
+            
+        try
+        {
+            var result = await method();
+            
+            foreach (var concern in _concerns.Reverse())
+                await concern.AfterExecutionAsync(context, result);
+                
+            return result;
+        }
+        catch (Exception ex)
+        {
+            foreach (var concern in _concerns.Reverse())
+                await concern.OnExceptionAsync(context, ex);
+            throw;
+        }
+    }
+}
+```
+
+## Practical Scenarios
+
+### Extensible API Endpoints
+
+**Problem**: Design REST API that can support new operations without modifying existing endpoints.
+
+**Solution**:
+```csharp
+// Command pattern with OCP
+public interface IApiCommand<TRequest, TResponse>
+{
+    Task<TResponse> ExecuteAsync(TRequest request);
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class CommandController : ControllerBase
+{
+    private readonly IServiceProvider _serviceProvider;
+    
+    public CommandController(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+    
+    [HttpPost("{commandName}")]
+    public async Task<IActionResult> ExecuteCommand(
+        string commandName, 
+        [FromBody] JsonElement request)
+    {
+        // Dynamically resolve command without modifying controller
+        var commandType = GetCommandType(commandName);
+        var command = _serviceProvider.GetService(commandType);
+        
+        if (command == null)
+            return NotFound($"Command '{commandName}' not found");
+            
+        var result = await ExecuteCommandDynamically(command, request);
+        return Ok(result);
+    }
+    
+    private async Task<object> ExecuteCommandDynamically(object command, JsonElement request)
+    {
+        // Use reflection to invoke ExecuteAsync method
+        var method = command.GetType().GetMethod("ExecuteAsync");
+        var task = (Task)method.Invoke(command, new[] { DeserializeRequest(request, method.GetParameters()[0].ParameterType) });
+        await task;
+        
+        // Extract result from Task<TResponse>
+        return task.GetType().GetProperty("Result")?.GetValue(task);
+    }
+}
+
+// New commands can be added without touching the controller
+public class CreateUserCommand : IApiCommand<CreateUserRequest, CreateUserResponse>
+{
+    private readonly IUserRepository _userRepository;
+    
+    public CreateUserCommand(IUserRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+    
+    public async Task<CreateUserResponse> ExecuteAsync(CreateUserRequest request)
+    {
+        var user = new User { Name = request.Name, Email = request.Email };
+        await _userRepository.CreateAsync(user);
+        return new CreateUserResponse { UserId = user.Id, Success = true };
+    }
+}
+
+// Adding new command doesn't require modifying existing code
+public class DeleteUserCommand : IApiCommand<DeleteUserRequest, DeleteUserResponse>
+{
+    private readonly IUserRepository _userRepository;
+    
+    public DeleteUserCommand(IUserRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+    
+    public async Task<DeleteUserResponse> ExecuteAsync(DeleteUserRequest request)
+    {
+        await _userRepository.DeleteAsync(request.UserId);
+        return new DeleteUserResponse { Success = true };
+    }
+}
+```
+
+### Plugin Architecture Implementation
+
+**Complete Plugin System:**
+
+```csharp
+// Plugin contract - defines what plugins can do
+public interface IPlugin
+{
+    string Name { get; }
+    Version Version { get; }
+    Task InitializeAsync(IPluginContext context);
+    Task<PluginResult> ExecuteAsync(PluginRequest request);
+    Task ShutdownAsync();
+}
+
+// Plugin context provides host services to plugins
+public interface IPluginContext
+{
+    ILogger Logger { get; }
+    IConfiguration Configuration { get; }
+    IServiceProvider ServiceProvider { get; }
+    Task<T> GetServiceAsync<T>() where T : class;
+}
+
+// Plugin loader - dynamically loads plugins without host modification
+public class PluginLoader
+{
+    private readonly List<IPlugin> _loadedPlugins = new();
+    private readonly IPluginContext _context;
+    
+    public PluginLoader(IPluginContext context)
+    {
+        _context = context;
+    }
+    
+    public async Task LoadPluginsAsync(string pluginDirectory)
+    {
+        var pluginFiles = Directory.GetFiles(pluginDirectory, "*.dll");
+        
+        foreach (var file in pluginFiles)
+        {
+            try
+            {
+                // Load assembly and find plugin implementations
+                var assembly = Assembly.LoadFrom(file);
+                var pluginTypes = assembly.GetTypes()
+                    .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract);
+                
+                foreach (var type in pluginTypes)
+                {
+                    var plugin = (IPlugin)Activator.CreateInstance(type);
+                    await plugin.InitializeAsync(_context);
+                    _loadedPlugins.Add(plugin);
+                    
+                    _context.Logger.LogInformation($"Loaded plugin: {plugin.Name} v{plugin.Version}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _context.Logger.LogError(ex, $"Failed to load plugin from {file}");
+            }
+        }
+    }
+    
+    public async Task<IEnumerable<PluginResult>> ExecutePluginsAsync(PluginRequest request)
+    {
+        var results = new List<PluginResult>();
+        
+        foreach (var plugin in _loadedPlugins)
+        {
+            try
+            {
+                var result = await plugin.ExecuteAsync(request);
+                results.Add(result);
+            }
+            catch (Exception ex)
+            {
+                _context.Logger.LogError(ex, $"Plugin {plugin.Name} execution failed");
+                results.Add(new PluginResult 
+                { 
+                    Success = false, 
+                    Error = ex.Message,
+                    PluginName = plugin.Name
+                });
+            }
+        }
+        
+        return results;
+    }
+}
+
+// Example plugin implementation - can be deployed separately
+public class EmailNotificationPlugin : IPlugin
+{
+    public string Name => "Email Notification Plugin";
+    public Version Version => new Version(1, 0, 0);
+    
+    private IEmailService _emailService;
+    
+    public async Task InitializeAsync(IPluginContext context)
+    {
+        _emailService = await context.GetServiceAsync<IEmailService>();
+        context.Logger.LogInformation("Email plugin initialized");
+    }
+    
+    public async Task<PluginResult> ExecuteAsync(PluginRequest request)
+    {
+        if (request.Type != "email-notification")
+            return new PluginResult { Success = true, Skipped = true };
+            
+        await _emailService.SendEmailAsync(request.Data["recipient"].ToString(), 
+                                          request.Data["subject"].ToString(),
+                                          request.Data["body"].ToString());
+        
+        return new PluginResult 
+        { 
+            Success = true, 
+            Message = "Email sent successfully",
+            PluginName = Name
+        };
+    }
+    
+    public async Task ShutdownAsync()
+    {
+        // Cleanup resources
+        await Task.CompletedTask;
+    }
+}
+
+// Host application - doesn't need to know about specific plugins
+public class PluginHostService
+{
+    private readonly PluginLoader _pluginLoader;
+    
+    public PluginHostService(PluginLoader pluginLoader)
+    {
+        _pluginLoader = pluginLoader;
+    }
+    
+    public async Task<ProcessingResult> ProcessRequestAsync(string requestType, object data)
+    {
+        var pluginRequest = new PluginRequest 
+        { 
+            Type = requestType, 
+            Data = data,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        // Execute all applicable plugins without knowing their implementations
+        var results = await _pluginLoader.ExecutePluginsAsync(pluginRequest);
+        
+        return new ProcessingResult
+        {
+            Success = results.All(r => r.Success),
+            PluginResults = results.ToList(),
+            ProcessedAt = DateTime.UtcNow
+        };
+    }
+}
+```
+
+## Legacy Code Modernization
+
+**Scenario**: Modernize a legacy reporting system that violates OCP.
+
+**Legacy Code (Before):**
+```csharp
+public class LegacyReportService
+{
+    public void GenerateReport(string reportType, DateTime startDate, DateTime endDate)
+    {
+        DataTable data = GetReportData(startDate, endDate);
+        
+        // Violation - adding new report type requires modifying this method
+        switch (reportType.ToUpper())
+        {
+            case "SALES":
+                GenerateSalesReport(data);
+                break;
+            case "INVENTORY":
+                GenerateInventoryReport(data);
+                break;
+            case "FINANCIAL":
+                GenerateFinancialReport(data);
+                break;
+            case "CUSTOMER":  // New requirement
+                GenerateCustomerReport(data);  // Modification required
+                break;
+            default:
+                throw new ArgumentException($"Unknown report type: {reportType}");
+        }
+    }
+    
+    private void GenerateSalesReport(DataTable data) { /* Legacy implementation */ }
+    private void GenerateInventoryReport(DataTable data) { /* Legacy implementation */ }
+    private void GenerateFinancialReport(DataTable data) { /* Legacy implementation */ }
+    private void GenerateCustomerReport(DataTable data) { /* New code mixed with old */ }
+}
+```
+
+**Modernization Strategy (After):**
+
+**Step 1: Create Modern Abstractions**
+```csharp
+public interface IReportGenerator
+{
+    string ReportType { get; }
+    Task<ReportResult> GenerateAsync(ReportParameters parameters);
+    bool CanGenerate(string reportType);
+}
+
+public class ReportParameters
+{
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public Dictionary<string, object> AdditionalParameters { get; set; } = new();
+}
+
+public class ReportResult
+{
+    public bool Success { get; set; }
+    public byte[] Data { get; set; }
+    public string ContentType { get; set; }
+    public string FileName { get; set; }
+    public string ErrorMessage { get; set; }
+}
+```
+
+**Step 2: Wrap Legacy Code in Adapters**
+```csharp
+public class LegacySalesReportAdapter : IReportGenerator
+{
+    private readonly LegacyReportService _legacyService;
+    
+    public string ReportType => "SALES";
+    
+    public LegacySalesReportAdapter(LegacyReportService legacyService)
+    {
+        _legacyService = legacyService;
+    }
+    
+    public bool CanGenerate(string reportType) => 
+        string.Equals(reportType, ReportType, StringComparison.OrdinalIgnoreCase);
+    
+    public async Task<ReportResult> GenerateAsync(ReportParameters parameters)
+    {
+        try
+        {
+            // Wrap legacy synchronous call in async adapter
+            await Task.Run(() => _legacyService.GenerateReport("SALES", parameters.StartDate, parameters.EndDate));
+            
+            // Convert legacy output to modern format
+            return new ReportResult
+            {
+                Success = true,
+                Data = GetLegacyOutputData(),
+                ContentType = "application/pdf",
+                FileName = $"Sales_Report_{DateTime.Now:yyyyMMdd}.pdf"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new ReportResult { Success = false, ErrorMessage = ex.Message };
+        }
+    }
+    
+    private byte[] GetLegacyOutputData()
+    {
+        // Convert legacy output format to byte array
+        // This isolates the legacy format conversion
+        return Array.Empty<byte>(); // Placeholder
+    }
+}
+```
+
+**Step 3: Create Modern Service**
+```csharp
+public class ModernReportService
+{
+    private readonly IEnumerable<IReportGenerator> _generators;
+    private readonly ILogger<ModernReportService> _logger;
+    
+    public ModernReportService(
+        IEnumerable<IReportGenerator> generators,
+        ILogger<ModernReportService> logger)
+    {
+        _generators = generators;
+        _logger = logger;
+    }
+    
+    public async Task<ReportResult> GenerateReportAsync(string reportType, ReportParameters parameters)
+    {
+        var generator = _generators.FirstOrDefault(g => g.CanGenerate(reportType));
+        
+        if (generator == null)
+        {
+            _logger.LogWarning("No generator found for report type: {ReportType}", reportType);
+            return new ReportResult 
+            { 
+                Success = false, 
+                ErrorMessage = $"Report type '{reportType}' not supported" 
+            };
+        }
+        
+        _logger.LogInformation("Generating {ReportType} report using {Generator}", 
+                              reportType, generator.GetType().Name);
+        
+        return await generator.GenerateAsync(parameters);
+    }
+    
+    public IEnumerable<string> GetSupportedReportTypes()
+    {
+        return _generators.Select(g => g.ReportType).OrderBy(t => t);
+    }
+}
+```
+
+**Step 4: Add New Modern Implementations**
+```csharp
+public class ModernCustomerReportGenerator : IReportGenerator
+{
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IPdfGenerator _pdfGenerator;
+    
+    public string ReportType => "CUSTOMER";
+    
+    public ModernCustomerReportGenerator(
+        ICustomerRepository customerRepository,
+        IPdfGenerator pdfGenerator)
+    {
+        _customerRepository = customerRepository;
+        _pdfGenerator = pdfGenerator;
+    }
+    
+    public bool CanGenerate(string reportType) => 
+        string.Equals(reportType, ReportType, StringComparison.OrdinalIgnoreCase);
+    
+    public async Task<ReportResult> GenerateAsync(ReportParameters parameters)
+    {
+        // Modern implementation using async/await, DI, and modern patterns
+        var customers = await _customerRepository.GetCustomersAsync(
+            parameters.StartDate, parameters.EndDate);
+        
+        var reportData = customers.Select(c => new CustomerReportRow
+        {
+            CustomerId = c.Id,
+            Name = c.Name,
+            TotalOrders = c.Orders.Count,
+            TotalValue = c.Orders.Sum(o => o.Total)
+        }).ToList();
+        
+        var pdfData = await _pdfGenerator.GenerateAsync("customer-report-template", reportData);
+        
+        return new ReportResult
+        {
+            Success = true,
+            Data = pdfData,
+            ContentType = "application/pdf",
+            FileName = $"Customer_Report_{DateTime.Now:yyyyMMdd}.pdf"
+        };
+    }
+}
+```
+
+**Step 5: Dependency Injection Setup**
+```csharp
+// Startup.cs or Program.cs
+public void ConfigureServices(IServiceCollection services)
+{
+    // Register legacy service as singleton to maintain state
+    services.AddSingleton<LegacyReportService>();
+    
+    // Register adapters for legacy reports
+    services.AddTransient<IReportGenerator, LegacySalesReportAdapter>();
+    services.AddTransient<IReportGenerator, LegacyInventoryReportAdapter>();
+    services.AddTransient<IReportGenerator, LegacyFinancialReportAdapter>();
+    
+    // Register modern implementations
+    services.AddTransient<IReportGenerator, ModernCustomerReportGenerator>();
+    
+    // Register modern service
+    services.AddTransient<ModernReportService>();
+    
+    // Supporting services
+    services.AddTransient<ICustomerRepository, CustomerRepository>();
+    services.AddTransient<IPdfGenerator, PdfGenerator>();
+}
+```
+
+**Benefits of This Approach:**
+1. **Gradual Migration**: Legacy code continues working while new features use modern patterns
+2. **Risk Mitigation**: Existing functionality preserved during modernization
+3. **Team Productivity**: Teams can work on new features while legacy system remains stable
+4. **Testing**: New implementations can be tested independently
+5. **Future Flexibility**: Easy to replace legacy adapters with modern implementations
+
+## Greenfield Development
+
+**Scenario**: Design a new microservices-based e-commerce system following OCP.
+
+```csharp
+// Domain Event Architecture with OCP
+public interface IDomainEvent
+{
+    Guid EventId { get; }
+    DateTime OccurredAt { get; }
+    string EventType { get; }
+}
+
+public interface IDomainEventHandler<T> where T : IDomainEvent
+{
+    Task HandleAsync(T domainEvent);
+    bool CanHandle(IDomainEvent evt);
+}
+
+// Extensible event dispatcher
+public class DomainEventDispatcher
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<DomainEventDispatcher> _logger;
+    
+    public DomainEventDispatcher(IServiceProvider serviceProvider, ILogger<DomainEventDispatcher> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
+    public async Task DispatchAsync<T>(T domainEvent) where T : IDomainEvent
+    {
+        // Get all handlers for this event type - extensible without modification
+        var handlers = _serviceProvider.GetServices<IDomainEventHandler<T>>();
+        
+        var tasks = handlers.Select(async handler =>
+        {
+            try
+            {
+                if (handler.CanHandle(domainEvent))
+                {
+                    await handler.HandleAsync(domainEvent);
+                    _logger.LogInformation("Event {EventType} handled by {Handler}", 
+                                         domainEvent.EventType, handler.GetType().Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling event {EventType} with {Handler}", 
+                               domainEvent.EventType, handler.GetType().Name);
+            }
+        });
+        
+        await Task.WhenAll(tasks);
+    }
+}
+
+// Domain events - new events can be added without modifying existing code
+public class OrderCreatedEvent : IDomainEvent
+{
+    public Guid EventId { get; } = Guid.NewGuid();
+    public DateTime OccurredAt { get; } = DateTime.UtcNow;
+    public string EventType => nameof(OrderCreatedEvent);
+    
+    public Guid OrderId { get; set; }
+    public Guid CustomerId { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+
+// Handlers can be added independently for new business requirements
+public class EmailNotificationHandler : IDomainEventHandler<OrderCreatedEvent>
+{
+    private readonly IEmailService _emailService;
+    private readonly ICustomerRepository _customerRepository;
+    
+    public EmailNotificationHandler(IEmailService emailService, ICustomerRepository customerRepository)
+    {
+        _emailService = emailService;
+        _customerRepository = customerRepository;
+    }
+    
+    public bool CanHandle(IDomainEvent evt) => evt is OrderCreatedEvent;
+    
+    public async Task HandleAsync(OrderCreatedEvent domainEvent)
+    {
+        var customer = await _customerRepository.GetByIdAsync(domainEvent.CustomerId);
+        await _emailService.SendOrderConfirmationAsync(customer.Email, domainEvent.OrderId);
+    }
+}
+
+public class InventoryReservationHandler : IDomainEventHandler<OrderCreatedEvent>
+{
+    private readonly IInventoryService _inventoryService;
+    
+    public InventoryReservationHandler(IInventoryService inventoryService)
+    {
+        _inventoryService = inventoryService;
+    }
+    
+    public bool CanHandle(IDomainEvent evt) => evt is OrderCreatedEvent;
+    
+    public async Task HandleAsync(OrderCreatedEvent domainEvent)
+    {
+        await _inventoryService.ReserveItemsAsync(domainEvent.OrderId);
+    }
+}
+
+// New handler can be added without touching existing handlers
+public class LoyaltyPointsHandler : IDomainEventHandler<OrderCreatedEvent>
+{
+    private readonly ILoyaltyService _loyaltyService;
+    
+    public LoyaltyPointsHandler(ILoyaltyService loyaltyService)
+    {
+        _loyaltyService = loyaltyService;
+    }
+    
+    public bool CanHandle(IDomainEvent evt) => evt is OrderCreatedEvent;
+    
+    public async Task HandleAsync(OrderCreatedEvent domainEvent)
+    {
+        var points = CalculateLoyaltyPoints(domainEvent.TotalAmount);
+        await _loyaltyService.AwardPointsAsync(domainEvent.CustomerId, points);
+    }
+    
+    private int CalculateLoyaltyPoints(decimal amount) => (int)(amount / 10);
+}
+```
+
+## Team Onboarding
+
+**Teaching OCP to Junior Developers:**
+
+**1. Conceptual Foundation**
+```csharp
+// Start with simple, relatable example
+public class ShapeAreaCalculator
+{
+    // BAD: Adding new shape requires modifying this method
+    public double CalculateArea(object shape)
+    {
+        if (shape is Rectangle rect)
+            return rect.Width * rect.Height;
+        else if (shape is Circle circle)
+            return Math.PI * circle.Radius * circle.Radius;
+        // Adding Triangle requires modifying this method - BAD!
+        
+        throw new NotSupportedException("Shape not supported");
+    }
+}
+
+// GOOD: New shapes can be added without modifying existing code
+public interface IShape
+{
+    double CalculateArea();
+}
+
+public class Rectangle : IShape
+{
+    public double Width { get; set; }
+    public double Height { get; set; }
+    public double CalculateArea() => Width * Height;
+}
+
+public class Circle : IShape
+{
+    public double Radius { get; set; }
+    public double CalculateArea() => Math.PI * Radius * Radius;
+}
+
+// New shape - no existing code modified
+public class Triangle : IShape
+{
+    public double Base { get; set; }
+    public double Height { get; set; }
+    public double CalculateArea() => 0.5 * Base * Height;
+}
+
+public class ShapeAreaCalculator
+{
+    public double CalculateArea(IShape shape) => shape.CalculateArea();
+}
+```
+
+**2. Practical Exercise**
+```csharp
+// Exercise: Refactor this discount calculator
+public class DiscountCalculator
+{
+    public decimal Calculate(CustomerType type, decimal amount)
+    {
+        switch (type)
+        {
+            case CustomerType.Regular:
+                return amount * 0.05m;
+            case CustomerType.Premium:
+                return amount * 0.10m;
+            default:
+                return 0;
+        }
+    }
+}
+
+// Challenge: How would you add a VIP customer type without modifying existing code?
+// Guide them through the strategy pattern implementation
+```
+
+**3. Code Review Checklist for Juniors**
+- Look for switch statements on types/enums
+- Identify if-else chains that check object types
+- Spot methods that need modification for new requirements
+- Find copy-paste code with slight variations
+
+## Microsoft Recommendations
+
+**Official .NET Guidance Alignment:**
+
+**1. Dependency Injection Container Usage**
+```csharp
+// Microsoft recommends using IServiceCollection for extensible service registration
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddPaymentProcessors(this IServiceCollection services)
+    {
+        // Register all payment processors - new ones can be added without modifying existing registrations
+        services.AddTransient<IPaymentProcessor, CreditCardProcessor>();
+        services.AddTransient<IPaymentProcessor, PayPalProcessor>();
+        services.AddTransient<IPaymentProcessor, StripeProcessor>();
+        
+        return services;
+    }
+    
+    // Extension method for adding new processors
+    public static IServiceCollection AddPaymentProcessor<T>(this IServiceCollection services) 
+        where T : class, IPaymentProcessor
+    {
+        return services.AddTransient<IPaymentProcessor, T>();
+    }
+}
+```
+
+**2. ASP.NET Core Middleware Pipeline**
+```csharp
+// Middleware pipeline is inherently OCP-compliant
+public class Startup
+{
+    public void Configure(IApplicationBuilder app)
+    {
+        // Existing middleware remains unchanged
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
+        // New middleware can be added without modifying existing ones
+        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseMiddleware<PerformanceMonitoringMiddleware>();
+        
+        app.UseRouting();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
+    }
+}
+```
+
+**3. Entity Framework Core Conventions**
+```csharp
+// EF Core conventions follow OCP
+public class BloggingContext : DbContext
+{
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Apply all configurations without modifying existing ones
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BloggingContext).Assembly);
+    }
+}
+
+// New entity configurations can be added independently
+public class BlogConfiguration : IEntityTypeConfiguration<Blog>
+{
+    public void Configure(EntityTypeBuilder<Blog> builder)
+    {
+        builder.Property(b => b.Title).HasMaxLength(500);
+    }
+}
+```
+
+## Community Standards and Tool Support
+
+**Static Analysis Tools:**
+
+**SonarQube Rules:**
+- S1301: "Switch statements should have at least 3 cases"
+- S3776: "Cognitive Complexity should be minimized"
+- S1142: "Methods should not contain too many return statements"
+
+**Code Metrics:**
+```csharp
+// Use metrics to identify OCP violations
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(
+    "Microsoft.Maintainability", 
+    "CA1502:AvoidExcessiveComplexity",
+    Justification = "Complexity will be reduced through strategy pattern refactoring")]
+```
+
+**IDE Support:**
+
+**Visual Studio/Rider Analysis:**
+- Code smell detection for large switch statements
+- Suggestion to extract interface when similar classes detected
+- Refactoring tools for strategy pattern implementation
+
+## Final Summary
+
+The Open/Closed Principle is fundamental to creating maintainable, extensible enterprise applications. Key takeaways for senior/principal architect interviews:
+
+**Core Message**: "Design software that can grow without breaking existing functionality."
+
+**Implementation Strategy**: Use abstraction (interfaces/abstract classes) + composition (dependency injection) + polymorphism
+
+**Business Value**: Faster delivery, lower risk, reduced maintenance cost, team scalability
+
+**When to Apply**: When you identify variation points, frequent changes, or plugin requirements
+
+**When Not to Apply**: Performance-critical code, simple stable requirements, early development phases
+
+**Architecture Impact**: Enables microservices, supports DDD, facilitates testing, reduces coupling
+
+**Microsoft Ecosystem**: Leverages DI container, middleware pipeline, EF configurations, ASP.NET Core extensibility
+
+This comprehensive understanding demonstrates architect-level thinking about long-term system evolution, team dynamics, and business value delivery - exactly what senior technical interviews assess.
+
+---
+
 13. **Liskov Substitution Principle (LSP)**
     - Give example of LSP violation in inheritance hierarchies.
     - How do you design proper abstractions that follow LSP?
+
+---
+I've created a comprehensive, interview-ready guide to the Liskov Substitution Principle (LSP) tailored for your senior/principal architect interviews. This guide covers all the aspects you requested with practical .NET examples and enterprise-level architectural thinking.
+
+## Key Highlights of this Guide:
+
+**🎯 Interview-Ready Content:**
+- Comprehensive Q&A section with common interview questions
+- Before/after refactoring examples showing LSP violations → compliance
+- Whiteboard-friendly explanations with code examples
+
+**🏗️ Enterprise Architecture Focus:**
+- Architectural decision records (ADR) templates
+- Risk assessment frameworks for LSP violations
+- Integration with microservices, clean architecture, and DDD
+
+**💻 Practical .NET Implementation:**
+- Short, focused code examples (10-15 lines) with detailed comments
+- Real-world scenarios (payment processing, document handling, caching)
+- Integration with ASP.NET Core, Entity Framework, and modern .NET patterns
+
+**🔧 Advanced Topics:**
+- Concurrency and thread safety implications
+- Cloud-native and distributed systems considerations
+- Performance vs. maintainability trade-offs
+- Custom Roslyn analyzers for LSP violation detection
+
+**📊 Measurement & Validation:**
+- Static analysis rules and code quality indicators
+- Contract-based testing patterns
+- Technical debt assessment strategies
+
+**🎨 Design Patterns & Best Practices:**
+- Repository pattern with LSP compliance
+- Template method pattern for consistent behavior
+- Strategy pattern implementations
+- Microsoft's official .NET framework design guidelines
+
+This guide positions you to demonstrate deep architectural thinking and practical experience with LSP in enterprise .NET development environments. The examples show not just how to follow LSP, but why it matters for long-term system maintainability and team productivity.
+
+# Liskov Substitution Principle (LSP) - Comprehensive .NET Interview Guide
+
+## Core Understanding
+
+### What is this principle?
+
+**Definition**: The Liskov Substitution Principle states that objects of a superclass should be replaceable with objects of its subclasses without breaking the application. In other words, if class B is a subtype of class A, then we should be able to replace A with B without disrupting the behavior of our program.
+
+**Formal Definition**: If S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program.
+
+**Context**: LSP is the 'L' in SOLID principles and forms the foundation for polymorphism in object-oriented design. It ensures that inheritance hierarchies are semantically correct and behaviorally consistent.
+
+### What problem does it solve?
+
+**Pain Points Addressed**:
+- **Broken Polymorphism**: Prevents situations where subclasses break the expected behavior of their parent classes
+- **Fragile Base Class Problem**: Eliminates scenarios where changes to base classes unexpectedly break derived classes
+- **Semantic Inconsistency**: Ensures that inheritance represents true "is-a" relationships
+- **Runtime Failures**: Prevents unexpected exceptions or incorrect behavior when using polymorphic objects
+
+```csharp
+// LSP Violation Example - Problem Scenario
+public abstract class Bird
+{
+    public abstract void Fly(); // All birds should fly?
+}
+
+public class Eagle : Bird
+{
+    public override void Fly() => Console.WriteLine("Eagle soars high");
+}
+
+public class Penguin : Bird
+{
+    // LSP Violation: Penguin cannot fly but inherits from Bird
+    public override void Fly() => throw new NotSupportedException("Penguins cannot fly");
+}
+
+// This breaks LSP - client code expecting Bird behavior gets exception
+public void MakeBirdFly(Bird bird) => bird.Fly(); // Fails with Penguin
+```
+
+### Why should I follow this principle?
+
+**Benefits and Value Proposition**:
+
+1. **Polymorphic Reliability**: Enables safe substitution of objects through inheritance hierarchies
+2. **Reduced Coupling**: Client code depends on abstractions rather than concrete implementations
+3. **Enhanced Testability**: Mock objects and test doubles can reliably replace real implementations
+4. **Improved Maintainability**: Changes to subclasses don't break existing client code
+5. **Design Consistency**: Enforces logical and semantic correctness in inheritance hierarchies
+
+```csharp
+// LSP Compliant Design
+public interface IFlyable
+{
+    void Fly();
+}
+
+public interface ISwimmable
+{
+    void Swim();
+}
+
+public abstract class Bird
+{
+    public abstract void Move();
+    public abstract void MakeSound();
+}
+
+public class Eagle : Bird, IFlyable
+{
+    public override void Move() => Fly();
+    public override void MakeSound() => Console.WriteLine("Eagle screech");
+    public void Fly() => Console.WriteLine("Eagle soars high");
+}
+
+public class Penguin : Bird, ISwimmable
+{
+    public override void Move() => Swim();
+    public override void MakeSound() => Console.WriteLine("Penguin call");
+    public void Swim() => Console.WriteLine("Penguin swims gracefully");
+}
+
+// Now client code works reliably with all Bird subtypes
+public void ProcessBird(Bird bird) => bird.Move(); // Always works
+```
+
+### What are the consequences of violating this principle?
+
+**Technical Debt and Maintenance Issues**:
+
+1. **Runtime Exceptions**: Unexpected `NotSupportedException`, `InvalidOperationException`
+2. **Defensive Programming**: Excessive type checking and casting in client code
+3. **Fragile Codebase**: Changes to base classes break derived implementations
+4. **Testing Complexity**: Difficulty creating reliable mock objects and test scenarios
+5. **Design Inconsistency**: Confusion about the true nature of inheritance relationships
+
+```csharp
+// Consequences of LSP Violation
+public class DocumentProcessor
+{
+    public void ProcessDocuments(List<Document> documents)
+    {
+        foreach (var doc in documents)
+        {
+            // Defensive programming due to LSP violations
+            if (doc is ReadOnlyDocument)
+            {
+                // Special handling for read-only docs
+                doc.Display();
+            }
+            else
+            {
+                doc.Process(); // Might throw exception
+                doc.Save();    // Might throw exception
+            }
+        }
+    }
+}
+```
+
+## Practical Application
+
+### When should I apply this principle?
+
+**Specific Scenarios and Triggers**:
+
+1. **Designing Inheritance Hierarchies**: Whenever creating base classes or interfaces
+2. **API Design**: When designing public interfaces that will be implemented by multiple classes
+3. **Framework Development**: Creating extensible frameworks where third parties will provide implementations
+4. **Polymorphic Collections**: When working with collections of related objects
+5. **Strategy Pattern Implementation**: Ensuring all strategies are truly interchangeable
+
+```csharp
+// LSP Application Scenario: Payment Processing
+public interface IPaymentProcessor
+{
+    PaymentResult ProcessPayment(decimal amount, PaymentDetails details);
+    bool CanProcess(decimal amount);
+    PaymentLimits GetLimits();
+}
+
+public class CreditCardProcessor : IPaymentProcessor
+{
+    public PaymentResult ProcessPayment(decimal amount, PaymentDetails details)
+    {
+        // Credit card specific processing
+        if (!CanProcess(amount))
+            return PaymentResult.Failed("Amount exceeds limit");
+        
+        // Process payment logic
+        return PaymentResult.Success();
+    }
+
+    public bool CanProcess(decimal amount) => amount <= GetLimits().MaxAmount;
+    
+    public PaymentLimits GetLimits() => new PaymentLimits { MaxAmount = 10000 };
+}
+
+public class PayPalProcessor : IPaymentProcessor
+{
+    // LSP Compliance: Same interface contract, different implementation
+    public PaymentResult ProcessPayment(decimal amount, PaymentDetails details)
+    {
+        if (!CanProcess(amount))
+            return PaymentResult.Failed("PayPal limit exceeded");
+            
+        // PayPal specific processing
+        return PaymentResult.Success();
+    }
+
+    public bool CanProcess(decimal amount) => amount <= GetLimits().MaxAmount;
+    
+    public PaymentLimits GetLimits() => new PaymentLimits { MaxAmount = 5000 };
+}
+```
+
+### When should I NOT apply this principle?
+
+**Over-engineering Scenarios and Exceptions**:
+
+1. **Simple Utility Classes**: When inheritance is used purely for code reuse without polymorphic behavior
+2. **Internal Implementation Details**: Private nested classes where substitution isn't required
+3. **Performance-Critical Scenarios**: When strict LSP compliance would introduce significant overhead
+4. **Legacy Integration**: When working with existing APIs that don't follow LSP
+
+```csharp
+// Acceptable LSP relaxation for performance
+public abstract class DataProcessor
+{
+    protected abstract void ProcessCore(byte[] data);
+    
+    public virtual void Process(byte[] data)
+    {
+        ValidateData(data);
+        ProcessCore(data);
+        LogProcessing();
+    }
+}
+
+public class HighPerformanceProcessor : DataProcessor
+{
+    // Skips validation and logging for performance
+    public override void Process(byte[] data)
+    {
+        ProcessCore(data); // Direct processing, skips base method
+    }
+    
+    protected override void ProcessCore(byte[] data)
+    {
+        // Ultra-fast processing logic
+    }
+}
+```
+
+### How does this principle fit with other SOLID principles?
+
+**Synergies and Relationships**:
+
+- **Single Responsibility Principle (SRP)**: LSP violations often indicate SRP violations
+- **Open/Closed Principle (OCP)**: LSP enables safe extension through inheritance
+- **Interface Segregation Principle (ISP)**: Smaller, focused interfaces are easier to implement in LSP-compliant ways
+- **Dependency Inversion Principle (DIP)**: LSP makes dependency injection reliable and safe
+
+```csharp
+// SOLID Principles Working Together
+public interface IOrderValidator // ISP: Focused interface
+{
+    ValidationResult Validate(Order order);
+}
+
+public interface IOrderProcessor // ISP: Separate concerns
+{
+    Task<ProcessingResult> ProcessAsync(Order order);
+}
+
+public class StandardOrderProcessor : IOrderProcessor // LSP: Substitutable
+{
+    private readonly IOrderValidator _validator; // DIP: Depend on abstraction
+    
+    public StandardOrderProcessor(IOrderValidator validator)
+    {
+        _validator = validator; // Constructor injection
+    }
+    
+    // SRP: Single responsibility - order processing
+    public async Task<ProcessingResult> ProcessAsync(Order order)
+    {
+        var validation = _validator.Validate(order);
+        if (!validation.IsValid)
+            return ProcessingResult.Failed(validation.Errors);
+            
+        return await ProcessOrderAsync(order);
+    }
+    
+    private async Task<ProcessingResult> ProcessOrderAsync(Order order)
+    {
+        // Processing logic
+        return ProcessingResult.Success();
+    }
+}
+
+// OCP: Open for extension, closed for modification
+public class ExpressOrderProcessor : StandardOrderProcessor
+{
+    public ExpressOrderProcessor(IOrderValidator validator) : base(validator) { }
+    
+    // LSP Compliant: Can substitute StandardOrderProcessor
+    protected override async Task<ProcessingResult> ProcessOrderAsync(Order order)
+    {
+        // Express processing with same contract
+        return await base.ProcessOrderAsync(order);
+    }
+}
+```
+
+## Implementation Guidelines
+
+### How to implement this principle in .NET Framework and .NET Core?
+
+**Interview-Ready Examples with Detailed Explanations**:
+
+```csharp
+// Example 1: Repository Pattern with LSP Compliance
+public interface IRepository<TEntity> where TEntity : class
+{
+    // Contract: Returns entity if found, null if not found
+    Task<TEntity> GetByIdAsync(int id);
+    
+    // Contract: Returns all entities, empty collection if none
+    Task<IEnumerable<TEntity>> GetAllAsync();
+    
+    // Contract: Adds entity, returns the added entity with generated ID
+    Task<TEntity> AddAsync(TEntity entity);
+    
+    // Contract: Updates existing entity, throws exception if not found
+    Task UpdateAsync(TEntity entity);
+    
+    // Contract: Deletes entity by ID, silent if not found
+    Task DeleteAsync(int id);
+}
+
+public class SqlRepository<TEntity> : IRepository<TEntity> where TEntity : class
+{
+    private readonly DbContext _context;
+    private readonly DbSet<TEntity> _dbSet;
+    
+    public SqlRepository(DbContext context)
+    {
+        _context = context;
+        _dbSet = context.Set<TEntity>();
+    }
+    
+    // LSP Compliance: Honors the contract exactly
+    public async Task<TEntity> GetByIdAsync(int id)
+    {
+        return await _dbSet.FindAsync(id); // Returns null if not found
+    }
+    
+    public async Task<IEnumerable<TEntity>> GetAllAsync()
+    {
+        return await _dbSet.ToListAsync(); // Returns empty list if no entities
+    }
+    
+    public async Task<TEntity> AddAsync(TEntity entity)
+    {
+        var entry = await _dbSet.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entry.Entity; // Returns entity with generated ID
+    }
+    
+    public async Task UpdateAsync(TEntity entity)
+    {
+        var exists = await GetByIdAsync(GetEntityId(entity));
+        if (exists == null)
+            throw new InvalidOperationException("Entity not found");
+            
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+    }
+    
+    public async Task DeleteAsync(int id)
+    {
+        var entity = await GetByIdAsync(id);
+        if (entity != null) // Silent if not found, as per contract
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
+}
+
+public class MemoryRepository<TEntity> : IRepository<TEntity> where TEntity : class
+{
+    private readonly Dictionary<int, TEntity> _storage = new();
+    private int _nextId = 1;
+    
+    // LSP Compliance: Same behavior as SQL implementation
+    public Task<TEntity> GetByIdAsync(int id)
+    {
+        _storage.TryGetValue(id, out var entity);
+        return Task.FromResult(entity); // Returns null if not found
+    }
+    
+    public Task<IEnumerable<TEntity>> GetAllAsync()
+    {
+        return Task.FromResult(_storage.Values.AsEnumerable()); // Empty if no entities
+    }
+    
+    public Task<TEntity> AddAsync(TEntity entity)
+    {
+        var id = _nextId++;
+        SetEntityId(entity, id); // Set the generated ID
+        _storage[id] = entity;
+        return Task.FromResult(entity); // Returns entity with ID
+    }
+    
+    public Task UpdateAsync(TEntity entity)
+    {
+        var id = GetEntityId(entity);
+        if (!_storage.ContainsKey(id))
+            throw new InvalidOperationException("Entity not found"); // Same exception
+            
+        _storage[id] = entity;
+        return Task.CompletedTask;
+    }
+    
+    public Task DeleteAsync(int id)
+    {
+        _storage.Remove(id); // Silent removal, same as SQL version
+        return Task.CompletedTask;
+    }
+}
+```
+
+```csharp
+// Example 2: Validation Framework with LSP
+public abstract class Validator<T>
+{
+    // Contract: Returns validation result with errors if invalid
+    public virtual ValidationResult Validate(T value)
+    {
+        var result = new ValidationResult();
+        PerformValidation(value, result);
+        return result;
+    }
+    
+    // Template method for subclasses to implement
+    protected abstract void PerformValidation(T value, ValidationResult result);
+}
+
+public class EmailValidator : Validator<string>
+{
+    // LSP Compliant: Follows base class contract exactly
+    protected override void PerformValidation(string email, ValidationResult result)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            result.AddError("Email is required");
+            return;
+        }
+        
+        if (!email.Contains("@"))
+        {
+            result.AddError("Invalid email format");
+        }
+    }
+}
+
+public class CompositeValidator<T> : Validator<T>
+{
+    private readonly List<Validator<T>> _validators = new();
+    
+    public void AddValidator(Validator<T> validator)
+    {
+        _validators.Add(validator);
+    }
+    
+    // LSP Compliant: Returns combined validation results
+    protected override void PerformValidation(T value, ValidationResult result)
+    {
+        foreach (var validator in _validators)
+        {
+            var validationResult = validator.Validate(value);
+            result.MergeWith(validationResult); // Combine all errors
+        }
+    }
+}
+```
+
+### Common violations of this principle in .NET applications
+
+**Anti-patterns to Avoid**:
+
+```csharp
+// Violation 1: Strengthening Preconditions
+public class BankAccount
+{
+    protected decimal balance;
+    
+    public virtual void Withdraw(decimal amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("Amount must be positive");
+            
+        if (amount > balance)
+            throw new InvalidOperationException("Insufficient funds");
+            
+        balance -= amount;
+    }
+}
+
+// LSP Violation: Adds additional precondition
+public class PremiumAccount : BankAccount
+{
+    public override void Withdraw(decimal amount)
+    {
+        // Violation: Strengthens precondition (minimum withdrawal)
+        if (amount < 100)
+            throw new ArgumentException("Minimum withdrawal is $100");
+            
+        base.Withdraw(amount);
+    }
+}
+
+// Violation 2: Weakening Postconditions
+public class FileProcessor
+{
+    // Contract: Process file and return success status
+    public virtual bool ProcessFile(string filePath)
+    {
+        // Process the file
+        return File.Exists(filePath); // Always returns meaningful result
+    }
+}
+
+// LSP Violation: Doesn't fulfill the contract
+public class NetworkFileProcessor : FileProcessor
+{
+    public override bool ProcessFile(string filePath)
+    {
+        // Violation: Always returns false regardless of success
+        try
+        {
+            // Process network file
+            return false; // Violates postcondition
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+
+// Violation 3: Throwing Unexpected Exceptions
+public interface IDataSource
+{
+    string GetData(string key);
+}
+
+public class DatabaseSource : IDataSource
+{
+    public string GetData(string key)
+    {
+        // Returns null if not found - expected behavior
+        return database.Find(key)?.Value;
+    }
+}
+
+// LSP Violation: Throws unexpected exception
+public class CacheSource : IDataSource
+{
+    public string GetData(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+            throw new NotSupportedException("Cache doesn't support empty keys");
+        
+        return cache.Get(key);
+    }
+}
+```
+
+### How to refactor existing code to follow this principle?
+
+**Step-by-Step Transformation**:
+
+```csharp
+// BEFORE: LSP Violation
+public class Shape
+{
+    public virtual double CalculateArea()
+    {
+        throw new NotImplementedException("Must be implemented by subclass");
+    }
+}
+
+public class Rectangle : Shape
+{
+    public double Width { get; set; }
+    public double Height { get; set; }
+    
+    public override double CalculateArea() => Width * Height;
+}
+
+public class Square : Rectangle
+{
+    // LSP Violation: Changes behavior of Width/Height setters
+    public new double Width
+    {
+        get => base.Width;
+        set
+        {
+            base.Width = value;
+            base.Height = value; // Side effect not expected from Rectangle
+        }
+    }
+    
+    public new double Height
+    {
+        get => base.Height;
+        set
+        {
+            base.Width = value;
+            base.Height = value; // Side effect not expected from Rectangle
+        }
+    }
+}
+
+// AFTER: LSP Compliant Refactor
+public abstract class Shape
+{
+    // Clear contract: Calculate and return area
+    public abstract double CalculateArea();
+    
+    // Optional: Common behavior can remain in base class
+    public virtual string GetShapeInfo() => $"Area: {CalculateArea()}";
+}
+
+public class Rectangle : Shape
+{
+    public Rectangle(double width, double height)
+    {
+        Width = width;
+        Height = height;
+    }
+    
+    public double Width { get; }
+    public double Height { get; }
+    
+    public override double CalculateArea() => Width * Height;
+}
+
+public class Square : Shape
+{
+    public Square(double side)
+    {
+        Side = side;
+    }
+    
+    public double Side { get; }
+    
+    // LSP Compliant: No unexpected behavior
+    public override double CalculateArea() => Side * Side;
+}
+
+// Alternative: Use composition instead of inheritance
+public class ModifiableRectangle
+{
+    private double _width;
+    private double _height;
+    
+    public double Width
+    {
+        get => _width;
+        set => _width = value;
+    }
+    
+    public double Height
+    {
+        get => _height;
+        set => _height = value;
+    }
+    
+    public double CalculateArea() => _width * _height;
+}
+
+public class ModifiableSquare
+{
+    private double _side;
+    
+    public double Side
+    {
+        get => _side;
+        set => _side = value;
+    }
+    
+    public double CalculateArea() => _side * _side;
+}
+```
+
+## Architecture and Design Context
+
+### Architecture Relevance
+
+**Layered Architecture**:
+```csharp
+// LSP in Layered Architecture
+public interface IBusinessService
+{
+    Task<ServiceResult<T>> ExecuteAsync<T>(ServiceRequest request);
+}
+
+// Each layer implementation must be substitutable
+public class ValidationBusinessService : IBusinessService
+{
+    public async Task<ServiceResult<T>> ExecuteAsync<T>(ServiceRequest request)
+    {
+        // Validation logic - always returns ServiceResult
+        var validationResult = await ValidateRequestAsync(request);
+        return validationResult.IsValid 
+            ? ServiceResult<T>.Success(default(T))
+            : ServiceResult<T>.Failed(validationResult.Errors);
+    }
+}
+
+public class ProcessingBusinessService : IBusinessService
+{
+    // LSP Compliant: Same return contract, different behavior
+    public async Task<ServiceResult<T>> ExecuteAsync<T>(ServiceRequest request)
+    {
+        // Processing logic - maintains same contract
+        var result = await ProcessRequestAsync<T>(request);
+        return result;
+    }
+}
+```
+
+**Clean Architecture**:
+```csharp
+// LSP in Clean Architecture - Use Cases
+public interface IUseCase<TRequest, TResponse>
+{
+    Task<TResponse> ExecuteAsync(TRequest request);
+}
+
+// All use cases must be substitutable
+public class CreateOrderUseCase : IUseCase<CreateOrderRequest, CreateOrderResponse>
+{
+    private readonly IOrderRepository _repository;
+    
+    public CreateOrderUseCase(IOrderRepository repository)
+    {
+        _repository = repository;
+    }
+    
+    public async Task<CreateOrderResponse> ExecuteAsync(CreateOrderRequest request)
+    {
+        // LSP Compliant: Always returns CreateOrderResponse
+        var order = new Order(request.CustomerId, request.Items);
+        await _repository.AddAsync(order);
+        return new CreateOrderResponse { OrderId = order.Id, Success = true };
+    }
+}
+```
+
+### Microservices Architecture Impact
+
+```csharp
+// LSP in Microservices - Service Communication
+public interface IServiceClient
+{
+    Task<ApiResponse<T>> SendAsync<T>(ServiceRequest request);
+}
+
+// All service clients must be interchangeable
+public class HttpServiceClient : IServiceClient
+{
+    private readonly HttpClient _httpClient;
+    
+    public async Task<ApiResponse<T>> SendAsync<T>(ServiceRequest request)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsync(request.Endpoint, request.Content);
+            var content = await response.Content.ReadAsStringAsync();
+            
+            return response.IsSuccessStatusCode
+                ? ApiResponse<T>.Success(JsonSerializer.Deserialize<T>(content))
+                : ApiResponse<T>.Failed(response.ReasonPhrase);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<T>.Failed(ex.Message);
+        }
+    }
+}
+
+public class MessageQueueServiceClient : IServiceClient
+{
+    // LSP Compliant: Different transport, same contract
+    public async Task<ApiResponse<T>> SendAsync<T>(ServiceRequest request)
+    {
+        try
+        {
+            await _messageQueue.PublishAsync(request);
+            var response = await _messageQueue.ReceiveAsync<T>();
+            
+            return ApiResponse<T>.Success(response);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<T>.Failed(ex.Message);
+        }
+    }
+}
+```
+
+## Advanced Scenarios
+
+### Concurrency and Multi-threading Context
+
+```csharp
+// LSP with Thread Safety
+public interface IThreadSafeCache<TKey, TValue>
+{
+    Task<TValue> GetAsync(TKey key);
+    Task SetAsync(TKey key, TValue value);
+    Task<bool> TryRemoveAsync(TKey key);
+}
+
+public class ConcurrentDictionaryCache<TKey, TValue> : IThreadSafeCache<TKey, TValue>
+{
+    private readonly ConcurrentDictionary<TKey, TValue> _cache = new();
+    
+    // LSP Compliant: Thread-safe implementation
+    public Task<TValue> GetAsync(TKey key)
+    {
+        _cache.TryGetValue(key, out var value);
+        return Task.FromResult(value);
+    }
+    
+    public Task SetAsync(TKey key, TValue value)
+    {
+        _cache.AddOrUpdate(key, value, (k, v) => value);
+        return Task.CompletedTask;
+    }
+    
+    public Task<bool> TryRemoveAsync(TKey key)
+    {
+        var removed = _cache.TryRemove(key, out _);
+        return Task.FromResult(removed);
+    }
+}
+
+public class DistributedCache<TKey, TValue> : IThreadSafeCache<TKey, TValue>
+{
+    private readonly IDistributedCache _cache;
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    
+    // LSP Compliant: Different implementation, same thread safety contract
+    public async Task<TValue> GetAsync(TKey key)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            var json = await _cache.GetStringAsync(key.ToString());
+            return json != null ? JsonSerializer.Deserialize<TValue>(json) : default;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+    
+    public async Task SetAsync(TKey key, TValue value)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            var json = JsonSerializer.Serialize(value);
+            await _cache.SetStringAsync(key.ToString(), json);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+    
+    public async Task<bool> TryRemoveAsync(TKey key)
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            await _cache.RemoveAsync(key.ToString());
+            return true; // Distributed cache doesn't report if key existed
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+}
+```
+
+### Cloud-Native and Distributed Systems
+
+```csharp
+// LSP in Cloud-Native Applications
+public interface ICloudStorageProvider
+{
+    Task<StorageResult> UploadAsync(string container, string key, Stream data);
+    Task<Stream> DownloadAsync(string container, string key);
+    Task<bool> ExistsAsync(string container, string key);
+    Task<bool> DeleteAsync(string container, string key);
+}
+
+public class AzureBlobStorageProvider : ICloudStorageProvider
+{
+    private readonly BlobServiceClient _blobClient;
+    
+    // LSP Compliant: Azure-specific implementation with consistent behavior
+    public async Task<StorageResult> UploadAsync(string container, string key, Stream data)
+    {
+        try
+        {
+            var containerClient = _blobClient.GetBlobContainerClient(container);
+            var blobClient = containerClient.GetBlobClient(key);
+            
+            await blobClient.UploadAsync(data, overwrite: true);
+            return StorageResult.Success();
+        }
+        catch (Exception ex)
+        {
+            return StorageResult.Failed(ex.Message);
+        }
+    }
+    
+    public async Task<Stream> DownloadAsync(string container, string key)
+    {
+        var containerClient = _blobClient.GetBlobContainerClient(container);
+        var blobClient = containerClient.GetBlobClient(key);
+        
+        if (await blobClient.ExistsAsync())
+        {
+            var response = await blobClient.DownloadAsync();
+            return response.Value.Content;
+        }
+        
+        return null; // Consistent null return for not found
+    }
+    
+    public async Task<bool> ExistsAsync(string container, string key)
+    {
+        var containerClient = _blobClient.GetBlobContainerClient(container);
+        var blobClient = containerClient.GetBlobClient(key);
+        return await blobClient.ExistsAsync();
+    }
+    
+    public async Task<bool> DeleteAsync(string container, string key)
+    {
+        var containerClient = _blobClient.GetBlobContainerClient(container);
+        var blobClient = containerClient.GetBlobClient(key);
+        
+        var response = await blobClient.DeleteIfExistsAsync();
+        return response.Value; // Returns true if deleted, false if not found
+    }
+}
+
+public class AwsS3StorageProvider : ICloudStorageProvider
+{
+    private readonly IAmazonS3 _s3Client;
+    
+    // LSP Compliant: AWS-specific implementation with same contract
+    public async Task<StorageResult> UploadAsync(string container, string key, Stream data)
+    {
+        try
+        {
+            var request = new PutObjectRequest
+            {
+                BucketName = container,
+                Key = key,
+                InputStream = data
+            };
+            
+            await _s3Client.PutObjectAsync(request);
+            return StorageResult.Success();
+        }
+        catch (Exception ex)
+        {
+            return StorageResult.Failed(ex.Message);
+        }
+    }
+    
+    public async Task<Stream> DownloadAsync(string container, string key)
+    {
+        try
+        {
+            var request = new GetObjectRequest
+            {
+                BucketName = container,
+                Key = key
+            };
+            
+            var response = await _s3Client.GetObjectAsync(request);
+            return response.ResponseStream;
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return null; // Consistent null return for not found
+        }
+    }
+    
+    public async Task<bool> ExistsAsync(string container, string key)
+    {
+        try
+        {
+            await _s3Client.GetObjectMetadataAsync(container, key);
+            return true;
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            return false;
+        }
+    }
+    
+    public async Task<bool> DeleteAsync(string container, string key)
+    {
+        try
+        {
+            await _s3Client.DeleteObjectAsync(container, key);
+            return true; // S3 always returns success for delete
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+```
+
+## Real-World Application
+
+### Industry Use Cases
+
+**Financial Services - Payment Processing**:
+```csharp
+// All payment processors must handle the same operations reliably
+public interface IPaymentGateway
+{
+    Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request);
+    Task<RefundResult> ProcessRefundAsync(RefundRequest request);
+    Task<PaymentStatus> GetPaymentStatusAsync(string transactionId);
+}
+
+// Each implementation must be completely substitutable
+public class StripePaymentGateway : IPaymentGateway
+{
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // Stripe-specific implementation that honors the contract
+        // Always returns PaymentResult with consistent structure
+    }
+}
+
+public class PayPalPaymentGateway : IPaymentGateway
+{
+    // LSP ensures this can replace Stripe without breaking client code
+    public async Task<PaymentResult> ProcessPaymentAsync(PaymentRequest request)
+    {
+        // PayPal-specific implementation with same contract
+    }
+}
+```
+
+**E-commerce - Inventory Management**:
+```csharp
+public interface IInventoryProvider
+{
+    Task<int> GetAvailableQuantityAsync(string productId);
+    Task<bool> ReserveItemsAsync(string productId, int quantity);
+    Task<bool> ReleaseReservationAsync(string productId, int quantity);
+}
+
+// Warehouse inventory
+public class WarehouseInventory : IInventoryProvider
+{
+    // Direct inventory management
+}
+
+// Dropshipping inventory
+public class SupplierInventory : IInventoryProvider
+{
+    // Third-party API integration - same interface contract
+}
+```
+
+### Code Review Red Flags
+
+**What to Look For**:
+
+1. **Type Checking in Client Code**:
+```csharp
+// RED FLAG: Client code checking types indicates LSP violation
+public void ProcessShape(Shape shape)
+{
+    if (shape is Rectangle rect)
+    {
+        // Special handling for Rectangle
+        ProcessRectangle(rect);
+    }
+    else if (shape is Circle circle)
+    {
+        // Different handling for Circle
+        ProcessCircle(circle);
+    }
+    // This indicates LSP violation - shouldn't need type checks
+}
+
+// CORRECT: LSP compliant - no type checking needed
+public void ProcessShape(Shape shape)
+{
+    var area = shape.CalculateArea(); // Works for all shapes
+    Console.WriteLine($"Shape area: {area}");
+}
+```
+
+2. **Exception Throwing in Overrides**:
+```csharp
+// RED FLAG: Derived class throws exceptions base class doesn't
+public class ReadOnlyList<T> : List<T>
+{
+    public override void Add(T item)
+    {
+        throw new NotSupportedException("List is read-only"); // LSP violation
+    }
+}
+```
+
+3. **Conditional Logic Based on Runtime Type**:
+```csharp
+// RED FLAG: Behavior depends on actual type
+public class DocumentProcessor
+{
+    public void Process(Document doc)
+    {
+        if (doc.GetType() == typeof(PdfDocument))
+        {
+            // PDF-specific logic
+        }
+        else if (doc.GetType() == typeof(WordDocument))
+        {
+            // Word-specific logic
+        }
+    }
+}
+```
+
+4. **Empty or Stub Method Implementations**:
+```csharp
+// RED FLAG: Method doesn't do what interface promises
+public class NoOpLogger : ILogger
+{
+    public void Log(string message)
+    {
+        // Does nothing - violates logging contract
+    }
+}
+```
+
+### Refactoring Strategies
+
+**Practical Approaches to Improve Existing Code**:
+
+**Strategy 1: Extract Common Behavior to Base Class**:
+```csharp
+// BEFORE: Repetitive code in derived classes
+public class EmailNotification
+{
+    public void SendNotification(string message)
+    {
+        ValidateMessage(message);
+        LogSending(message);
+        SendEmail(message);
+        LogSent(message);
+    }
+    
+    private void SendEmail(string message) { /* Email logic */ }
+}
+
+public class SmsNotification
+{
+    public void SendNotification(string message)
+    {
+        ValidateMessage(message);
+        LogSending(message);
+        SendSms(message);
+        LogSent(message);
+    }
+    
+    private void SendSms(string message) { /* SMS logic */ }
+}
+
+// AFTER: LSP compliant with template method pattern
+public abstract class NotificationBase
+{
+    // Template method - defines the algorithm
+    public void SendNotification(string message)
+    {
+        ValidateMessage(message);
+        LogSending(message);
+        DeliverMessage(message); // Abstract method for subclasses
+        LogSent(message);
+    }
+    
+    protected virtual void ValidateMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            throw new ArgumentException("Message cannot be empty");
+    }
+    
+    protected virtual void LogSending(string message)
+    {
+        // Common logging logic
+    }
+    
+    protected virtual void LogSent(string message)
+    {
+        // Common logging logic
+    }
+    
+    // Each subclass implements delivery differently but follows same contract
+    protected abstract void DeliverMessage(string message);
+}
+
+public class EmailNotification : NotificationBase
+{
+    protected override void DeliverMessage(string message)
+    {
+        // Email-specific delivery logic
+    }
+}
+
+public class SmsNotification : NotificationBase
+{
+    protected override void DeliverMessage(string message)
+    {
+        // SMS-specific delivery logic
+    }
+}
+```
+
+**Strategy 2: Replace Inheritance with Composition**:
+```csharp
+// BEFORE: Problematic inheritance
+public class Vehicle
+{
+    public virtual void StartEngine() { /* Engine logic */ }
+    public virtual void Accelerate() { /* Acceleration logic */ }
+}
+
+public class ElectricVehicle : Vehicle
+{
+    public override void StartEngine()
+    {
+        throw new NotSupportedException("Electric vehicles don't have engines");
+    }
+}
+
+// AFTER: Composition-based design
+public interface IDriveSystem
+{
+    void Start();
+    void Stop();
+    void Accelerate();
+}
+
+public class GasEngine : IDriveSystem
+{
+    public void Start() => Console.WriteLine("Starting gas engine");
+    public void Stop() => Console.WriteLine("Stopping gas engine");
+    public void Accelerate() => Console.WriteLine("Gas engine accelerating");
+}
+
+public class ElectricMotor : IDriveSystem
+{
+    public void Start() => Console.WriteLine("Starting electric motor");
+    public void Stop() => Console.WriteLine("Stopping electric motor");
+    public void Accelerate() => Console.WriteLine("Electric motor accelerating");
+}
+
+public class Vehicle
+{
+    private readonly IDriveSystem _driveSystem;
+    
+    public Vehicle(IDriveSystem driveSystem)
+    {
+        _driveSystem = driveSystem;
+    }
+    
+    public void Start() => _driveSystem.Start();
+    public void Stop() => _driveSystem.Stop();
+    public void Accelerate() => _driveSystem.Accelerate();
+}
+```
+
+**Strategy 3: Interface Segregation**:
+```csharp
+// BEFORE: Fat interface causes LSP violations
+public interface IWorker
+{
+    void Work();
+    void Eat();
+    void Sleep();
+}
+
+public class Human : IWorker
+{
+    public void Work() => Console.WriteLine("Human working");
+    public void Eat() => Console.WriteLine("Human eating");
+    public void Sleep() => Console.WriteLine("Human sleeping");
+}
+
+public class Robot : IWorker
+{
+    public void Work() => Console.WriteLine("Robot working");
+    public void Eat() => throw new NotSupportedException("Robots don't eat");
+    public void Sleep() => throw new NotSupportedException("Robots don't sleep");
+}
+
+// AFTER: Segregated interfaces
+public interface IWorkable
+{
+    void Work();
+}
+
+public interface ILivingBeing
+{
+    void Eat();
+    void Sleep();
+}
+
+public class Human : IWorkable, ILivingBeing
+{
+    public void Work() => Console.WriteLine("Human working");
+    public void Eat() => Console.WriteLine("Human eating");
+    public void Sleep() => Console.WriteLine("Human sleeping");
+}
+
+public class Robot : IWorkable
+{
+    public void Work() => Console.WriteLine("Robot working");
+    // No need to implement Eat/Sleep - LSP preserved
+}
+```
+
+## Interview-Specific Content
+
+### Common Interview Questions
+
+**Q1: "Explain LSP with a practical example"**
+
+**Answer Approach**:
+```csharp
+// Start with violation example
+public class Rectangle
+{
+    public virtual int Width { get; set; }
+    public virtual int Height { get; set; }
+    public int Area => Width * Height;
+}
+
+public class Square : Rectangle
+{
+    // LSP Violation: Changes expected behavior
+    public override int Width
+    {
+        get => base.Width;
+        set
+        {
+            base.Width = value;
+            base.Height = value; // Unexpected side effect
+        }
+    }
+    
+    public override int Height
+    {
+        get => base.Height;
+        set
+        {
+            base.Width = value;
+            base.Height = value; // Unexpected side effect
+        }
+    }
+}
+
+// Problem demonstration
+public void TestRectangle(Rectangle rect)
+{
+    rect.Width = 5;
+    rect.Height = 10;
+    // Expects area = 50, but gets 100 if rect is Square
+    Console.WriteLine($"Area: {rect.Area}"); 
+}
+
+// LSP Compliant Solution
+public abstract class Shape
+{
+    public abstract int CalculateArea();
+}
+
+public class Rectangle : Shape
+{
+    public Rectangle(int width, int height)
+    {
+        Width = width;
+        Height = height;
+    }
+    
+    public int Width { get; }
+    public int Height { get; }
+    
+    public override int CalculateArea() => Width * Height;
+}
+
+public class Square : Shape
+{
+    public Square(int side)
+    {
+        Side = side;
+    }
+    
+    public int Side { get; }
+    
+    public override int CalculateArea() => Side * Side;
+}
+```
+
+**Q2: "How does LSP relate to polymorphism?"**
+
+**Answer**: LSP is what makes polymorphism reliable and predictable. Without LSP, you can't trust that a subclass will behave correctly when used through a base class reference.
+
+**Q3: "Give an example of when you might intentionally violate LSP"**
+
+**Answer**:
+```csharp
+// Acceptable violation for performance optimization
+public abstract class DataProcessor
+{
+    public virtual ProcessingResult Process(byte[] data)
+    {
+        var validated = Validate(data);
+        var processed = ProcessCore(data);
+        var logged = LogResult(processed);
+        return processed;
+    }
+    
+    protected abstract ProcessingResult ProcessCore(byte[] data);
+}
+
+public class HighPerformanceProcessor : DataProcessor
+{
+    // Violates LSP by skipping validation/logging for performance
+    public override ProcessingResult Process(byte[] data)
+    {
+        return ProcessCore(data); // Direct processing
+    }
+    
+    protected override ProcessingResult ProcessCore(byte[] data)
+    {
+        // Ultra-fast processing
+        return ProcessingResult.Success();
+    }
+}
+```
+
+### Before/After Refactoring Examples
+
+**Scenario: File Processing System**
+
+**BEFORE - LSP Violation**:
+```csharp
+public abstract class FileProcessor
+{
+    public abstract void ProcessFile(string filePath);
+    public abstract void SaveFile(string filePath);
+}
+
+public class TextFileProcessor : FileProcessor
+{
+    public override void ProcessFile(string filePath)
+    {
+        // Process text file
+        Console.WriteLine($"Processing text file: {filePath}");
+    }
+    
+    public override void SaveFile(string filePath)
+    {
+        // Save text file
+        Console.WriteLine($"Saving text file: {filePath}");
+    }
+}
+
+public class ReadOnlyFileProcessor : FileProcessor
+{
+    public override void ProcessFile(string filePath)
+    {
+        // Can process read-only files
+        Console.WriteLine($"Processing read-only file: {filePath}");
+    }
+    
+    public override void SaveFile(string filePath)
+    {
+        // LSP Violation: Can't save read-only files
+        throw new NotSupportedException("Cannot save read-only files");
+    }
+}
+
+// Client code breaks with ReadOnlyFileProcessor
+public void ProcessFiles(List<FileProcessor> processors, string filePath)
+{
+    foreach (var processor in processors)
+    {
+        processor.ProcessFile(filePath);
+        processor.SaveFile(filePath); // Throws exception for read-only processor
+    }
+}
+```
+
+**AFTER - LSP Compliant**:
+```csharp
+// Separate concerns with different interfaces
+public interface IFileReader
+{
+    FileContent ReadFile(string filePath);
+}
+
+public interface IFileProcessor
+{
+    ProcessedContent ProcessContent(FileContent content);
+}
+
+public interface IFileWriter
+{
+    void WriteFile(string filePath, ProcessedContent content);
+}
+
+// Composite interface for full file operations
+public interface IFullFileProcessor : IFileReader, IFileProcessor, IFileWriter
+{
+}
+
+public class TextFileHandler : IFullFileProcessor
+{
+    public FileContent ReadFile(string filePath)
+    {
+        // Read text file
+        return new FileContent(File.ReadAllText(filePath));
+    }
+    
+    public ProcessedContent ProcessContent(FileContent content)
+    {
+        // Process text content
+        return new ProcessedContent(content.Data.ToUpper());
+    }
+    
+    public void WriteFile(string filePath, ProcessedContent content)
+    {
+        // Write processed content
+        File.WriteAllText(filePath, content.Data);
+    }
+}
+
+public class ReadOnlyFileHandler : IFileReader, IFileProcessor
+{
+    public FileContent ReadFile(string filePath)
+    {
+        // Read read-only file
+        return new FileContent(File.ReadAllText(filePath));
+    }
+    
+    public ProcessedContent ProcessContent(FileContent content)
+    {
+        // Process content (but can't save)
+        return new ProcessedContent(content.Data.ToUpper());
+    }
+    
+    // No SaveFile method - interface segregation prevents LSP violation
+}
+
+// Client code now works correctly
+public class FileProcessingService
+{
+    public void ProcessForReading(List<IFileReader> readers, string filePath)
+    {
+        foreach (var reader in readers)
+        {
+            var content = reader.ReadFile(filePath); // Works for all readers
+        }
+    }
+    
+    public void ProcessForWriting(List<IFileWriter> writers, string filePath, ProcessedContent content)
+    {
+        foreach (var writer in writers)
+        {
+            writer.WriteFile(filePath, content); // Only called on writers
+        }
+    }
+}
+```
+
+## Measurement and Validation
+
+### How to measure compliance with this principle?
+
+**Metrics and Tools**:
+
+1. **Static Analysis Rules**:
+```csharp
+// Custom analyzer rule
+public class LSPViolationAnalyzer : DiagnosticAnalyzer
+{
+    public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        "LSP001",
+        "Potential LSP violation detected",
+        "Method '{0}' in derived class '{1}' throws exception not declared in base class",
+        "Design",
+        DiagnosticSeverity.Warning,
+        true);
+
+    public override void Initialize(AnalysisContext context)
+    {
+        context.RegisterSyntaxNodeAction(AnalyzeMethod, SyntaxKind.MethodDeclaration);
+    }
+
+    private static void AnalyzeMethod(SyntaxNodeAnalysisContext context)
+    {
+        var method = (MethodDeclarationSyntax)context.Node;
+        
+        // Check for throw statements in overridden methods
+        if (method.Modifiers.Any(m => m.IsKind(SyntaxKind.OverrideKeyword)))
+        {
+            var throwStatements = method.DescendantNodes().OfType<ThrowStatementSyntax>();
+            if (throwStatements.Any())
+            {
+                // Check if base method declares these exceptions
+                // Report violation if new exceptions are thrown
+            }
+        }
+    }
+}
+```
+
+2. **Unit Test Patterns**:
+```csharp
+// Contract-based testing to verify LSP compliance
+public abstract class PaymentProcessorContractTests<T> where T : IPaymentProcessor, new()
+{
+    protected abstract T CreateProcessor();
+    
+    [Test]
+    public void ProcessPayment_WithValidRequest_ShouldReturnResult()
+    {
+        // Arrange
+        var processor = CreateProcessor();
+        var request = CreateValidPaymentRequest();
+        
+        // Act
+        var result = processor.ProcessPayment(request);
+        
+        // Assert - All implementations must satisfy this contract
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.IsSuccess || result.IsFailure);
+        if (result.IsFailure)
+        {
+            Assert.IsNotEmpty(result.ErrorMessage);
+        }
+    }
+    
+    [Test]
+    public void ProcessPayment_WithInvalidAmount_ShouldReturnFailure()
+    {
+        // Contract: All processors must handle invalid amounts consistently
+        var processor = CreateProcessor();
+        var request = CreatePaymentRequest(amount: -100);
+        
+        var result = processor.ProcessPayment(request);
+        
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsNotEmpty(result.ErrorMessage);
+    }
+}
+
+// Concrete test classes
+public class StripeProcessorContractTests : PaymentProcessorContractTests<StripeProcessor>
+{
+    protected override StripeProcessor CreateProcessor() => new StripeProcessor();
+}
+
+public class PayPalProcessorContractTests : PaymentProcessorContractTests<PayPalProcessor>
+{
+    protected override PayPalProcessor CreateProcessor() => new PayPalProcessor();
+}
+```
+
+3. **Runtime Monitoring**:
+```csharp
+// Decorator to monitor LSP compliance at runtime
+public class LSPMonitoringDecorator<T> : DispatchProxy
+{
+    private T _target;
+    private readonly ILogger _logger;
+
+    protected override object Invoke(MethodInfo targetMethod, object[] args)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        
+        try
+        {
+            var result = targetMethod.Invoke(_target, args);
+            
+            // Log successful execution
+            _logger.LogInformation($"Method {targetMethod.Name} completed successfully in {stopwatch.ElapsedMilliseconds}ms");
+            
+            return result;
+        }
+        catch (Exception ex)
+        {
+            // Log potential LSP violations
+            _logger.LogWarning($"Method {targetMethod.Name} threw {ex.GetType().Name}: {ex.Message}. Potential LSP violation.");
+            throw;
+        }
+    }
+
+    public static T Create<T>(T target, ILogger logger) where T : class
+    {
+        object proxy = Create<T, LSPMonitoringDecorator<T>>();
+        ((LSPMonitoringDecorator<T>)proxy).SetTarget(target, logger);
+        return (T)proxy;
+    }
+
+    private void SetTarget(T target, ILogger logger)
+    {
+        _target = target;
+        _logger = logger;
+    }
+}
+```
+
+### Code Quality Indicators
+
+**Static Analysis Rules and Code Smells**:
+
+1. **Roslyn Analyzers Configuration**:
+```xml
+<!-- .editorconfig -->
+[*.cs]
+# Enable LSP-related rules
+dotnet_diagnostic.CA1063.severity = error  # Implement IDisposable correctly
+dotnet_diagnostic.CA2215.severity = error  # Dispose methods should call base class dispose
+dotnet_diagnostic.CA2229.severity = error  # Implement serialization constructors
+dotnet_diagnostic.CA1010.severity = warning # Collections should implement generic interface
+
+# Custom LSP rules
+dotnet_diagnostic.LSP001.severity = warning # Potential LSP violation
+dotnet_diagnostic.LSP002.severity = error   # Strengthening preconditions
+dotnet_diagnostic.LSP003.severity = error   # Weakening postconditions
+```
+
+2. **SonarQube Rules**:
+```xml
+<!-- SonarQube quality profile -->
+<rule>
+    <key>csharpsquid:S3871</key>
+    <name>Exception types should be "public"</name>
+    <severity>MAJOR</severity>
+</rule>
+<rule>
+    <key>csharpsquid:S3925</key>
+    <name>"ISerializable" should be implemented correctly</name>
+    <severity>CRITICAL</severity>
+</rule>
+```
+
+### Technical Debt Assessment
+
+**How Violations Accumulate Over Time**:
+
+```csharp
+// Technical debt tracking
+public class LSPDebtAnalyzer
+{
+    public class DebtItem
+    {
+        public string ClassName { get; set; }
+        public string ViolationType { get; set; }
+        public int Severity { get; set; }
+        public DateTime DetectedDate { get; set; }
+        public string Description { get; set; }
+    }
+
+    public List<DebtItem> AnalyzeCodebase(string solutionPath)
+    {
+        var debtItems = new List<DebtItem>();
+        
+        // Analyze for common LSP violations
+        var violations = new[]
+        {
+            DetectStrengthenedPreconditions(),
+            DetectWeakenedPostconditions(),
+            DetectUnexpectedExceptions(),
+            DetectTypeCheckingInClientCode(),
+            DetectEmptyOverrides()
+        };
+
+        return debtItems.SelectMany(v => v).ToList();
+    }
+
+    private IEnumerable<DebtItem> DetectStrengthenedPreconditions()
+    {
+        // Scan for overridden methods that add parameter validation
+        // not present in base class
+        return new List<DebtItem>();
+    }
+
+    private IEnumerable<DebtItem> DetectWeakenedPostconditions()
+    {
+        // Scan for overridden methods that return different types
+        // or null when base class guarantees non-null
+        return new List<DebtItem>();
+    }
+
+    // ... other detection methods
+}
+```
+
+## Advanced Topics
+
+### Principle Conflicts
+
+**When Following One Principle Conflicts with Another**:
+
+```csharp
+// Conflict: LSP vs Performance Optimization
+public abstract class DataProcessor
+{
+    // LSP requires all implementations to follow this contract
+    public virtual ProcessingResult Process(byte[] data)
+    {
+        ValidateInput(data);      // Security requirement
+        var result = ProcessCore(data);
+        AuditOperation(result);   // Compliance requirement
+        return result;
+    }
+    
+    protected abstract ProcessingResult ProcessCore(byte[] data);
+    protected virtual void ValidateInput(byte[] data) { /* validation */ }
+    protected virtual void AuditOperation(ProcessingResult result) { /* audit */ }
+}
+
+// Performance-critical implementation
+public class HighThroughputProcessor : DataProcessor
+{
+    // Conflict: Performance vs LSP compliance
+    // Solution: Provide configuration option
+    private readonly bool _skipValidation;
+    private readonly bool _skipAudit;
+    
+    public HighThroughputProcessor(bool skipValidation = false, bool skipAudit = false)
+    {
+        _skipValidation = skipValidation;
+        _skipAudit = skipAudit;
+    }
+    
+    public override ProcessingResult Process(byte[] data)
+    {
+        if (!_skipValidation)
+            ValidateInput(data);
+            
+        var result = ProcessCore(data);
+        
+        if (!_skipAudit)
+            AuditOperation(result);
+            
+        return result;
+    }
+    
+    protected override ProcessingResult ProcessCore(byte[] data)
+    {
+        // Ultra-fast processing
+        return ProcessingResult.Success();
+    }
+}
+
+// Alternative: Different interfaces for different requirements
+public interface ISecureDataProcessor
+{
+    ProcessingResult ProcessWithValidation(byte[] data);
+}
+
+public interface IHighPerformanceDataProcessor
+{
+    ProcessingResult ProcessFast(byte[] data);
+}
+
+public interface IAuditableDataProcessor
+{
+    ProcessingResult ProcessWithAudit(byte[] data);
+}
+```
+
+### Context-Dependent Application
+
+**How the Principle Varies by Domain/Context**:
+
+```csharp
+// Financial Domain - Strict LSP compliance required
+namespace FinancialDomain
+{
+    public interface IPaymentProcessor
+    {
+        // Contract must be strictly followed for regulatory compliance
+        Task<PaymentResult> ProcessAsync(PaymentRequest request);
+    }
+    
+    public class CreditCardProcessor : IPaymentProcessor
+    {
+        public async Task<PaymentResult> ProcessAsync(PaymentRequest request)
+        {
+            // Must handle all edge cases, no exceptions allowed
+            try
+            {
+                // Processing logic
+                return PaymentResult.Success();
+            }
+            catch (Exception ex)
+            {
+                // Convert all exceptions to proper result objects
+                return PaymentResult.Failed(ex.Message);
+            }
+        }
+    }
+}
+
+// Gaming Domain - More flexibility allowed
+namespace GamingDomain
+{
+    public abstract class GameEntity
+    {
+        public abstract void Update(GameTime gameTime);
+        public abstract void Render(GraphicsContext context);
+    }
+    
+    public class OptimizedGameEntity : GameEntity
+    {
+        // Acceptable LSP relaxation for performance
+        public override void Update(GameTime gameTime)
+        {
+            // Skip update if not visible (performance optimization)
+            if (!IsVisible) return;
+            
+            base.Update(gameTime);
+        }
+        
+        public override void Render(GraphicsContext context)
+        {
+            // Early exit for performance
+            if (!IsVisible) return;
+            
+            // Optimized rendering
+        }
+    }
+}
+```
+
+### Cross-Cutting Concerns
+
+**Logging, Security, Caching Implications**:
+
+```csharp
+// LSP with Cross-Cutting Concerns
+public interface IBusinessService
+{
+    Task<ServiceResult<T>> ExecuteAsync<T>(ServiceRequest request);
+}
+
+// Base implementation with cross-cutting concerns
+public abstract class BusinessServiceBase : IBusinessService
+{
+    private readonly ILogger _logger;
+    private readonly ISecurityContext _security;
+    private readonly ICacheManager _cache;
+    
+    protected BusinessServiceBase(ILogger logger, ISecurityContext security, ICacheManager cache)
+    {
+        _logger = logger;
+        _security = security;
+        _cache = cache;
+    }
+    
+    public async Task<ServiceResult<T>> ExecuteAsync<T>(ServiceRequest request)
+    {
+        // Cross-cutting concerns applied consistently
+        _logger.LogInformation($"Executing service: {GetType().Name}");
+        
+        // Security check
+        if (!await _security.IsAuthorizedAsync(request))
+        {
+            return ServiceResult<T>.Unauthorized();
+        }
+        
+        // Caching
+        var cacheKey = GenerateCacheKey(request);
+        if (await _cache.TryGetAsync<T>(cacheKey, out var cachedResult))
+        {
+            return ServiceResult<T>.Success(cachedResult);
+        }
+        
+        try
+        {
+            // Template method for business logic
+            var result = await ExecuteCoreAsync<T>(request);
+            
+            // Cache successful results
+            if (result.IsSuccess)
+            {
+                await _cache.SetAsync(cacheKey, result.Data, TimeSpan.FromMinutes(5));
+            }
+            
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Service execution failed");
+            return ServiceResult<T>.Error(ex.Message);
+        }
+    }
+    
+    // LSP-compliant: All implementations must provide this
+    protected abstract Task<ServiceResult<T>> ExecuteCoreAsync<T>(ServiceRequest request);
+    
+    protected virtual string GenerateCacheKey(ServiceRequest request)
+    {
+        return $"{GetType().Name}_{request.GetHashCode()}";
+    }
+}
+
+// Implementations maintain LSP while benefiting from cross-cutting concerns
+public class OrderService : BusinessServiceBase
+{
+    public OrderService(ILogger logger, ISecurityContext security, ICacheManager cache)
+        : base(logger, security, cache) { }
+    
+    protected override async Task<ServiceResult<T>> ExecuteCoreAsync<T>(ServiceRequest request)
+    {
+        // Order-specific business logic
+        // Cross-cutting concerns handled by base class
+        var orderResult = await ProcessOrderAsync(request);
+        return ServiceResult<T>.Success((T)(object)orderResult);
+    }
+    
+    private async Task<Order> ProcessOrderAsync(ServiceRequest request)
+    {
+        // Business logic implementation
+        return new Order();
+    }
+}
+```
+
+## Microsoft Recommendations and Best Practices
+
+### Official .NET Guidance
+
+**Microsoft's Framework Design Guidelines**:
+
+```csharp
+// Microsoft recommended pattern for LSP compliance
+// Source: Framework Design Guidelines by Krzysztof Cwalina and Brad Abrams
+
+// ✅ DO: Design inheritance hierarchies carefully
+public abstract class Stream
+{
+    // Abstract methods define the contract
+    public abstract int Read(byte[] buffer, int offset, int count);
+    public abstract void Write(byte[] buffer, int offset, int count);
+    
+    // Virtual methods provide default implementation but can be overridden
+    public virtual void Close()
+    {
+        // Default close behavior
+    }
+    
+    // Template methods that use abstract methods
+    public void CopyTo(Stream destination)
+    {
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = Read(buffer, 0, buffer.Length)) > 0)
+        {
+            destination.Write(buffer, 0, bytesRead);
+        }
+    }
+}
+
+// ✅ DO: Follow the contract established by base classes
+public class FileStream : Stream
+{
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        // Implementation that honors Stream contract:
+        // - Returns number of bytes read
+        // - Returns 0 at end of stream
+        // - Never returns negative values
+        return ActualFileRead(buffer, offset, count);
+    }
+    
+    public override void Write(byte[] buffer, int offset, int count)
+    {
+        // Implementation that honors Stream contract:
+        // - Writes exactly count bytes
+        // - Throws if stream is not writable
+        ActualFileWrite(buffer, offset, count);
+    }
+}
+
+// ❌ DON'T: Violate base class contracts
+public class BadStream : Stream
+{
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        // LSP violation: Throws exception instead of returning 0 at EOF
+        if (IsAtEndOfStream())
+            throw new EndOfStreamException(); // Wrong!
+            
+        return ReadData(buffer, offset, count);
+    }
+}
+```
+
+### Community Standards
+
+**Industry-Accepted Practices**:
+
+```csharp
+// Repository Pattern - Community Standard Implementation
+public interface IRepository<T> where T : class
+{
+    // Standard contract that all implementations must follow
+    Task<T> GetByIdAsync(object id);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T> AddAsync(T entity);
+    Task UpdateAsync(T entity);
+    Task DeleteAsync(object id);
+}
+
+// Entity Framework implementation
+public class EfRepository<T> : IRepository<T> where T : class
+{
+    private readonly DbContext _context;
+    private readonly DbSet<T> _dbSet;
+    
+    public EfRepository(DbContext context)
+    {
+        _context = context;
+        _dbSet = context.Set<T>();
+    }
+    
+    // LSP Compliant: Follows community standard contract
+    public async Task<T> GetByIdAsync(object id)
+    {
+        return await _dbSet.FindAsync(id); // Returns null if not found
+    }
+    
+    public async Task<IEnumerable<T>> GetAllAsync()
+    {
+        return await _dbSet.ToListAsync(); // Returns empty list if no entities
+    }
+    
+    public async Task<T> AddAsync(T entity)
+    {
+        await _dbSet.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entity; // Returns entity with generated keys populated
+    }
+    
+    public async Task UpdateAsync(T entity)
+    {
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync(); // May throw if entity doesn't exist
+    }
+    
+    public async Task DeleteAsync(object id)
+    {
+        var entity = await GetByIdAsync(id);
+        if (entity != null)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+        // Silent if entity doesn't exist - community standard
+    }
+}
+
+// Dapper implementation - must follow same contract
+public class DapperRepository<T> : IRepository<T> where T : class
+{
+    private readonly IDbConnection _connection;
+    private readonly string _tableName;
+    
+    public DapperRepository(IDbConnection connection, string tableName)
+    {
+        _connection = connection;
+        _tableName = tableName;
+    }
+    
+    // LSP Compliant: Same behavior as EF implementation
+    public async Task<T> GetByIdAsync(object id)
+    {
+        var sql = $"SELECT * FROM {_tableName} WHERE Id = @Id";
+        return await _connection.QuerySingleOrDefaultAsync<T>(sql, new { Id = id });
+        // Returns null if not found - same as EF
+    }
+    
+    public async Task<IEnumerable<T>> GetAllAsync()
+    {
+        var sql = $"SELECT * FROM {_tableName}";
+        return await _connection.QueryAsync<T>(sql);
+        // Returns empty collection if no records - same as EF
+    }
+    
+    public async Task<T> AddAsync(T entity)
+    {
+        // Implementation details vary but contract remains the same
+        var sql = GenerateInsertSql();
+        var id = await _connection.QuerySingleAsync<int>(sql, entity);
+        SetEntityId(entity, id);
+        return entity; // Returns entity with generated ID
+    }
+    
+    public async Task UpdateAsync(T entity)
+    {
+        var sql = GenerateUpdateSql();
+        var rowsAffected = await _connection.ExecuteAsync(sql, entity);
+        if (rowsAffected == 0)
+            throw new InvalidOperationException("Entity not found"); // Same exception as EF
+    }
+    
+    public async Task DeleteAsync(object id)
+    {
+        var sql = $"DELETE FROM {_tableName} WHERE Id = @Id";
+        await _connection.ExecuteAsync(sql, new { Id = id });
+        // Silent if entity doesn't exist - same as EF
+    }
+}
+```
+
+### Tool Support
+
+**IDEs, Analyzers, and Frameworks**:
+
+1. **Visual Studio Integration**:
+```xml
+<!-- MSBuild integration for LSP analysis -->
+<Project>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.54.0.64047" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+    <AdditionalFiles Include="sonar-project.properties" />
+  </ItemGroup>
+</Project>
+```
+
+2. **Custom Roslyn Analyzer for LSP**:
+```csharp
+[DiagnosticAnalyzer(LanguageNames.CSharp)]
+public class LiskovSubstitutionAnalyzer : DiagnosticAnalyzer
+{
+    public static readonly DiagnosticDescriptor StrengthenedPreconditionRule = new DiagnosticDescriptor(
+        "LSP001",
+        "Overridden method strengthens preconditions",
+        "Method '{0}' in '{1}' adds parameter validation not present in base class '{2}'",
+        "Design",
+        DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Derived classes should not strengthen preconditions defined by base classes.");
+
+    public static readonly DiagnosticDescriptor WeakenedPostconditionRule = new DiagnosticDescriptor(
+        "LSP002",
+        "Overridden method weakens postconditions",
+        "Method '{0}' in '{1}' may return null when base class '{2}' guarantees non-null",
+        "Design",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Derived classes should not weaken postconditions defined by base classes.");
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        ImmutableArray.Create(StrengthenedPreconditionRule, WeakenedPostconditionRule);
+
+    public override void Initialize(AnalysisContext context)
+    {
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
+        context.RegisterSyntaxNodeAction(AnalyzeMethod, SyntaxKind.MethodDeclaration);
+    }
+
+    private static void AnalyzeMethod(SyntaxNodeAnalysisContext context)
+    {
+        var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+        
+        // Check if method is an override
+        if (!methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            return;
+
+        var semanticModel = context.SemanticModel;
+        var methodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
+        
+        if (methodSymbol?.OverriddenMethod == null)
+            return;
+
+        // Analyze for strengthened preconditions
+        AnalyzePreconditions(context, methodDeclaration, methodSymbol);
+        
+        // Analyze for weakened postconditions
+        AnalyzePostconditions(context, methodDeclaration, methodSymbol);
+    }
+
+    private static void AnalyzePreconditions(SyntaxNodeAnalysisContext context, 
+        MethodDeclarationSyntax method, IMethodSymbol methodSymbol)
+    {
+        // Look for additional parameter validation not in base method
+        var throwStatements = method.DescendantNodes()
+            .OfType<ThrowStatementSyntax>()
+            .Where(t => IsParameterValidationThrow(t));
+
+        if (throwStatements.Any())
+        {
+            // Check if base method has the same validations
+            var baseMethod = methodSymbol.OverriddenMethod;
+            var diagnostic = Diagnostic.Create(
+                StrengthenedPreconditionRule,
+                method.Identifier.GetLocation(),
+                methodSymbol.Name,
+                methodSymbol.ContainingType.Name,
+                baseMethod.ContainingType.Name);
+
+            context.ReportDiagnostic(diagnostic);
+        }
+    }
+
+    private static void AnalyzePostconditions(SyntaxNodeAnalysisContext context,
+        MethodDeclarationSyntax method, IMethodSymbol methodSymbol)
+    {
+        // Look for return statements that might weaken postconditions
+        var returnStatements = method.DescendantNodes().OfType<ReturnStatementSyntax>();
+        
+        foreach (var returnStmt in returnStatements)
+        {
+            if (returnStmt.Expression is LiteralExpressionSyntax literal &&
+                literal.Token.IsKind(SyntaxKind.NullKeyword))
+            {
+                // Check if base method can return null
+                var baseMethod = methodSymbol.OverriddenMethod;
+                if (!CanBaseMethodReturnNull(baseMethod))
+                {
+                    var diagnostic = Diagnostic.Create(
+                        WeakenedPostconditionRule,
+                        returnStmt.GetLocation(),
+                        methodSymbol.Name,
+                        methodSymbol.ContainingType.Name,
+                        baseMethod.ContainingType.Name);
+
+                    context.ReportDiagnostic(diagnostic);
+                }
+            }
+        }
+    }
+
+    private static bool IsParameterValidationThrow(ThrowStatementSyntax throwStmt)
+    {
+        // Implementation to detect parameter validation throws
+        return throwStmt.Expression is ObjectCreationExpressionSyntax creation &&
+               creation.Type.ToString().Contains("ArgumentException");
+    }
+
+    private static bool CanBaseMethodReturnNull(IMethodSymbol baseMethod)
+    {
+        // Implementation to check if base method can return null
+        // This would involve analyzing nullable reference types, documentation, etc.
+        return baseMethod.ReturnType.CanBeReferencedByName;
+    }
+}
+```
+
+3. **EditorConfig Rules for LSP**:
+```ini
+# .editorconfig
+root = true
+
+[*.cs]
+# LSP-related rules
+dotnet_diagnostic.LSP001.severity = warning
+dotnet_diagnostic.LSP002.severity = error
+
+# Related CA rules that support LSP
+dotnet_diagnostic.CA1061.severity = error    # Do not hide base class methods
+dotnet_diagnostic.CA1063.severity = error    # Implement IDisposable correctly
+dotnet_diagnostic.CA2215.severity = error    # Dispose methods should call base class dispose
+dotnet_diagnostic.CA2229.severity = error    # Implement serialization constructors
+
+# Design rules that relate to LSP
+dotnet_diagnostic.CA1010.severity = warning  # Collections should implement generic interface
+dotnet_diagnostic.CA1012.severity = error    # Abstract types should not have constructors
+dotnet_diagnostic.CA1051.severity = error    # Do not declare visible instance fields
+```
+
+### Framework Integration
+
+**How .NET Frameworks Embody LSP**:
+
+1. **ASP.NET Core Middleware Pipeline**:
+```csharp
+// ASP.NET Core middleware follows LSP strictly
+public interface IMiddleware
+{
+    Task InvokeAsync(HttpContext context, RequestDelegate next);
+}
+
+// All middleware implementations are substitutable
+public class AuthenticationMiddleware : IMiddleware
+{
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        // Authentication logic
+        if (await IsAuthenticatedAsync(context))
+        {
+            await next(context); // Continue pipeline
+        }
+        else
+        {
+            context.Response.StatusCode = 401;
+            // Pipeline stops here - but contract is honored
+        }
+    }
+}
+
+public class LoggingMiddleware : IMiddleware
+{
+    // LSP Compliant: Different behavior, same contract
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        
+        await next(context); // Always continues pipeline
+        
+        stopwatch.Stop();
+        _logger.LogInformation($"Request processed in {stopwatch.ElapsedMilliseconds}ms");
+    }
+}
+
+// Framework can compose middleware without knowing specific implementations
+public class MiddlewarePipeline
+{
+    private readonly List<IMiddleware> _middlewares = new();
+    
+    public void AddMiddleware(IMiddleware middleware)
+    {
+        _middlewares.Add(middleware); // LSP enables this
+    }
+    
+    public async Task ExecuteAsync(HttpContext context)
+    {
+        var index = 0;
+        
+        RequestDelegate next = null;
+        next = async (ctx) =>
+        {
+            if (++index < _middlewares.Count)
+            {
+                await _middlewares[index].InvokeAsync(ctx, next);
+            }
+        };
+        
+        if (_middlewares.Any())
+        {
+            await _middlewares[0].InvokeAsync(context, next);
+        }
+    }
+}
+```
+
+2. **Entity Framework Core Providers**:
+```csharp
+// EF Core database providers follow LSP
+public abstract class DatabaseProvider
+{
+    // Contract all providers must implement
+    public abstract IDbConnection CreateConnection(string connectionString);
+    public abstract IDbCommand CreateCommand(string sql, IDbConnection connection);
+    public abstract string GenerateSelectSql(string tableName, string[] columns);
+    public abstract string GenerateInsertSql(string tableName, Dictionary<string, object> values);
+}
+
+public class SqlServerProvider : DatabaseProvider
+{
+    public override IDbConnection CreateConnection(string connectionString)
+    {
+        return new SqlConnection(connectionString); // SQL Server specific
+    }
+    
+    public override IDbCommand CreateCommand(string sql, IDbConnection connection)
+    {
+        return new SqlCommand(sql, (SqlConnection)connection);
+    }
+    
+    public override string GenerateSelectSql(string tableName, string[] columns)
+    {
+        return $"SELECT {string.Join(", ", columns)} FROM [{tableName}]"; // T-SQL syntax
+    }
+    
+    public override string GenerateInsertSql(string tableName, Dictionary<string, object> values)
+    {
+        var columns = string.Join(", ", values.Keys.Select(k => $"[{k}]"));
+        var parameters = string.Join(", ", values.Keys.Select(k => $"@{k}"));
+        return $"INSERT INTO [{tableName}] ({columns}) VALUES ({parameters})";
+    }
+}
+
+public class PostgreSqlProvider : DatabaseProvider
+{
+    // LSP Compliant: Different syntax, same contract
+    public override IDbConnection CreateConnection(string connectionString)
+    {
+        return new NpgsqlConnection(connectionString); // PostgreSQL specific
+    }
+    
+    public override IDbCommand CreateCommand(string sql, IDbConnection connection)
+    {
+        return new NpgsqlCommand(sql, (NpgsqlConnection)connection);
+    }
+    
+    public override string GenerateSelectSql(string tableName, string[] columns)
+    {
+        return $"SELECT {string.Join(", ", columns)} FROM \"{tableName}\""; // PostgreSQL syntax
+    }
+    
+    public override string GenerateInsertSql(string tableName, Dictionary<string, object> values)
+    {
+        var columns = string.Join(", ", values.Keys.Select(k => $"\"{k}\""));
+        var parameters = string.Join(", ", values.Keys.Select(k => $"@{k}"));
+        return $"INSERT INTO \"{tableName}\" ({columns}) VALUES ({parameters})";
+    }
+}
+
+// EF Core can work with any provider thanks to LSP
+public class DataAccess
+{
+    private readonly DatabaseProvider _provider;
+    
+    public DataAccess(DatabaseProvider provider)
+    {
+        _provider = provider; // Any provider can be substituted
+    }
+    
+    public async Task<T> GetByIdAsync<T>(int id, string tableName)
+    {
+        using var connection = _provider.CreateConnection(_connectionString);
+        var sql = _provider.GenerateSelectSql(tableName, new[] { "*" });
+        using var command = _provider.CreateCommand($"{sql} WHERE Id = @Id", connection);
+        
+        // Works with any provider implementation
+        // LSP ensures consistent behavior
+    }
+}
+```
+
+## Problem-Solving Approach
+
+### Identifying Violations
+
+**How to Spot When Code Violates LSP**:
+
+```csharp
+// Violation Detection Checklist
+
+// 1. Client code with type checking
+public class ViolationExample1
+{
+    public void ProcessDocument(Document doc)
+    {
+        // RED FLAG: Type checking indicates LSP violation
+        if (doc is PdfDocument pdf)
+        {
+            pdf.ExtractText(); // Special method only for PDF
+        }
+        else if (doc is WordDocument word)
+        {
+            word.ExtractContent(); // Different method for Word
+        }
+        
+        // If all documents should support text extraction,
+        // why different methods?
+    }
+}
+
+// 2. Exception throwing in derived classes
+public abstract class Account
+{
+    public abstract void Withdraw(decimal amount);
+}
+
+public class SavingsAccount : Account
+{
+    public override void Withdraw(decimal amount)
+    {
+        if (amount > Balance)
+            throw new InsufficientFundsException(); // Expected
+    }
+}
+
+public class FixedDepositAccount : Account
+{
+    public override void Withdraw(decimal amount)
+    {
+        // RED FLAG: Throws exception not expected from base contract
+        throw new NotSupportedException("Cannot withdraw from fixed deposit");
+    }
+}
+
+// 3. Defensive programming patterns
+public class ViolationExample3
+{
+    public void ProcessShapes(List<Shape> shapes)
+    {
+        foreach (var shape in shapes)
+        {
+            // RED FLAG: Defensive programming indicates LSP issues
+            try
+            {
+                shape.CalculateArea();
+            }
+            catch (NotImplementedException)
+            {
+                // Special handling for incomplete implementations
+                Console.WriteLine("Shape calculation not implemented");
+            }
+            catch (NotSupportedException)
+            {
+                // Special handling for unsupported operations
+                Console.WriteLine("Operation not supported for this shape");
+            }
+        }
+    }
+}
+
+// Detection Tool Implementation
+public class LSPViolationDetector
+{
+    public class ViolationReport
+    {
+        public string ClassName { get; set; }
+        public string ViolationType { get; set; }
+        public string Description { get; set; }
+        public int Severity { get; set; }
+    }
+    
+    public List<ViolationReport> DetectViolations(Assembly assembly)
+    {
+        var violations = new List<ViolationReport>();
+        
+        foreach (var type in assembly.GetTypes())
+        {
+            violations.AddRange(CheckForTypeChecking(type));
+            violations.AddRange(CheckForUnexpectedExceptions(type));
+            violations.AddRange(CheckForEmptyImplementations(type));
+            violations.AddRange(CheckForStrengthenedPreconditions(type));
+        }
+        
+        return violations;
+    }
+    
+    private IEnumerable<ViolationReport> CheckForTypeChecking(Type type)
+    {
+        // Use reflection to analyze methods for type checking patterns
+        // Look for typeof(), is, as operators in client code
+        return new List<ViolationReport>();
+    }
+    
+    private IEnumerable<ViolationReport> CheckForUnexpectedExceptions(Type type)
+    {
+        // Analyze override methods for exceptions not declared in base
+        return new List<ViolationReport>();
+    }
+    
+    // Additional detection methods...
+}
+```
+
+### Incremental Improvement
+
+**Strategies for Gradual LSP Adoption**:
+
+```csharp
+// Phase 1: Identify and Document Violations
+public class LegacyDocumentProcessor
+{
+    // Legacy method with LSP violations - document the issues
+    [Obsolete("This method violates LSP - use ProcessDocumentSafely instead")]
+    public void ProcessDocument(Document document)
+    {
+        // Type checking indicates LSP violation
+        switch (document)
+        {
+            case PdfDocument pdf:
+                ProcessPdf(pdf);
+                break;
+            case WordDocument word:
+                ProcessWord(word);
+                break;
+            default:
+                throw new NotSupportedException($"Document type {document.GetType().Name} not supported");
+        }
+    }
+    
+    // Phase 1: Create LSP-compliant alternative
+    public ProcessingResult ProcessDocumentSafely(Document document)
+    {
+        try
+        {
+            // Use polymorphic behavior instead of type checking
+            return document.Process();
+        }
+        catch (Exception ex)
+        {
+            return ProcessingResult.Failed(ex.Message);
+        }
+    }
+}
+
+// Phase 2: Introduce Abstractions
+public interface IDocumentProcessor
+{
+    ProcessingResult Process();
+    bool CanProcess(DocumentType type);
+    ProcessingCapabilities GetCapabilities();
+}
+
+public abstract class DocumentBase : IDocumentProcessor
+{
+    // Template method pattern to ensure consistent behavior
+    public ProcessingResult Process()
+    {
+        try
+        {
+            ValidateDocument();
+            var result = ProcessCore();
+            LogProcessing(result);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return ProcessingResult.Failed(ex.Message);
+        }
+    }
+    
+    protected virtual void ValidateDocument()
+    {
+        // Common validation logic
+    }
+    
+    protected abstract ProcessingResult ProcessCore();
+    
+    protected virtual void LogProcessing(ProcessingResult result)
+    {
+        // Common logging logic
+    }
+    
+    public abstract bool CanProcess(DocumentType type);
+    public abstract ProcessingCapabilities GetCapabilities();
+}
+
+// Phase 3: Implement LSP-Compliant Subclasses
+public class PdfDocument : DocumentBase
+{
+    protected override ProcessingResult ProcessCore()
+    {
+        // PDF-specific processing that follows base contract
+        return ProcessingResult.Success("PDF processed successfully");
+    }
+    
+    public override bool CanProcess(DocumentType type)
+    {
+        return type == DocumentType.Pdf;
+    }
+    
+    public override ProcessingCapabilities GetCapabilities()
+    {
+        return new ProcessingCapabilities
+        {
+            SupportsTextExtraction = true,
+            SupportsImageExtraction = true,
+            SupportsMetadataExtraction = true
+        };
+    }
+}
+
+public class WordDocument : DocumentBase
+{
+    protected override ProcessingResult ProcessCore()
+    {
+        // Word-specific processing that follows base contract
+        return ProcessingResult.Success("Word document processed successfully");
+    }
+    
+    public override bool CanProcess(DocumentType type)
+    {
+        return type == DocumentType.Word;
+    }
+    
+    public override ProcessingCapabilities GetCapabilities()
+    {
+        return new ProcessingCapabilities
+        {
+            SupportsTextExtraction = true,
+            SupportsImageExtraction = false,
+            SupportsMetadataExtraction = true
+        };
+    }
+}
+
+// Phase 4: Update Client Code Gradually
+public class ModernDocumentProcessor
+{
+    private readonly List<IDocumentProcessor> _processors = new();
+    
+    public void RegisterProcessor(IDocumentProcessor processor)
+    {
+        _processors.Add(processor);
+    }
+    
+    public ProcessingResult ProcessDocument(DocumentType type, byte[] data)
+    {
+        // LSP-compliant: All processors are interchangeable
+        var processor = _processors.FirstOrDefault(p => p.CanProcess(type));
+        
+        if (processor == null)
+        {
+            return ProcessingResult.Failed($"No processor available for {type}");
+        }
+        
+        return processor.Process(); // Polymorphic call - no type checking needed
+    }
+    
+    public ProcessingCapabilities GetProcessingCapabilities(DocumentType type)
+    {
+        var processor = _processors.FirstOrDefault(p => p.CanProcess(type));
+        return processor?.GetCapabilities() ?? ProcessingCapabilities.None;
+    }
+}
+```
+
+### Risk Assessment
+
+**Evaluating When LSP Violations Are Acceptable**:
+
+```csharp
+// Risk Assessment Matrix
+public class LSPRiskAssessment
+{
+    public enum RiskLevel
+    {
+        Low,        // Acceptable violation
+        Medium,     // Requires justification
+        High,       // Should be fixed
+        Critical    // Must be fixed immediately
+    }
+    
+    public class RiskFactor
+    {
+        public string Factor { get; set; }
+        public int Weight { get; set; }
+        public int Score { get; set; }
+        public string Description { get; set; }
+    }
+    
+    public RiskLevel AssessViolation(Type violatingType, string violationDescription)
+    {
+        var factors = new List<RiskFactor>
+        {
+            // Public API exposure
+            new RiskFactor
+            {
+                Factor = "API Visibility",
+                Weight = 10,
+                Score = violatingType.IsPublic ? 10 : 2,
+                Description = "Public APIs have higher risk"
+            },
+            
+            // Usage frequency
+            new RiskFactor
+            {
+                Factor = "Usage Frequency",
+                Weight = 8,
+                Score = EstimateUsageFrequency(violatingType),
+                Description = "Frequently used classes have higher impact"
+            },
+            
+            // Team size
+            new RiskFactor
+            {
+                Factor = "Team Size",
+                Weight = 6,
+                Score = GetTeamSize() > 5 ? 8 : 3,
+                Description = "Larger teams increase coordination risk"
+            },
+            
+            // System criticality
+            new RiskFactor
+            {
+                Factor = "System Criticality",
+                Weight = 9,
+                Score = IsBusinessCritical(violatingType) ? 10 : 4,
+                Description = "Business-critical systems need higher quality"
+            },
+            
+            // Performance impact
+            new RiskFactor
+            {
+                Factor = "Performance Impact",
+                Weight = 5,
+                Score = HasPerformanceImplications(violatingType) ? 8 : 2,
+                Description = "Performance-critical code may justify violations"
+            }
+        };
+        
+        var totalScore = factors.Sum(f => f.Weight * f.Score) / factors.Sum(f => f.Weight);
+        
+        return totalScore switch
+        {
+            >= 8 => RiskLevel.Critical,
+            >= 6 => RiskLevel.High,
+            >= 4 => RiskLevel.Medium,
+            _ => RiskLevel.Low
+        };
+    }
+    
+    private int EstimateUsageFrequency(Type type)
+    {
+        // Implementation would analyze call graphs, reflection usage, etc.
+        return 5; // Placeholder
+    }
+    
+    private int GetTeamSize()
+    {
+        // Implementation would check team configuration
+        return 8; // Placeholder
+    }
+    
+    private bool IsBusinessCritical(Type type)
+    {
+        // Check if type is in critical business domains
+        var criticalNamespaces = new[] { "Payment", "Security", "Audit", "Compliance" };
+        return criticalNamespaces.Any(ns => type.Namespace?.Contains(ns) == true);
+    }
+    
+    private bool HasPerformanceImplications(Type type)
+    {
+        // Check if type is used in performance-critical paths
+        var performanceNamespaces = new[] { "HighFrequency", "RealTime", "Gaming" };
+        return performanceNamespaces.Any(ns => type.Namespace?.Contains(ns) == true);
+    }
+}
+
+// Acceptable Violation Example
+public class PerformanceOptimizedCache<T> : ICache<T>
+{
+    // Documented LSP violation for performance reasons
+    [LSPViolation(Reason = "Performance optimization", Risk = RiskLevel.Low)]
+    public T Get(string key)
+    {
+        // Violation: May return default(T) instead of null for reference types
+        // in high-performance scenarios to avoid null checks
+        
+        if (_ultraFastMode && !_cache.ContainsKey(key))
+        {
+            return default(T); // Violates contract but improves performance
+        }
+        
+        return _cache.TryGetValue(key, out var value) ? value : default(T);
+    }
+}
+
+// Custom attribute to document acceptable violations
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+public class LSPViolationAttribute : Attribute
+{
+    public string Reason { get; set; }
+    public RiskLevel Risk { get; set; }
+    public string Justification { get; set; }
+    public DateTime ReviewDate { get; set; } = DateTime.Now.AddYears(1);
+}
+```
+
+## Final Recommendations
+
+### Enterprise Architecture Checklist
+
+**For Senior/Principal Architect Interviews**:
+
+```csharp
+// Architectural Decision Template for LSP
+public class LSPArchitecturalDecision
+{
+    public string Title { get; set; } = "Liskov Substitution Principle Application";
+    public string Status { get; set; } = "Proposed"; // Proposed, Accepted, Deprecated
+    public string Context { get; set; }
+    public string Decision { get; set; }
+    public string Consequences { get; set; }
+    public List<string> Alternatives { get; set; } = new();
+    
+    // Example ADR for payment processing system
+    public static LSPArchitecturalDecision PaymentProcessorDesign => new()
+    {
+        Title = "Payment Processor Interface Design",
+        Status = "Accepted",
+        Context = @"
+            We need to support multiple payment providers (Stripe, PayPal, Square) 
+            in our e-commerce platform. Each provider has different capabilities 
+            and constraints, but we need a consistent interface for the application layer.
+        ",
+        Decision = @"
+            We will design the IPaymentProcessor interface following LSP strictly:
+            - All methods will return Result objects instead of throwing exceptions
+            - Common capabilities will be exposed through standard methods
+            - Provider-specific features will be accessed through capability discovery
+            - All implementations must handle edge cases consistently
+        ",
+        Consequences = @"
+            Positive:
+            - Easy to add new payment providers
+            - Reliable polymorphic behavior
+            - Simplified testing with mock implementations
+            - Consistent error handling across providers
+            
+            Negative:
+            - Some provider-specific optimizations may be harder to implement
+            - Interface may be more complex to accommodate all providers
+            - Performance overhead from result wrapping
+        ",
+        Alternatives = new List<string>
+        {
+            "Provider-specific interfaces (rejected due to tight coupling)",
+            "Single concrete implementation with strategy pattern (rejected due to complexity)",
+            "Dynamic typing approach (rejected due to type safety concerns)"
+        }
+    };
+}
+```
+
+### Key Interview Points Summary
+
+**Essential Talking Points**:
+
+1. **Definition**: "LSP ensures that objects of a superclass should be replaceable with objects of its subclasses without breaking the application"
+
+2. **Real-world Impact**: "LSP violations lead to fragile code where polymorphism can't be trusted, requiring defensive programming and type checking"
+
+3. **Enterprise Implications**: "In large systems, LSP violations compound technical debt and make systems harder to extend and maintain"
+
+4. **Relationship to Other Principles**: "LSP enables OCP (Open/Closed) and works synergistically with ISP (Interface Segregation)"
+
+5. **Detection Strategy**: "Look for type checking in client code, unexpected exceptions in overrides, and defensive programming patterns"
+
+6. **Modern .NET Integration**: "Use nullable reference types, result patterns, and proper interface design to support LSP"
+
+Remember: **LSP is not just about inheritance - it's about creating reliable, predictable, and maintainable object-oriented systems that can evolve over time without breaking existing functionality.**
+
+---
 
 14. **Interface Segregation Principle (ISP)**
     - How do you avoid fat interfaces in service design?

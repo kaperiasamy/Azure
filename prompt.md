@@ -260,7 +260,7 @@ Would you like me to create a **focused 10-pattern "interview must-know cheat sh
 
 ---
 
-Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. I want to learn design pattern in very detailed way. I want to know the following points on `Strategy Pattern`:
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. I want to learn design pattern in very detailed way. I want to know the following points on `Observer Pattern`:
 - Core Category of Pattern 
 - What is this pattern? 
 - What problem does it solve?
@@ -276,8 +276,178 @@ Hi, I am a .NET resource of having 16+ years of experience. I am preparing for t
 - Risks using this pattern (in multi-thread / cloud native world)?
 - What are the drawbacks of not using it?
 - Code Examples (C# / .NET) (Keep examples short but interview-ready (10–15 lines), but with very detailed comments / explanations.)
-- How would you implement different payment gateways using Strategy pattern?
-- Show strategy selection based on runtime conditions.
+- How would you implement event-driven architecture using Observer?
+- Show domain events implementation in .NET Core.
 Please get me the details in solution-oriented architect approach. 
 
 - In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
+
+
+Here's a comprehensive prompt template for learning design principles in detail for your .NET technical interviews:I've created a comprehensive prompt template that will help you get the most detailed and interview-ready information for each design principle. This template is structured to cover all aspects that senior/principal architect interviews typically explore:
+
+## **Key Features of This Prompt Template:**
+
+### **1. Comprehensive Coverage**
+- **Core Understanding**: Fundamental concepts and problem-solving aspects
+- **Practical Application**: Real-world usage scenarios and trade-offs
+- **Implementation Guidelines**: Concrete .NET examples with detailed explanations
+- **Advanced Scenarios**: Enterprise, cloud, and concurrency considerations
+
+### **2. Interview-Focused Content**
+- Short, interview-ready code examples (10-15 lines)
+- Before/after refactoring scenarios
+- Common interview questions and whiteboard explanations
+- Red flags and anti-patterns to discuss
+
+### **3. Architecture-Level Thinking**
+- Enterprise application context
+- Microservices and distributed systems impact
+- Domain-Driven Design connections
+- Long-term maintenance and evolution considerations
+
+### **4. Practical Problem-Solving**
+- Legacy code modernization strategies
+- Team development and onboarding approaches
+- Measurement and validation techniques
+- Tool support and automation
+
+## **How to Use This Prompt:**
+
+1. **Replace `[PRINCIPLE_NAME]`** with the specific principle you want to learn:
+   - "Single Responsibility Principle (SRP)"
+   - "Open/Closed Principle (OCP)"
+   - "DRY (Don't Repeat Yourself)"
+   - etc.
+
+2. **Customize the additional context section** based on the principle you're studying
+
+3. **Use this exact prompt structure** to get comprehensive, interview-ready material
+
+## **Interview Advantages:**
+
+This prompt structure ensures you'll get:
+- **Deep Technical Knowledge**: Beyond surface-level understanding
+- **Real-World Application**: Practical scenarios interviewers ask about
+- **Architecture Perspective**: Senior-level thinking about system design
+- **Problem-Solving Skills**: How to identify, analyze, and fix principle violations
+- **Leadership Context**: How to guide teams in applying these principles
+
+The prompt is designed to generate content that demonstrates the architectural thinking and practical experience expected in senior .NET architect roles.
+
+# Design Principles Interview Preparation Prompt Template
+
+Hi, I am a .NET resource with 16+ years of experience. I am preparing for technical interviews on .NET. I want to learn design principles in very detailed way. I want to know the following points on `Interface Segregation Principle (ISP)`:
+
+## Core Understanding
+- **What is this principle?** (Definition with context)
+- **What problem does it solve?** (Pain points it addresses)
+- **Why should I follow this principle?** (Benefits and value proposition)
+- **What are the consequences of violating this principle?** (Technical debt, maintenance issues)
+
+## Practical Application
+- **When should I apply this principle?** (Specific scenarios and triggers)
+- **When should I NOT apply this principle?** (Over-engineering scenarios, exceptions)
+- **How does this principle fit with other SOLID principles?** (Synergies and conflicts)
+- **What are the trade-offs of following this principle?** (Benefits vs costs)
+
+## Implementation Guidelines
+- **How to implement this principle in .NET Framework and .NET Core?** (Keep examples short but interview-ready (10–15 lines), with very detailed comments/explanations)
+- **What are the common violations of this principle in .NET applications?** (Anti-patterns to avoid)
+- **How to refactor existing code to follow this principle?** (Step-by-step transformation)
+- **What design patterns naturally support this principle?** (Pattern relationships)
+
+## Architecture and Design Context
+- **Architecture Relevance** (How it applies to different architectural styles - layered, clean, microservices, etc.)
+- **Enterprise Application Context** (Large-scale application considerations)
+- **Domain-Driven Design Connection** (How it relates to DDD concepts)
+- **Microservices Architecture Impact** (Service design implications)
+
+## Advanced Scenarios
+- **Concurrency and Multi-threading Context** (Thread safety implications)
+- **Cloud-Native and Distributed Systems** (Scalability and resilience considerations)
+- **Performance Impact** (Runtime performance vs maintainability trade-offs)
+- **Testing Implications** (How following this principle affects testability)
+
+## Real-World Application
+- **Industry Use Cases** (Common scenarios where this principle is critical)
+- **Code Review Red Flags** (What to look for during code reviews)
+- **Refactoring Strategies** (Practical approaches to improve existing code)
+- **Team Development Guidelines** (How to enforce this principle in team settings)
+
+## Interview-Specific Content
+- **Code Examples (C# / .NET)** (Keep examples short but interview-ready (10–15 lines), with very detailed comments/explanations)
+- **Before/After Refactoring Examples** (Show violation → compliance transformation)
+- **Common Interview Questions** (Typical questions asked about this principle)
+- **Whiteboard-Friendly Explanations** (Simple diagrams and examples for technical discussions)
+
+## Measurement and Validation
+- **How to measure compliance with this principle?** (Metrics and tools)
+- **Code Quality Indicators** (Static analysis rules, code smells)
+- **Technical Debt Assessment** (How violations accumulate over time)
+- **Automated Enforcement** (Tools, analyzers, and build pipeline integration)
+
+## Advanced Topics
+- **Principle Conflicts** (When following one principle conflicts with another)
+- **Context-Dependent Application** (How the principle varies by domain/context)
+- **Evolution and Maintenance** (Long-term implications for code evolution)
+- **Cross-Cutting Concerns** (Logging, security, caching implications)
+
+## Practical Scenarios
+- **Legacy Code Modernization** (Applying principle to existing systems)
+- **Greenfield Development** (Designing new systems with this principle)
+- **Team Onboarding** (Teaching this principle to junior developers)
+- **Architecture Decision Records** (Documenting principle-based decisions)
+
+## Industry Best Practices
+- **Microsoft Recommendations** (Official .NET guidance and conventions)
+- **Community Standards** (Industry-accepted practices)
+- **Tool Support** (IDEs, analyzers, frameworks that support this principle)
+- **Framework Integration** (How .NET frameworks embody this principle)
+
+## Problem-Solving Approach
+- **Identifying Violations** (How to spot when code violates this principle)
+- **Incremental Improvement** (Strategies for gradual principle adoption)
+- **Risk Assessment** (Evaluating when principle violations are acceptable)
+- **Documentation Strategies** (How to document principle-based decisions)
+
+## Additional Context
+- **Relationship with other SOLID principles** (How they work together)
+- **IoC Container implications** (Dependency injection frameworks)
+- **Unit Testing impact** (How principle affects test design)
+- **API Design considerations** (Public interface design)
+
+## Also consider
+- How do you avoid fat interfaces in service design?
+- Show splitting large interfaces into focused ones.
+
+Please get me the details in solution-oriented architect approach with practical examples that demonstrate deep understanding of enterprise-level .NET development and architectural thinking suitable for senior/principal architect interviews.
+
+---
+
+Please get me the details in solution-oriented architect approach with practical examples that demonstrate deep understanding of enterprise-level .NET development and architectural thinking suitable for senior/principal architect interviews.
+
+## Additional Context for Specific Principles:
+
+### For SOLID Principles, also include:
+- **Relationship with other SOLID principles** (How they work together)
+- **IoC Container implications** (Dependency injection frameworks)
+- **Unit Testing impact** (How principle affects test design)
+- **API Design considerations** (Public interface design)
+
+### For DRY Principle, also include:
+- **Abstraction strategies** (When and how to abstract)
+- **Code generation scenarios** (T4 templates, source generators)
+- **Configuration management** (Avoiding duplication in config)
+- **Knowledge representation** (Business rule centralization)
+
+### For KISS Principle, also include:
+- **Complexity measurement** (Cyclomatic complexity, cognitive load)
+- **Over-engineering prevention** (Avoiding unnecessary abstractions)
+- **Readability vs performance** (Balancing simplicity with efficiency)
+- **Maintainability focus** (Long-term code health)
+
+### For YAGNI Principle, also include:
+- **Feature creep prevention** (Avoiding speculative development)
+- **Agile development alignment** (Iterative improvement strategies)
+- **Refactoring timing** (When to add complexity)
+- **Cost-benefit analysis** (Economic aspects of development decisions)
