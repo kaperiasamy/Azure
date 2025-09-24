@@ -282,6 +282,33 @@ Please get me the details in solution-oriented architect approach.
 
 - In the interview if I was asked 'Query to get the highest salary from each department (Tables: Employee, Department, Salary)', what could be the best answer to impress the interviewer? Please provide a very detailed explanation with examples. Please don't use Unicode characters in the response.
 
+--- 
+
+Please create a comprehensive prompt tempate for preparing technical interview for senior architect / solution architect on `Architectural design`, `Scenario-based questions`, `Performance & Scalability`, `Error Handling & Resilience`, `Security Patterns`, `Testing & Maintainability`, and `Advanced Scenarios`. 
+Under `Architectural design`, I would like to include:
+1. Layered Architecture
+2. API Design Patterns(MVC Pattern, REST / SOAP / RESTFul Architecture, and API Versioning)
+Under `Performance & Scalability`, I would like to include: 
+1. Caching Strategy
+2. Database Performance
+3. Microservices Communication
+Under `Error Handling & Resilience`, I would like to include: 
+1. Global Error Handling
+2. Retry Pattern
+3. Validation Patterns
+Under `Security Patterns`, I would like to include: 
+1. Authentication & Authorization
+2. API Security
+Under `Testing & Maintainability`, I would like to include: 
+1. Testable Design
+2. Configuration Management
+Under `Advanced Scenarios`, I would like to include: 
+1. Event Sourcing
+2. Multi-tenant Architecture
+3. API Gateway Pattern
+The prompt template should help me to get the most detailed and interview-ready information on each topic. Structure the template to cover all aspects that that senior/principal architect interviews typically explore.
+
+---
 
 Here's a comprehensive prompt template for learning design principles in detail for your .NET technical interviews:I've created a comprehensive prompt template that will help you get the most detailed and interview-ready information for each design principle. This template is structured to cover all aspects that senior/principal architect interviews typically explore:
 
