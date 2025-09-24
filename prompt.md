@@ -336,7 +336,7 @@ The prompt is designed to generate content that demonstrates the architectural t
 
 # Design Principles Interview Preparation Prompt Template
 
-Hi, I am a .NET resource with 16+ years of experience. I am preparing for technical interviews on .NET. I want to learn design principles in very detailed way. I want to know the following points on `Interface Segregation Principle (ISP)`:
+Hi, I am a .NET resource with 16+ years of experience. I am preparing for technical interviews on .NET. I want to learn design principles in very detailed way. I want to know the following points on `Dependency Inversion Principle (DIP)`:
 
 ## Core Understanding
 - **What is this principle?** (Definition with context)
@@ -416,9 +416,9 @@ Hi, I am a .NET resource with 16+ years of experience. I am preparing for techni
 - **Unit Testing impact** (How principle affects test design)
 - **API Design considerations** (Public interface design)
 
-## Also consider
-- How do you avoid fat interfaces in service design?
-- Show splitting large interfaces into focused ones.
+## Also include
+- How does .NET Core DI implement DIP?
+- Show high-level modules depending on abstractions, not concretions.
 
 Please get me the details in solution-oriented architect approach with practical examples that demonstrate deep understanding of enterprise-level .NET development and architectural thinking suitable for senior/principal architect interviews.
 

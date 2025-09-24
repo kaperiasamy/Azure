@@ -1,0 +1,21 @@
+@page {
+  size: A4;
+  margin: 25mm 20mm 25mm 30mm; /* Top Right Bottom Left */
+  /* Adjust these values for wider left margin for binding */
+  
+  @top-center {
+    content: string(filename);
+    font-size: 12pt;
+    font-weight: bold;
+  }
+
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font-size: 10pt;
+  }
+}
+
+/* Set the filename at the top-center using string-set */
+h1 {
+  string-set: filename content();
+}
