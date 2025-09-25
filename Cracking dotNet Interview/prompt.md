@@ -70,6 +70,7 @@ Please get me the details in solution-oriented architect approach, include more 
 #### REST / SOAP / RESTful Architecture
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain web service architectures comprehensively:
 
 **REST:**
@@ -95,11 +96,13 @@ Explain web service architectures comprehensively:
 - Bulk operations and batch processing in REST
 - Error handling and consistent response formats
 - API documentation and discoverability
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 #### API Versioning
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover API versioning strategies comprehensively:
 - Why API versioning is necessary (breaking changes, backward compatibility)
 - Versioning strategies:
@@ -115,6 +118,7 @@ Cover API versioning strategies comprehensively:
 - Tools and frameworks for API version management
 - GraphQL approach to API evolution
 - Contract testing across API versions
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -123,6 +127,7 @@ Cover API versioning strategies comprehensively:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Prepare detailed architectural solutions for these common scenarios:
 
 **E-commerce Platform:**
@@ -164,6 +169,7 @@ For each scenario, address:
 - Integration patterns
 - Monitoring and observability
 - Cost optimization strategies
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -174,6 +180,7 @@ For each scenario, address:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Provide comprehensive caching strategy knowledge:
 
 **Caching Levels:**
@@ -205,12 +212,14 @@ Provide comprehensive caching strategy knowledge:
 - Cache monitoring and metrics
 - Hot key problems and solutions
 - Cache stampede prevention
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 3.2 Database Performance
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover database performance optimization comprehensively:
 
 **Indexing Strategies:**
@@ -247,12 +256,14 @@ Cover database performance optimization comprehensively:
 - Prepared statements and query caching
 - Database connection monitoring
 - Handling connection failures and retries
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 3.3 Microservices Communication
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain microservices communication patterns in detail:
 
 **Synchronous Communication:**
@@ -285,6 +296,7 @@ Explain microservices communication patterns in detail:
 - Compression and serialization formats
 - Monitoring inter-service communication
 - Distributed tracing and observability
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -295,6 +307,7 @@ Explain microservices communication patterns in detail:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover comprehensive error handling strategies:
 
 **Error Classification:**
@@ -330,12 +343,14 @@ Cover comprehensive error handling strategies:
 - Error boundaries in component architecture
 - Health checks and readiness probes
 - Chaos engineering principles
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 4.2 Retry Pattern
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain retry patterns comprehensively:
 
 **Retry Strategies:**
@@ -372,12 +387,14 @@ Explain retry patterns comprehensively:
 - Success rate tracking after retries
 - Performance impact of retries
 - Cost implications of retry strategies
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 4.3 Validation Patterns
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover validation patterns at different architectural levels:
 
 **Input Validation:**
@@ -414,6 +431,7 @@ Cover validation patterns at different architectural levels:
 - Validation result caching
 - Validation service patterns
 - Event-driven validation
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -424,6 +442,7 @@ Cover validation patterns at different architectural levels:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Provide comprehensive security authentication and authorization coverage:
 
 **Authentication Methods:**
@@ -464,12 +483,14 @@ Provide comprehensive security authentication and authorization coverage:
 - Session management and security
 - Cross-site request forgery (CSRF) protection
 - Audit logging for authentication events
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 5.2 API Security
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover API security comprehensively:
 
 **API Authentication:**
@@ -510,6 +531,7 @@ Cover API security comprehensively:
 - API security testing (OWASP ZAP, Burp Suite)
 - Vulnerability scanning and assessment
 - Security incident response for APIs
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -520,6 +542,7 @@ Cover API security comprehensively:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain testable architecture design principles:
 
 **Dependency Injection:**
@@ -556,12 +579,14 @@ Explain testable architecture design principles:
 - Verifying interactions vs state
 - Testing external service integrations
 - Database mocking strategies
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 6.2 Configuration Management
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover configuration management comprehensively:
 
 **Configuration Sources:**
@@ -599,6 +624,7 @@ Cover configuration management comprehensively:
 - Configuration caching strategies
 - Configuration change propagation
 - Rollback strategies for configuration changes
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
@@ -609,6 +635,7 @@ Cover configuration management comprehensively:
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain event sourcing pattern comprehensively:
 
 **Core Concepts:**
@@ -646,12 +673,14 @@ Explain event sourcing pattern comprehensively:
 - Audit and compliance with event sourcing
 - Testing strategies for event-sourced systems
 - When not to use event sourcing
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 7.2 Multi-tenant Architecture
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Cover multi-tenancy patterns in detail:
 
 **Tenancy Models:**
@@ -688,12 +717,14 @@ Cover multi-tenancy patterns in detail:
 - Tenant authentication and authorization
 - Audit trails per tenant
 - Compliance and data governance
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ### 7.3 API Gateway Pattern
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain API Gateway architecture comprehensively:
 
 **Core Functions:**
@@ -739,6 +770,7 @@ Explain API Gateway architecture comprehensively:
 - Kong, Zuul, Ambassador, Istio Gateway
 - Cloud-managed gateways (AWS API Gateway, Azure API Management)
 - Implementation trade-offs and selection criteria
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 ---
