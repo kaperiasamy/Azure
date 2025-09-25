@@ -830,3 +830,5 @@ The prompt template should help me to get the most detailed and interview-ready 
 
 ---
 
+Hi, I’m a .NET developer with over 16 years of experience primarily working with C#, .NET, .NET Core, Web APIs, and Azure. I’m currently preparing for an online screening test that comes before a technical interview for a senior individual contributor role in the banking domain. I'm not sure what to expect from the screening test. Could you please shed some light on the types of questions that are typically asked, so I can prepare accordingly?
+
