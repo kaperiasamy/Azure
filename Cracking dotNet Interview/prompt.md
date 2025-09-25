@@ -29,6 +29,7 @@ Use this comprehensive prompt template to prepare detailed, interview-ready resp
 
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Explain layered architecture in detail covering:
 - Definition and core principles of layered architecture
 - Common layers (Presentation, Business/Application, Data Access, Database) and their responsibilities
@@ -39,6 +40,7 @@ Explain layered architecture in detail covering:
 - How to handle cross-cutting concerns (logging, security, caching) in layered architecture
 - Design patterns commonly used within each layer
 - Evolution from traditional N-tier to modern layered approaches
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 **Key Interview Questions to Prepare:**
@@ -51,6 +53,7 @@ Explain layered architecture in detail covering:
 #### MVC Pattern
 **Preparation Prompt:**
 ```
+Hi, I am a .NET resource of having 16+ years of experience. I am preparing for technical interview on .NET. 
 Provide comprehensive coverage of MVC pattern including:
 - Model-View-Controller separation and responsibilities
 - Variations: MVP (Model-View-Presenter), MVVM (Model-View-ViewModel)
@@ -61,6 +64,7 @@ Provide comprehensive coverage of MVC pattern including:
 - Best practices for keeping controllers thin and models rich
 - Handling of cross-cutting concerns in MVC
 - MVC in microservices architecture
+Please get me the details in solution-oriented architect approach, include more explanation and keep the code short and simple. 
 ```
 
 #### REST / SOAP / RESTful Architecture
