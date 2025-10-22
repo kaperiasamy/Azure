@@ -127,9 +127,9 @@ For **each question**, use the following structure:
 * Use **.NET 6+/C# 10+** coding standards.
 * Prioritize practical, applied answers — not theory-heavy responses.
 
-Generate 1-2 questions with full structure described above.
+Generate 1 or 2 questions with full structure described above.
 
-Now continue with Question 8 with full structure described above.
+Now continue with Question 7 and 8 with full structure described above.
 ---
 
 ## **Section 1: Microservices Fundamentals & Architecture**
