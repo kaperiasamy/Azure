@@ -509,3 +509,11 @@ Please provide:
 ---
 
 
+
+Please come up with 50 mostly asked interview questions with correct answers to that questions, including the explanation for that answer, continue with follow-up questions. Keep the C# code short (10 - 15 lines for each). 
+
+Generate 15 - 20 interview questions, on each section with detailed answers, including explanation for that answer (with C# code, short and sharp, 10 - 25 lines) continued with follow-up questions (3 - 5 questions with short answers). 
+
+Generate 15 - 20 interview questions, on each section, with detailed answers, including explanation for that answer (with clean C# code, between 10 - 25 lines) continued with follow-up questions (3 - 5 questions with short answers).
+
+Instead of only 20 questions, generate 15 - 20 interview questions, on each section, with detailed answers, including explanation for that answer (with clean C# code, between 10 - 25 lines) continued with follow-up questions (3 - 5 questions with short answers). Instead of creating content for all sections at once, generate content for one section at a time and then continue to the next section. 
