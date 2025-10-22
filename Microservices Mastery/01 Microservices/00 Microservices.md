@@ -129,6 +129,9 @@ For **each question**, use the following structure:
 
 Generate 1 or 2 questions with full structure described above.
 
+Now continue with Question 3 and 4 with full structure described above.
+Now continue with Question 5 and 6 with full structure described above.
+Now continue with Question 7 and 8 with full structure described above.
 Now continue with Question 9 and 10 with full structure described above.
 ---
 
