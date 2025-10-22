@@ -105,7 +105,7 @@ Include **3–5 follow-up questions** related to the main question, using the fo
 
 You are a senior .NET architect and technical interview trainer specializing in **Azure-based Microservices Architecture**.
 Under the topic **“Microservices Fundamentals & Architecture”**, generate **7–10 interview questions** specifically focused on:
-> **Service decomposition strategies**
+> **Service boundaries definition**
 For **each question**, use the following structure:
 ---
 ## Question X: [Title]
@@ -129,7 +129,7 @@ For **each question**, use the following structure:
 
 Generate 1 or 2 questions with full structure described above.
 
-Now continue with Question 7 and 8 with full structure described above.
+Now continue with Question 9 and 10 with full structure described above.
 ---
 
 ## **Section 1: Microservices Fundamentals & Architecture**
