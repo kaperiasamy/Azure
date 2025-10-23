@@ -470,3 +470,43 @@ For each section, I'll also provide:
 
 ---
 
+I’m a software developer with over 16 years of experience. I began my career with FoxPro, then worked with VB6 and other languages, and transitioned to .NET around 12 years ago. I’m currently seeking a job change, aiming for roles such as Fullstack Lead Developer, Technical Architect, or Solution Architect. My goal is to move into modern technologies like .NET Core, ASP.NET Core, Web API, Microservices, Azure and React JS.
+
+However, my knowledge in these areas—especially React JS — is currently limited, which is making it difficult to clear technical interviews for senior roles. I want to focus on one topic at a time, starting with **React JS**.
+
+Please provide:
+
+1. A list of common **React JS interview questions** for senior roles (Lead, Architect).
+2. A **detailed study plan** to learn React JS thoroughly and prepare for interviews, including concepts, best practices, architecture patterns, and hands-on skills.
+
+Make a study plan for learning **React JS**, in which list the sections / topics to cover.
+
+---
+
+I’m a software developer with over 16 years of experience. I began my career with FoxPro, then worked with VB6 and other languages, and transitioned to .NET around 12 years ago. I’m currently seeking a job change, aiming for roles such as Lead Developer, Technical Architect, or Solution Architect. My goal is to move into modern technologies like .NET Core, ASP.NET Core, Web API, Microservices, and Azure.
+
+However, my knowledge in these areas—especially Microservices—is currently limited, which is making it difficult to clear technical interviews for senior roles. I want to focus on one topic at a time, starting with **Microservices**.
+
+Please provide:
+
+1. A list of common **Microservices interview questions** for senior roles (Lead, Architect).
+2. A **detailed study plan** to learn Microservices thoroughly and prepare for interviews, including concepts, best practices, architecture patterns, and hands-on skills.
+
+---
+
+Please come up with 50 mostly asked interview questions with correct answers to that questions, including the explanation for that answer, continue with follow-up questions. Keep the C# code short (10 - 15 lines for each).
+
+--- 
+
+Make the study plan shorter, I don't have 16 weeks for preparation. I have only one week. So, make the content accordingly, but never skip the content.
+
+--- 
+
+Generate 15 - 20 interview questions with detailed answers, including explanation for that answer (with C# code, short and sharp, 10 - 25 lines) continued with follow-up questions (3 - 5 questions with short answers).
+
+--- 
+
+What are the sections / topics to cover
+
+--- 
+
