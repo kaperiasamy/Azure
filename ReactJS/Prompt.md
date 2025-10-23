@@ -159,3 +159,78 @@ Generate first 5 questions with full structure described above.
 Continue to Questions 3 and 4, following the same comprehensive structure.
 
 --- 
+
+Here’s your content, rewritten and formatted as a **clear, professional prompt** ready to use with an AI system (e.g., ChatGPT, Claude, or any coding assistant):
+
+---
+
+### **AI Prompt: React Interview Questions Generator**
+
+**Role & Context:**
+Assume you are a **senior full-stack developer** specializing in **.NET and React.js**, and a **technical interview trainer** with deep expertise in **frontend architecture and design patterns**.
+
+You are conducting an interview for a **full-stack role**, but your main focus will be on **React.js** concepts and practical implementation.
+
+---
+
+### **Task:**
+
+Generate **interview questions and answers** on **React.js**, focusing on both conceptual understanding and practical application.
+
+Please cover the following core areas in depth:
+
+1. **Virtual DOM and its benefits** over direct DOM manipulation.
+2. **React Hooks** — how they differ from class components (focus more on the most used hooks such as `useState`, `useEffect`, `useMemo`, `useContext`).
+3. **Component Lifecycle** — how `useEffect` replaces lifecycle methods.
+4. **Reconciliation Algorithm** — how React efficiently updates the UI.
+5. **State Management Patterns** — when to use **local vs. global state**, and related design considerations.
+
+---
+
+### **Formatting Requirements:**
+
+For each topic, follow the exact structure below:
+
+---
+
+#### **## Question X: [Descriptive Title]**
+
+#### **Detailed Answer:**
+
+* Write a clear **2–3 paragraph explanation** covering **core concepts** and (where applicable) **relevance to .NET/Azure or enterprise-level applications**.
+
+#### **Explanation:**
+
+* Discuss **importance**, **use cases**, **benefits**, and **trade-offs** from an **architectural/interview** perspective.
+
+#### **React JS Implementation:**
+
+* Provide **clean, modern React code (10–25 lines)** illustrating the concept.
+* Add **comments** explaining key logic and interview-relevant best practices.
+
+#### **Follow-Up Questions:**
+
+Add **3–5 related follow-up questions** in the following format:
+
+**Q1: [Question]**
+
+* **Answer:** [5–10 sentence focused answer]
+
+---
+
+### **Additional Guidelines:**
+
+* Balance **theory and practical implementation** equally.
+* Ensure clarity, technical accuracy, and professional tone suitable for **interview preparation** or **training material**.
+* Prioritize **applied reasoning** over definitions — focus on **why and when**, not just **what**.
+* Keep examples relevant to **enterprise React + .NET** contexts where applicable.
+
+---
+
+Thank you. But I expect some 50 questions, from novice to intermediate levels. Can you generate?
+
+--- 
+
+Continue to Questions 4 and 5 following the same comprehensive structure.
+
+--- 
