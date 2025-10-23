@@ -133,6 +133,8 @@ Now continue with Question 3 and 4 with full structure described above.
 Now continue with Question 5 and 6 with full structure described above.
 Now continue with Question 7 and 8 with full structure described above.
 Now continue with Question 9 and 10 with full structure described above.
+
+Continue to Questions 6-7 following the same comprehensive structure.
 ---
 
 ## **Section 1: Microservices Fundamentals & Architecture**
